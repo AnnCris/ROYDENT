@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Recuperar Contraseña - Mundo Medico Y RoyDent</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+    :root {
+        /* Colores principales - Tema Dorado y Verde VIBRANTES */
+        --color-gold: #D4AF37;
+        --color-gold-light: #f6e06f;
+        --color-gold-dark: #B8860B;
+        --color-green: #2E8B57;
+        --color-green-light: #98FB98;
+        --color-green-dark: #1A5D34;
+        --text-dark: #2D3748;
+        --text-gray: #718096;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #FFFACD, #F0FFF0, #FFFAF0);
+        min-height: 100vh;
+        color: var(--text-dark);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    /* Efecto de vidrio con bordes animados */
+    .glass-card {
+        position: relative;
+        border-radius: 20px;
+        padding: 2.5rem;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+        z-index: 2;
+        width: 100%;
+        max-width: 450px;
+    }
+
+    /* Borde animado */
+    .glass-card::before {
+        content: "";
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        background: linear-gradient(45deg, 
+            var(--color-gold), 
+            var(--color-green), 
+            var(--color-gold-light),
+            var(--color-gold));
+        background-size: 300% 300%;
+        border-radius: 22px;
+        animation: gradientMove 4s ease infinite;
+        z-index: -1;
+    }
+
+    /* Fondo interior para el efecto de vidrio */
+    .glass-card::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        right: 2px;
+        bottom: 2px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 18px;
+        z-index: -1;
+    }
+
+    @keyframes gradientMove {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .card-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .form-input {
+        @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 transition duration-200 ease-in-out;
+        background: rgba(255, 255, 255, 0.8);
+    }
+    .form-input:focus {
+        border-color: var(--color-green);
+        box-shadow: 0 0 0 3px rgba(0, 200, 81, 0.3);
+    }
+
+    .btn-primary {
+        background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+        @apply w-full text-white py-3 px-4 rounded-lg font-bold shadow-lg transition duration-300;
+        box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    }
+    .btn-primary:hover {
+        background: linear-gradient(90deg, var(--color-green), var(--color-gold));
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(255, 215, 0, 0.6);
+    }
+
+    .btn-whatsapp {
+        background: linear-gradient(135deg, #25D366, #128C7E);
+        @apply w-full text-white py-3 px-4 rounded-lg font-bold shadow-lg transition duration-300 flex items-center justify-center gap-2;
+        box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
+    }
+    .btn-whatsapp:hover {
+        background: linear-gradient(135deg, #128C7E, #25D366);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(37, 211, 102, 0.5);
+    }
+
+    .link {
+        color: var(--color-green);
+        transition: all 0.3s;
+        font-weight: 500;
+    }
+    .link:hover {
+        color: var(--color-gold);
+        text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+    }
+
+    .logo-image {
+        @apply w-32 h-32 mx-auto rounded-full shadow-lg object-cover;
+        border: none;
+        box-shadow: 0 8px 32px rgba(255, 215, 0, 0.4);
+    }
+
+    /* Elementos decorativos de fondo */
+    .bg-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: 0.25;
+        z-index: 0;
+    }
+    
+    .blob-1 {
+        width: 400px;
+        height: 400px;
+        background: var(--color-gold);
+        top: -100px;
+        left: -100px;
+    }
+    
+    .blob-2 {
+        width: 500px;
+        height: 500px;
+        background: var(--color-green);
+        bottom: -150px;
+        right: -150px;
+    }
+    
+    .blob-3 {
+        width: 300px;
+        height: 300px;
+        background: var(--color-gold-light);
+        top: 50%;
+        left: 70%;
+    }
+
+    .form-label {
+        @apply block text-sm font-medium mb-2;
+        color: var(--color-green-dark);
+    }
+
+    .lock-icon {
+        background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem auto;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+    }
+
+    .divider {
+        position: relative;
+        text-align: center;
+        margin: 1.5rem 0;
+    }
+
+    .divider::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.3), transparent);
+    }
+
+    .divider-text {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 0 1rem;
+        color: var(--text-gray);
+        font-size: 0.875rem;
+        font-weight: 500;
+        position: relative;
+        z-index: 1;
+    }
+
+    .success-message {
+        background: rgba(0, 200, 81, 0.1);
+        border: 2px solid var(--color-green);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        color: var(--color-green-dark);
+        font-weight: 600;
+        text-align: center;
+        display: none;
+    }
+
+    .error-message {
+        background: rgba(239, 68, 68, 0.1);
+        border: 2px solid #EF4444;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        color: #DC2626;
+        font-weight: 600;
+        text-align: center;
+        display: none;
+    }
+</style>
+</head>
+<body>
+    <!-- Elementos decorativos de fondo -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+    
+    <div class="glass-card mx-4">
+        <div class="card-content space-y-6">
+            <div class="text-center">
+                <!-- Solo la imagen del logo - sin alternativa por defecto -->
+                <img src="assets/images/Roydent.png" alt="Logo de Mundo Medico y RoyDent" class="logo-image mb-4">
+                          
+                <h2 class="text-3xl font-bold text-[var(--text-dark)]">¿Olvidaste tu contraseña?</h2>
+                <p class="mt-2 text-[var(--text-gray)]">
+                    No te preocupes. Ingresa tu correo o celular para recuperarla en 
+                    <span class="font-semibold" style="color: var(--color-green);">RoyDent</span>
+                </p>
+            </div>
+
+            <div id="success-message" class="success-message">
+                Código de verificación enviado exitosamente
+            </div>
+
+            <div id="error-message" class="error-message">
+                Error al enviar el código. Verifica tus datos e intenta nuevamente.
+            </div>
+
+            <form id="recovery-form" class="space-y-6">
+                <div>
+                    <label for="email_or_phone" class="form-label">Correo electrónico o celular</label>
+                    <input 
+                        class="form-input" 
+                        id="email_or_phone" 
+                        name="email_or_phone" 
+                        placeholder="ej: tu@correo.com o 76543210" 
+                        required 
+                        type="text"
+                    />
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Enviar código de verificación
+                </button>
+            </form>
+
+            <div class="divider">
+                <span class="divider-text">O recupera tu cuenta con</span>
+            </div>
+
+            <a 
+                class="btn btn-whatsapp" 
+                href="https://wa.me/?text=Hola%20Mundo%20Médico%20y%20RoyDent,%20necesito%20ayuda%20para%20recuperar%20mi%20contraseña." 
+                target="_blank"
+            >
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.269.655 4.357 1.846 6.077l-1.32 4.867 4.935-1.305z"/>
+                </svg>
+                Recuperar vía WhatsApp
+            </a>
+
+            <p class="text-center text-sm text-[var(--text-gray)]">
+                ¿Recordaste tu contraseña?
+                <a href="login.html" class="link font-semibold">Volver a inicio de sesión</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('recovery-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const input = document.getElementById('email_or_phone');
+            const value = input.value.trim();
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+            
+            // Ocultar mensajes previos
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            // Validación básica
+            if (!value) {
+                errorMessage.textContent = 'Por favor ingresa tu correo o número de celular';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Simular envío
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.textContent = 'Enviando...';
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                
+                // Simular éxito (en producción aquí harías la llamada real a la API)
+                if (Math.random() > 0.2) { // 80% de éxito simulado
+                    successMessage.textContent = `Código enviado a ${value}`;
+                    successMessage.style.display = 'block';
+                    input.value = '';
+                } else {
+                    errorMessage.textContent = 'Error al enviar el código. Intenta nuevamente.';
+                    errorMessage.style.display = 'block';
+                }
+            }, 2000);
+        });
+
+        // Validación en tiempo real
+        document.getElementById('email_or_phone').addEventListener('input', function() {
+            const errorMessage = document.getElementById('error-message');
+            if (errorMessage.style.display === 'block') {
+                errorMessage.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

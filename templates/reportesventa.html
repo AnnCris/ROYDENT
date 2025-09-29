@@ -1,0 +1,2226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Reportes de Ventas - Sistema Roy Representaciones</title>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+:root {
+    /* Colores principales - Tema Dorado y Verde VIBRANTES */
+    --color-gold: #D4AF37;
+    --color-gold-light: #f6e06f;
+    --color-gold-dark: #B8860B;
+    --color-green: #2E8B57;
+    --color-green-light: #98FB98;
+    --color-green-dark: #1A5D34;
+    --text-dark: #2D3748;
+    --text-gray: #718096;
+    --text-light: #A0AEC0;
+    
+    /* Colores de fondo */
+    --bg-primary: rgba(255, 255, 255, 0.85);
+    --bg-secondary: rgba(255, 250, 205, 0.7);
+    --bg-tertiary: rgba(240, 255, 240, 0.5);
+    
+    /* Sombras */
+    --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+    
+    /* Radios */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    
+    /* Espaciado */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #FFFACD, #F0FFF0, #FFFAF0);
+    min-height: 100vh;
+    color: var(--text-dark);
+    line-height: 1.6;
+    font-size: 16px;
+    background-attachment: fixed;
+    font-weight: 400;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Elementos decorativos de fondo */
+.bg-blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.25;
+    z-index: -1;
+}
+
+.blob-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--color-gold);
+    top: -100px;
+    left: -100px;
+}
+
+.blob-2 {
+    width: 500px;
+    height: 500px;
+    background: var(--color-green);
+    bottom: -150px;
+    right: -150px;
+}
+
+.blob-3 {
+    width: 300px;
+    height: 300px;
+    background: var(--color-gold-light);
+    top: 50%;
+    left: 70%;
+}
+
+/* ============ SIDEBAR MODERNO ============ */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-right: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    padding: var(--space-xl);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.sidebar-header::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: 0 0 22px 0;
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+}
+
+.sidebar-header::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 0 0 18px 0;
+    z-index: -1;
+}
+
+.sidebar-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    margin-bottom: var(--space-md);
+    width: 100%;
+}
+
+.sidebar-logo-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: var(--space-md);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    border-radius: 50%;
+}
+
+.logo-default {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-md);
+    color: white;
+    font-weight: 900;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.sidebar-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-green-dark);
+    letter-spacing: -0.01em;
+}
+
+.sidebar-subtitle {
+    font-size: 0.75rem;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: var(--space-xs);
+}
+
+.sidebar-nav {
+    padding: var(--space-md);
+}
+
+.nav-section {
+    margin-bottom: var(--space-xl);
+}
+
+.nav-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-md);
+    padding: 0 var(--space-md);
+}
+
+.nav-item {
+    margin-bottom: var(--space-xs);
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: var(--space-md);
+    color: var(--text-gray);
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.875rem;
+    gap: var(--space-sm);
+    background: rgba(255, 250, 205, 0.5);
+}
+
+.nav-link:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: var(--color-green-dark);
+    transform: translateX(4px);
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: var(--color-gold);
+}
+
+.nav-link.active .nav-icon {
+    color: white;
+}
+
+/* ============ MAIN CONTENT ============ */
+.main-content {
+    margin-left: 280px;
+    min-height: 100vh;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: var(--space-xl);
+}
+
+/* ============ NAVEGACIÓN MÓVIL ============ */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    z-index: 1001;
+    padding: var(--space-md);
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mobile-menu-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-green-dark);
+}
+
+.mobile-logo {
+    height: 40px;
+    object-fit: contain;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+/* ============ LAYOUT RESPONSIVO ============ */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.section {
+    margin-bottom: var(--space-3xl);
+}
+
+.grid {
+    display: grid;
+    gap: var(--space-xl);
+}
+
+.grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+}
+
+.grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* ============ CARDS CON EFECTOS DE LUZ ============ */
+.card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: calc(var(--radius-xl) + 3px);
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+}
+
+.card::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: calc(var(--radius-xl) - 2px);
+    z-index: -1;
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.card-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* ============ TIPOGRAFÍA MODERNA ============ */
+.text-display {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    margin-bottom: var(--space-lg);
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.text-h1 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--color-green-dark);
+    margin-bottom: var(--space-lg);
+    letter-spacing: -0.02em;
+}
+
+.text-h2 {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-green-dark);
+    margin-bottom: var(--space-md);
+    letter-spacing: -0.01em;
+}
+
+.text-h3 {
+    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-gold-dark);
+    margin-bottom: var(--space-md);
+}
+
+.text-body {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--text-dark);
+    margin-bottom: var(--space-md);
+}
+
+/* ============ ESTILOS ESPECÍFICOS PARA REPORTES ============ */
+.filter-tabs {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+    background: var(--bg-secondary);
+    padding: var(--space-sm);
+    border-radius: var(--radius-lg);
+    flex-wrap: wrap;
+}
+
+.filter-tab {
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-md);
+    border: none;
+    background: transparent;
+    color: var(--text-gray);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.filter-tab.active {
+    background: var(--color-green);
+    color: white;
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
+.filter-tab:hover:not(.active) {
+    background: var(--bg-primary);
+    color: var(--color-green);
+}
+
+.form-group {
+    margin-bottom: var(--space-lg);
+}
+
+.form-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    background: var(--bg-primary);
+    color: var(--text-dark);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-green);
+    box-shadow: 0 0 0 4px rgba(0, 200, 81, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    transform: scale(1.01);
+}
+
+.form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23DAA520' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 1rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25rem;
+    padding-right: 3rem;
+    appearance: none;
+}
+
+.text-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-xs);
+    display: block;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    letter-spacing: 0.025em;
+    min-width: 140px;
+    margin: var(--space-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: calc(var(--radius-lg) + 3px);
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.btn:hover::before {
+    opacity: 1;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    min-width: auto;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    position: relative;
+    z-index: 1;
+}
+
+.btn-primary::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+    border-radius: calc(var(--radius-lg) - 2px);
+    z-index: -1;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--color-green-dark);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    position: relative;
+    z-index: 1;
+}
+
+.btn-secondary::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: calc(var(--radius-lg) - 2px);
+    z-index: -1;
+}
+
+.btn-secondary:hover {
+    background: var(--color-green);
+    color: white;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--color-green), #2E7D32);
+    color: white;
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--color-gold), #DAA520);
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.btn-info {
+    background: linear-gradient(135deg, var(--color-green), #00C851);
+    color: white;
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.kpi-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: calc(var(--radius-lg) + 3px);
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.kpi-card:hover::before {
+    opacity: 1;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+}
+
+.kpi-card::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: calc(var(--radius-lg) - 2px);
+    z-index: -1;
+}
+
+.kpi-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-gold-dark);
+    margin-bottom: var(--space-sm);
+    position: relative;
+    z-index: 1;
+}
+
+.kpi-label {
+    font-size: 0.875rem;
+    color: var(--color-green-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+
+.kpi-change {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+}
+
+.kpi-positive {
+    background: rgba(0, 200, 81, 0.1);
+    color: var(--color-green);
+}
+
+.kpi-negative {
+    background: rgba(239, 68, 68, 0.1);
+    color: #e53e3e;
+}
+
+.table-container {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+th, td {
+    padding: var(--space-lg);
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+th {
+    background: rgba(255, 215, 0, 0.2);
+    font-weight: 700;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+tr {
+    transition: all 0.3s ease;
+}
+
+tbody tr:hover {
+    background: rgba(0, 200, 81, 0.05);
+    transform: scale(1.01);
+}
+
+.progress-bar {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    height: 8px;
+    overflow: hidden;
+    margin: var(--space-sm) 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+    border-radius: var(--radius-lg);
+    transition: width 0.3s ease;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 1rem;
+    border-radius: var(--radius-lg);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: var(--space-xs);
+    box-shadow: var(--shadow-sm);
+}
+
+.badge-activo {
+    background: linear-gradient(135deg, var(--color-green), #2E7D32);
+    color: white;
+}
+
+.badge-inactivo {
+    background: linear-gradient(135deg, #6B7280, #4B5563);
+    color: white;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding-top: 70px;
+        padding: var(--space-md);
+    }
+
+    .mobile-header {
+        display: flex;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0;
+    }
+    
+    .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+    }
+    
+    .card {
+        padding: var(--space-lg);
+    }
+
+    .filter-tabs {
+        flex-direction: column;
+    }
+
+    .kpi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding-top: 60px;
+        padding: var(--space-sm);
+    }
+
+    .kpi-number {
+        font-size: 1.5rem;
+    }
+    
+    .btn {
+        width: 100%;
+        margin: var(--space-xs) 0;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Elementos decorativos de fondo (como en el login) -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <!-- Logo desde la carpeta assets -->
+                <img src="assets/images/Roydent.png" alt="Logo de RoyDent" class="sidebar-logo-img" id="sidebarLogo" onerror="handleLogoError()">
+                <!-- Logo por defecto (oculto inicialmente) -->
+                <div class="logo-default" id="defaultLogo" style="display: none;">
+                    ROY
+                </div>
+                <div>
+                    <div class="sidebar-title">Sistema RoyDent</div>
+                    <div class="sidebar-subtitle">Y Mundo Medico</div>
+                </div>
+            </a>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-title">Principal</div>
+                <div class="nav-item">
+                    <a href="panel-admin.html" class="nav-link">
+                        <div class="nav-icon">🏠</div>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📊</div>
+                        Analíticas
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Productos</div>
+                <div class="nav-item">
+                    <a href="agregarproducto.html" class="nav-link">
+                        <div class="nav-icon">➕</div>
+                        Agregar Producto
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📦</div>
+                        Lista de Productos
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestioncategorias.html" class="nav-link">
+                        <div class="nav-icon">🏷️</div>
+                        Categorías
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">🔄</div>
+                        Control FIFO
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Inventario</div>
+                <div class="nav-item">
+                    <a href="inventario.html" class="nav-link">
+                        <div class="nav-icon">📋</div>
+                        Inventario General
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">⚠️</div>
+                        Stock Bajo
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📍</div>
+                        Ubicaciones
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestionproveedores.html" class="nav-link">
+                        <div class="nav-icon">user-001</div>
+                        Proveedores
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Ventas</div>
+                <div class="nav-item">
+                    <a href="nuevaventa.html" class="nav-link">
+                        <div class="nav-icon">🛒</div>
+                        Nueva Venta
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="historialventa.html" class="nav-link">
+                        <div class="nav-icon">💰</div>
+                        Historial Ventas
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestionclientes.html" class="nav-link">
+                        <div class="nav-icon">👥</div>
+                        Clientes
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Reportes</div>
+                <div class="nav-item">
+                    <a href="reportesventa.html" class="nav-link active">
+                        <div class="nav-icon">📈</div>
+                        Reportes de Ventas
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📉</div>
+                        Análisis de Inventario
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">💼</div>
+                        Reportes Financieros
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Configuración</div>
+                <div class="nav-item">
+                    <a href="configuracion.html" class="nav-link">
+                        <div class="nav-icon">⚙️</div>
+                        Configuración
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="perfilusuario.html" class="nav-link">
+                        <div class="nav-icon">👤</div>
+                        Perfil
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestionusuario.html" class="nav-link">
+                        <div class="nav-icon">👥</div>
+                        Usuarios
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="backups.html" class="nav-link">
+                        <div class="nav-icon">💾</div>
+                        Backup
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Mobile Header -->
+    <header class="mobile-header" id="mobile-header">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+        <img src="assets/images/Roydent.png" alt="Logo de RoyDent" class="mobile-logo" id="mobileLogo" onerror="handleMobileLogoError()">
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="section">
+                <div class="card">
+                    <div class="card-content">
+                        <h1 class="text-display text-center">📈 Reportes de Ventas</h1>
+                        <p class="text-body text-center">Análisis detallado del rendimiento comercial y métricas de negocio</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros de Período -->
+            <div class="section">
+                <div class="card">
+                    <h2 class="text-h2">📅 Período de Análisis</h2>
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" onclick="cambiarPeriodo('hoy')">Hoy</button>
+                        <button class="filter-tab" onclick="cambiarPeriodo('semana')">Esta Semana</button>
+                        <button class="filter-tab" onclick="cambiarPeriodo('mes')">Este Mes</button>
+                        <button class="filter-tab" onclick="cambiarPeriodo('trimestre')">Trimestre</button>
+                        <button class="filter-tab" onclick="cambiarPeriodo('año')">Este Año</button>
+                        <button class="filter-tab" onclick="cambiarPeriodo('personalizado')">Personalizado</button>
+                    </div>
+                    
+                    <div id="filtro-personalizado" style="display: none;">
+                        <div class="grid grid-4">
+                            <div class="form-group">
+                                <label class="text-label">Fecha Desde</label>
+                                <input type="date" class="form-input" id="fecha-desde">
+                            </div>
+                            <div class="form-group">
+                                <label class="text-label">Fecha Hasta</label>
+                                <input type="date" class="form-input" id="fecha-hasta">
+                            </div>
+                            <div class="form-group">
+                                <label class="text-label">Sucursal</label>
+                                <select class="form-input form-select" id="sucursal">
+                                    <option value="todas">Todas las sucursales</option>
+                                    <option value="roydent">Roydent</option>
+                                    <option value="mundo-medico">Mundo Médico</option>
+                                    <option value="deposito">Depósito</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-label">Vendedor</label>
+                                <select class="form-input form-select" id="vendedor">
+                                    <option value="todos">Todos</option>
+                                    <option value="juan">Juan Pérez</option>
+                                    <option value="maria">María López</option>
+                                    <option value="carlos">Carlos Ruiz</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: var(--space-lg);">
+                            <button class="btn btn-primary" onclick="aplicarFiltrosPersonalizados()">🔍 Aplicar Filtros</button>
+                            <button class="btn btn-secondary" onclick="resetearFiltros()">🔄 Resetear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPIs Principales -->
+            <div class="section">
+                <div class="kpi-grid">
+                    <div class="kpi-card" onclick="verVentas()">
+                        <div class="kpi-number" id="kpi-ventas">Bs. 28,495</div>
+                        <div class="kpi-label">Ventas del Período</div>
+                        <div class="kpi-change kpi-positive">↗ +15.3%</div>
+                    </div>
+                    <div class="kpi-card" onclick="verFacturas()">
+                        <div class="kpi-number" id="kpi-facturas">89</div>
+                        <div class="kpi-label">Facturas Emitidas</div>
+                        <div class="kpi-change kpi-positive">↗ +8.7%</div>
+                    </div>
+                    <div class="kpi-card" onclick="verTicket()">
+                        <div class="kpi-number" id="kpi-ticket">Bs. 320</div>
+                        <div class="kpi-label">Ticket Promedio</div>
+                        <div class="kpi-change kpi-negative">↘ -2.1%</div>
+                    </div>
+                    <div class="kpi-card" onclick="verCobro()">
+                        <div class="kpi-number" id="kpi-cobro">95.2%</div>
+                        <div class="kpi-label">Tasa de Cobro</div>
+                        <div class="kpi-change kpi-positive">↗ +3.5%</div>
+                    </div>
+                    <div class="kpi-card" onclick="verClientes()">
+                        <div class="kpi-number" id="kpi-clientes">24</div>
+                        <div class="kpi-label">Clientes Activos</div>
+                        <div class="kpi-change kpi-positive">↗ +12.5%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categorías más vendidas -->
+            <div class="section">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3 class="text-h3">📊 Distribución de Ventas por Categoría</h3>
+                        <div style="margin-top: var(--space-lg);">
+                            <div style="color: var(--text-gray); margin-bottom: 1rem;">Top 5 categorías más vendidas</div>
+                            <div style="text-align: left; font-size: 0.875rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>🧤 Protección</span><span style="font-weight: 600;">35%</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>💉 Anestésicos</span><span style="font-weight: 600;">28%</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>🦷 Odontología</span><span style="font-weight: 600;">22%</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>🧼 Higiene</span><span style="font-weight: 600;">10%</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>🔬 Instrumental</span><span style="font-weight: 600;">5%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfico de categorías (placeholder) -->
+                    <div class="card">
+                        <h3 class="text-h3">📈 Visualización de Categorías</h3>
+                        <div style="height: 250px; display: flex; align-items: center; justify-content: center; color: var(--text-gray);">
+                            🍰 Gráfico de Torta - Categorías
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Productos del Mes -->
+            <div class="section">
+                <div class="card">
+                    <h2 class="text-h2">🏆 Top 10 Productos del Período</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ranking</th>
+                                    <th>Producto</th>
+                                    <th>Código</th>
+                                    <th>Cantidad Vendida</th>
+                                    <th>Ingresos</th>
+                                    <th>% del Total</th>
+                                    <th>Progreso</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong style="color: var(--color-gold);">#1</strong></td>
+                                    <td>Guantes Látex Talla M x 100</td>
+                                    <td>GUA025</td>
+                                    <td><strong>145 pares</strong></td>
+                                    <td><strong>Bs. 4,132.50</strong></td>
+                                    <td>18.5%</td>
+                                    <td>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 85%;"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color: var(--text-gray);">#2</strong></td>
+                                    <td>Anestesia Lidocaína 2% x 50ml</td>
+                                    <td>ANE001</td>
+                                    <td><strong>78 frascos</strong></td>
+                                    <td><strong>Bs. 3,510.00</strong></td>
+                                    <td>15.7%</td>
+                                    <td>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 72%;"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color: var(--text-gray);">#3</strong></td>
+                                    <td>Cápsulas Amalgama x 50</td>
+                                    <td>CAP156</td>
+                                    <td><strong>25 cajas</strong></td>
+                                    <td><strong>Bs. 3,125.00</strong></td>
+                                    <td>14.0%</td>
+                                    <td>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 65%;"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color: var(--text-gray);">#4</strong></td>
+                                    <td>Mascarilla Quirúrgica 3 Capas x 50</td>
+                                    <td>MAS112</td>
+                                    <td><strong>56 cajas</strong></td>
+                                    <td><strong>Bs. 1,960.00</strong></td>
+                                    <td>8.8%</td>
+                                    <td>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 40%;"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color: var(--text-gray);">#5</strong></td>
+                                    <td>Seda Dental Fluorada x 50m</td>
+                                    <td>SED089</td>
+                                    <td><strong>89 unidades</strong></td>
+                                    <td><strong>Bs. 1,602.00</strong></td>
+                                    <td>7.2%</td>
+                                    <td>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 35%;"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análisis por Cliente y Métodos de Pago -->
+            <div class="section">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3 class="text-h3">👥 Top Clientes del Período</h3>
+                        <div style="margin-top: var(--space-lg);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); padding: var(--space-md); background: var(--bg-secondary); border-radius: var(--radius-md);">
+                                <div>
+                                    <div style="font-weight: 600;">Hospital San Juan</div>
+                                    <div style="font-size: 0.875rem; color: var(--text-gray);">15 facturas</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-weight: 700; color: var(--color-green);">Bs. 8,450.00</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-gray);">29.7% del total</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); padding: var(--space-md); background: var(--bg-secondary); border-radius: var(--radius-md);">
+                                <div>
+                                    <div style="font-weight: 600;">Clínica Dental Norte</div>
+                                    <div style="font-size: 0.875rem; color: var(--text-gray);">12 facturas</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-weight: 700; color: var(--color-green);">Bs. 6,280.00</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-gray);">22.1% del total</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); padding: var(--space-md); background: var(--bg-secondary); border-radius: var(--radius-md);">
+                                <div>
+                                    <div style="font-weight: 600;">Dr. Carlos Mendoza</div>
+                                    <div style="font-size: 0.875rem; color: var(--text-gray);">8 facturas</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-weight: 700; color: var(--color-green);">Bs. 3,950.00</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-gray);">13.9% del total</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 class="text-h3">📊 Métodos de Pago</h3>
+                        <div style="margin-top: var(--space-lg);">
+                            <div style="margin-bottom: var(--space-md);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-xs);">
+                                    <span>Efectivo</span>
+                                    <span style="font-weight: 600;">45%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 45%;"></div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--space-md);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-xs);">
+                                    <span>Transferencia</span>
+                                    <span style="font-weight: 600;">30%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 30%;"></div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--space-md);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-xs);">
+                                    <span>Crédito</span>
+                                    <span style="font-weight: 600;">20%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 20%;"></div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--space-md);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-xs);">
+                                    <span>Cheque</span>
+                                    <span style="font-weight: 600;">5%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 5%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análisis Predictivo -->
+            <div class="section">
+                <div class="card">
+                    <h2 class="text-h2">🔮 Análisis Predictivo y Metas</h2>
+                    <div class="grid grid-3">
+                        <div style="background: linear-gradient(135deg, var(--color-green), #059669); color: white; padding: var(--space-lg); border-radius: var(--radius-lg); text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: var(--space-sm);">📊</div>
+                            <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: var(--space-sm);">Proyección Mensual</div>
+                            <div style="font-size: 1.75rem; font-weight: 800;">Bs. 32,500</div>
+                            <div style="font-size: 0.875rem; opacity: 0.9;">+14% vs mes anterior</div>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #3B82F6, #1D4ED8); color: white; padding: var(--space-lg); border-radius: var(--radius-lg); text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: var(--space-sm);">🎯</div>
+                            <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: var(--space-sm);">Meta del Mes</div>
+                            <div style="font-size: 1.75rem; font-weight: 800;">87%</div>
+                            <div style="font-size: 0.875rem; opacity: 0.9;">Faltan Bs. 4,505</div>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #F59E0B, #D97706); color: white; padding: var(--space-lg); border-radius: var(--radius-lg); text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: var(--space-sm);">⚠️</div>
+                            <div style="font-size: 1.25rem; font-weight: 700; margin-bottom: var(--space-sm);">Restock Sugerido</div>
+                            <div style="font-size: 1.75rem; font-weight: 800;">15 productos</div>
+                            <div style="font-size: 0.875rem; opacity: 0.9;">Alta demanda proyectada</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reportes Automáticos -->
+            <div class="section">
+                <div class="card">
+                    <h2 class="text-h2">🤖 Reportes Automáticos Programados</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tipo de Reporte</th>
+                                    <th>Frecuencia</th>
+                                    <th>Último Envío</th>
+                                    <th>Destinatarios</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                            <span style="font-size: 1.5rem;">📊</span>
+                                            <div>
+                                                <div style="font-weight: 600;">Ventas Diarias</div>
+                                                <div style="font-size: 0.875rem; color: var(--text-gray);">Resumen ejecutivo</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><strong>Diario - 8:00 AM</strong></td>
+                                    <td>09/09/2024 08:00</td>
+                                    <td>
+                                        <div>gerencia@roy.com</div>
+                                        <div style="font-size: 0.875rem; color: var(--text-gray);">+2 más</div>
+                                    </td>
+                                    <td><span class="badge badge-activo">Activo</span></td>
+                                    <td>
+                                        <button class="btn btn-secondary btn-sm" onclick="editarReporteAuto('daily')">✏️</button>
+                                        <button class="btn btn-warning btn-sm" onclick="pausarReporteAuto('daily')">⏸️</button>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                            <span style="font-size: 1.5rem;">📈</span>
+                                            <div>
+                                                <div style="font-weight: 600;">Análisis Semanal</div>
+                                                <div style="font-size: 0.875rem; color: var(--text-gray);">Tendencias y KPIs</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><strong>Semanal - Lunes 9:00 AM</strong></td>
+                                    <td>02/09/2024 09:00</td>
+                                    <td>
+                                        <div>admin@roy.com</div>
+                                        <div style="font-size: 0.875rem; color: var(--text-gray);">ventas@roy.com</div>
+                                    </td>
+                                    <td><span class="badge badge-activo">Activo</span></td>
+                                    <td>
+                                        <button class="btn btn-secondary btn-sm" onclick="editarReporteAuto('weekly')">✏️</button>
+                                        <button class="btn btn-warning btn-sm" onclick="pausarReporteAuto('weekly')">⏸️</button>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                            <span style="font-size: 1.5rem;">💰</span>
+                                            <div>
+                                                <div style="font-weight: 600;">Reporte Mensual</div>
+                                                <div style="font-size: 0.875rem; color: var(--text-gray);">Financiero completo</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><strong>Mensual - Día 1 10:00 AM</strong></td>
+                                    <td>01/09/2024 10:00</td>
+                                    <td>
+                                        <div>director@roy.com</div>
+                                        <div style="font-size: 0.875rem; color: var(--text-gray);">contabilidad@roy.com</div>
+                                    </td>
+                                    <td><span class="badge badge-activo">Activo</span></td>
+                                    <td>
+                                        <button class="btn btn-secondary btn-sm" onclick="editarReporteAuto('monthly')">✏️</button>
+                                        <button class="btn btn-warning btn-sm" onclick="pausarReporteAuto('monthly')">⏸️</button>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                            <span style="font-size: 1.5rem;">👥</span>
+                                            <div>
+                                                <div style="font-weight: 600;">Clientes VIP</div>
+                                                <div style="font-size: 0.875rem; color: var(--text-gray);">Análisis de comportamiento</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><strong>Quincenal - Día 15</strong></td>
+                                    <td>15/08/2024 14:00</td>
+                                    <td>
+                                        <div>marketing@roy.com</div>
+                                    </td>
+                                    <td><span class="badge badge-inactivo">Pausado</span></td>
+                                    <td>
+                                        <button class="btn btn-success btn-sm" onclick="activarReporteAuto('vip')">▶️</button>
+                                        <button class="btn btn-secondary btn-sm" onclick="editarReporteAuto('vip')">✏️</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-top: var(--space-xl); text-align: center;">
+                        <button class="btn btn-primary" onclick="nuevoReporteAutomatico()">➕ Nuevo Reporte Automático</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones Rápidas -->
+            <div class="section">
+                <div class="card">
+                    <h2 class="text-h2">⚡ Acciones Rápidas</h2>
+                    <div class="grid grid-4">
+                        <button class="btn btn-primary" onclick="exportarReporte('excel')">
+                            📊 Exportar Excel<br>
+                            <small style="opacity: 0.8;">Ctrl+E</small>
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportarReporte('pdf')">
+                            📄 Exportar PDF<br>
+                            <small style="opacity: 0.8;">Ctrl+P</small>
+                        </button>
+                        <button class="btn btn-info" onclick="enviarReporte()">
+                            📧 Enviar Email<br>
+                            <small style="opacity: 0.8;">Ctrl+M</small>
+                        </button>
+                        <button class="btn btn-success" onclick="programarReporte()">
+                            ⏰ Programar<br>
+                            <small style="opacity: 0.8;">Automático</small>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-3" style="margin-top: var(--space-lg);">
+                        <button class="btn btn-warning" onclick="verTendenciasDetalladas()">📈 Tendencias Detalladas</button>
+                        <button class="btn btn-info" onclick="configurarAlertas()">🔔 Configurar Alertas</button>
+                        <button class="btn btn-secondary" onclick="compararPeriodos()">⚖️ Comparar Períodos</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="section">
+                <div class="card" style="background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));">
+                    <div class="grid grid-3">
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: var(--space-sm);">🕐</div>
+                            <div style="font-weight: 600; margin-bottom: var(--space-xs);">Última Actualización</div>
+                            <div style="color: var(--text-gray);" id="ultima-actualizacion">09/09/2024 - 14:30</div>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: var(--space-sm);">📊</div>
+                            <div style="font-weight: 600; margin-bottom: var(--space-xs);">Datos Procesados</div>
+                            <div style="color: var(--text-gray);">1,247 registros</div>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: var(--space-sm);">⏱️</div>
+                            <div style="font-weight: 600; margin-bottom: var(--space-xs);">Tiempo de Procesamiento</div>
+                            <div style="color: var(--text-gray);">2.3 segundos</div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: var(--space-xl); padding-top: var(--space-lg); border-top: 1px solid rgba(0,0,0,0.1);">
+                        <div style="color: var(--text-gray); margin-bottom: var(--space-sm);">
+                            Sistema de Reportes Roy Representaciones &copy; 2024
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-gray);">
+                            Versión 2.1.0 | Soporte: soporte@roy.com | 📞 +591 2-2345678
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ============ MANEJO DE LOGOS ============
+        function handleLogoError() {
+            // Ocultar imagen y mostrar logo por defecto en el sidebar
+            document.getElementById('sidebarLogo').style.display = 'none';
+            document.getElementById('defaultLogo').style.display = 'flex';
+        }
+        
+        function handleMobileLogoError() {
+            // Reemplazar logo móvil con texto si falla la carga
+            const mobileLogo = document.getElementById('mobileLogo');
+            mobileLogo.src = '';
+            mobileLogo.alt = 'Sistema Roy';
+            mobileLogo.style.fontFamily = 'Inter, sans-serif';
+            mobileLogo.style.fontWeight = '700';
+            mobileLogo.style.fontSize = '1.2rem';
+            mobileLogo.style.color = 'var(--color-purple)';
+        }
+        
+        // Verificar si las imágenes se cargaron correctamente al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarLogo = document.getElementById('sidebarLogo');
+            const mobileLogo = document.getElementById('mobileLogo');
+            
+            // Si la imagen del sidebar no se cargó correctamente
+            if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
+                handleLogoError();
+            }
+            
+            // Si la imagen móvil no se cargó correctamente
+            if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
+                handleMobileLogoError();
+            }
+            
+            // También verificar después de un tiempo por si la carga es lenta
+            setTimeout(function() {
+                if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
+                    handleLogoError();
+                }
+                if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
+                    handleMobileLogoError();
+                }
+            }, 1000);
+            
+            // Inicializar datos
+            actualizarDatos('mes');
+        });
+
+        // ============ FUNCIONES DEL SIDEBAR ============
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // ============ FUNCIONES DE REPORTES ============
+        // Datos simulados para diferentes períodos
+        const datosVentas = {
+            'hoy': {
+                ventas: 'Bs. 2,850',
+                facturas: 12,
+                ticket: 'Bs. 237',
+                cobro: '100%',
+                clientes: 8
+            },
+            'semana': {
+                ventas: 'Bs. 15,420',
+                facturas: 67,
+                ticket: 'Bs. 230',
+                cobro: '95.8%',
+                clientes: 18
+            },
+            'mes': {
+                ventas: 'Bs. 28,495',
+                facturas: 89,
+                ticket: 'Bs. 320',
+                cobro: '95.2%',
+                clientes: 24
+            },
+            'trimestre': {
+                ventas: 'Bs. 84,750',
+                facturas: 267,
+                ticket: 'Bs. 317',
+                cobro: '96.1%',
+                clientes: 42
+            },
+            'año': {
+                ventas: 'Bs. 342,580',
+                facturas: 1247,
+                ticket: 'Bs. 275',
+                cobro: '94.8%',
+                clientes: 156
+            },
+            'personalizado': {
+                ventas: 'Bs. 45,680',
+                facturas: 134,
+                ticket: 'Bs. 341',
+                cobro: '97.3%',
+                clientes: 38
+            }
+        };
+
+        // Función para cambiar período
+        function cambiarPeriodo(periodo) {
+            // Remover clase active de todos los tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Agregar clase active al tab seleccionado
+            event.target.classList.add('active');
+            
+            // Mostrar/ocultar filtro personalizado
+            const filtroPersonalizado = document.getElementById('filtro-personalizado');
+            if (periodo === 'personalizado') {
+                filtroPersonalizado.style.display = 'block';
+            } else {
+                filtroPersonalizado.style.display = 'none';
+            }
+            
+            // Actualizar datos según el período
+            actualizarDatos(periodo);
+        }
+
+        // Función para aplicar filtros personalizados
+        function aplicarFiltrosPersonalizados() {
+            const fechaDesde = document.getElementById('fecha-desde').value;
+            const fechaHasta = document.getElementById('fecha-hasta').value;
+            const sucursal = document.getElementById('sucursal').value;
+            const vendedor = document.getElementById('vendedor').value;
+            
+            if (!fechaDesde || !fechaHasta) {
+                alert('⚠️ Por favor selecciona fechas de inicio y fin');
+                return;
+            }
+            
+            // Simular aplicación de filtros
+            const elementos = document.querySelectorAll('.kpi-card');
+            elementos.forEach(el => {
+                el.style.transform = 'scale(1.05)';
+                setTimeout(() => el.style.transform = 'scale(1)', 200);
+            });
+            
+            // Actualizar con datos personalizados
+            actualizarDatos('personalizado');
+            
+            alert(`🔍 Filtros aplicados exitosamente:\n` +
+                  `📅 Período: ${fechaDesde} a ${fechaHasta}\n` +
+                  `🏢 Sucursal: ${sucursal}\n` +
+                  `👤 Vendedor: ${vendedor}\n\n` +
+                  `📊 Datos actualizados según criterios seleccionados`);
+        }
+
+        // Función para resetear filtros
+        function resetearFiltros() {
+            document.querySelectorAll('.form-input, .form-select').forEach(input => {
+                if (input.type === 'date') {
+                    input.value = '';
+                } else if (input.tagName === 'SELECT') {
+                    input.selectedIndex = 0;
+                }
+            });
+            
+            // Ocultar filtro personalizado
+            document.getElementById('filtro-personalizado').style.display = 'none';
+            
+            // Restaurar período a "Este Mes"
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector('.filter-tab:nth-child(3)').classList.add('active');
+            
+            actualizarDatos('mes');
+            alert('🔄 Filtros reseteados\n📊 Mostrando datos del mes actual');
+        }
+
+        // Función para actualizar datos según período
+        function actualizarDatos(periodo) {
+            if (datosVentas[periodo]) {
+                const datos = datosVentas[periodo];
+                
+                // Actualizar KPIs con animación
+                animarKPI('kpi-ventas', datos.ventas);
+                animarKPI('kpi-facturas', datos.facturas);
+                animarKPI('kpi-ticket', datos.ticket);
+                animarKPI('kpi-cobro', datos.cobro);
+                animarKPI('kpi-clientes', datos.clientes);
+                
+                // Actualizar timestamp
+                const ahora = new Date();
+                document.getElementById('ultima-actualizacion').textContent = 
+                    ahora.toLocaleDateString('es-BO') + ' - ' + ahora.toLocaleTimeString('es-BO');
+                
+                console.log('Datos actualizados para período:', periodo);
+            }
+        }
+
+        // Función para animar cambio de KPI
+        function animarKPI(elementId, nuevoValor) {
+            const elemento = document.getElementById(elementId);
+            if (elemento) {
+                elemento.style.transform = 'scale(1.1)';
+                elemento.style.color = 'var(--color-green)';
+                
+                setTimeout(() => {
+                    elemento.textContent = nuevoValor;
+                    elemento.style.transform = 'scale(1)';
+                    elemento.style.color = 'var(--color-purple)';
+                }, 300);
+            }
+        }
+
+        // Función para generar reportes
+        function generarReporte(tipoReporte) {
+            const reportes = {
+                'ventas-detallado': 'Reporte Detallado de Ventas',
+                'productos-mas-vendidos': 'Top Productos Más Vendidos',
+                'clientes-frecuentes': 'Análisis de Clientes VIP',
+                'tendencias-mensuales': 'Tendencias y Patrones de Venta',
+                'analisis-rentabilidad': 'Análisis de Rentabilidad',
+                'performance-vendedores': 'Performance de Vendedores'
+            };
+            
+            // Simular proceso de generación
+            const btnReporte = event.target;
+            const textoOriginal = btnReporte.innerHTML;
+            
+            btnReporte.innerHTML = '⏳ Generando...';
+            btnReporte.disabled = true;
+            btnReporte.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                btnReporte.innerHTML = textoOriginal;
+                btnReporte.disabled = false;
+                btnReporte.style.transform = 'scale(1)';
+                
+                // Mostrar resultado
+                mostrarReporteGenerado(tipoReporte, reportes[tipoReporte]);
+            }, 2000);
+        }
+
+        // Función para mostrar reporte generado
+        function mostrarReporteGenerado(tipo, nombre) {
+            const fecha = new Date().toLocaleDateString('es-BO');
+            const hora = new Date().toLocaleTimeString('es-BO');
+            
+            alert(`✅ ${nombre} generado exitosamente!\n\n` +
+                  `📅 Fecha: ${fecha}\n` +
+                  `⏰ Hora: ${hora}\n` +
+                  `📄 Tipo: ${tipo}\n\n` +
+                  `📊 Incluye datos actualizados y gráficos interactivos\n` +
+                  `💾 El reporte está listo para descargar o visualizar`);
+        }
+
+        // Función para exportar reportes
+        function exportarReporte(formato) {
+            const formatos = {
+                'excel': {
+                    nombre: '📊 Excel (.xlsx)',
+                    extension: '.xlsx',
+                    mime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                },
+                'pdf': {
+                    nombre: '📄 PDF',
+                    extension: '.pdf',
+                    mime: 'application/pdf'
+                }
+            };
+            
+            const formatoInfo = formatos[formato];
+            const fecha = new Date().toISOString().split('T')[0];
+            const nombreArchivo = `reporte-ventas-${fecha}${formatoInfo.extension}`;
+            
+            // Simular descarga
+            const btnExportar = event.target;
+            const textoOriginal = btnExportar.innerHTML;
+            
+            btnExportar.innerHTML = '⬇️ Descargando...';
+            btnExportar.disabled = true;
+            
+            setTimeout(() => {
+                btnExportar.innerHTML = textoOriginal;
+                btnExportar.disabled = false;
+                
+                alert(`💾 Exportando reporte en formato ${formatoInfo.nombre}\n` +
+                      `📁 Archivo: ${nombreArchivo}\n` +
+                      `📊 Incluye todas las métricas del período seleccionado\n` +
+                      `📥 La descarga comenzará automáticamente...`);
+                
+                // Simular descarga real
+                simularDescarga(nombreArchivo, formatoInfo.mime);
+            }, 1500);
+        }
+
+        // Función para simular descarga
+        function simularDescarga(nombreArchivo, mimeType) {
+            // En una implementación real, aquí generarías el archivo
+            console.log(`Descargando: ${nombreArchivo} (${mimeType})`);
+            
+            // Crear elemento temporal para descarga
+            const elemento = document.createElement('a');
+            elemento.href = '#';
+            elemento.download = nombreArchivo;
+            elemento.style.display = 'none';
+            document.body.appendChild(elemento);
+            elemento.click();
+            document.body.removeChild(elemento);
+        }
+
+        // Función para enviar reporte por email
+        function enviarReporte() {
+            const email = prompt('📧 Ingresa el email de destino:');
+            if (email && validarEmail(email)) {
+                const btnEnviar = event.target;
+                const textoOriginal = btnEnviar.innerHTML;
+                
+                btnEnviar.innerHTML = '📤 Enviando...';
+                btnEnviar.disabled = true;
+                
+                setTimeout(() => {
+                    btnEnviar.innerHTML = textoOriginal;
+                    btnEnviar.disabled = false;
+                    
+                    alert(`📤 Reporte enviado exitosamente a: ${email}\n\n` +
+                          `✅ El destinatario recibirá:\n` +
+                          `• Reporte completo en PDF\n` +
+                          `• Resumen ejecutivo\n` +
+                          `• Gráficos y métricas detalladas\n` +
+                          `• Análisis y recomendaciones`);
+                }, 2000);
+            } else if (email) {
+                alert('❌ Email inválido. Por favor ingresa un email válido.');
+            }
+        }
+
+        // Función para validar email
+        function validarEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+
+        // Función para programar reporte
+        function programarReporte() {
+            const opciones = [
+                'Diario - 8:00 AM',
+                'Semanal - Lunes 9:00 AM',
+                'Mensual - Primer día del mes',
+                'Trimestral - Cada 3 meses',
+                'Personalizado'
+            ];
+            
+            let mensaje = '⏰ Configurar reporte automático\n\n';
+            mensaje += 'Selecciona una opción:\n';
+            opciones.forEach((opcion, index) => {
+                mensaje += `${index + 1}. ${opcion}\n`;
+            });
+            
+            const seleccion = prompt(mensaje + '\nIngresa el número de opción (1-5):');
+            
+            if (seleccion && seleccion >= 1 && seleccion <= 5) {
+                const opcionSeleccionada = opciones[seleccion - 1];
+                
+                if (seleccion == 5) {
+                    const personalizado = prompt('Especifica la frecuencia personalizada\n(Ej: "Cada viernes a las 15:00"):');
+                    if (personalizado) {
+                        const email = prompt('Email para recibir el reporte:');
+                        if (email && validarEmail(email)) {
+                            alert(`✅ Reporte programado exitosamente\n` +
+                                  `📅 Frecuencia: ${personalizado}\n` +
+                                  `📧 Destinatario: ${email}\n` +
+                                  `🔔 Recibirás notificaciones automáticas`);
+                        }
+                    }
+                } else {
+                    const email = prompt('Email para recibir el reporte:');
+                    if (email && validarEmail(email)) {
+                        alert(`✅ Reporte programado exitosamente\n` +
+                              `📅 Frecuencia: ${opcionSeleccionada}\n` +
+                              `📧 Destinatario: ${email}\n` +
+                              `🔔 Primer envío programado para mañana`);
+                    }
+                }
+            }
+        }
+
+        // Funciones para reportes automáticos
+        function editarReporteAuto(tipo) {
+            alert(`✏️ Editando configuración del reporte: ${tipo}\n\n` +
+                  `Opciones disponibles:\n` +
+                  `• Cambiar frecuencia de envío\n` +
+                  `• Modificar lista de destinatarios\n` +
+                  `• Ajustar formato de salida\n` +
+                  `• Personalizar contenido incluido\n` +
+                  `• Configurar filtros automáticos`);
+        }
+
+        function pausarReporteAuto(tipo) {
+            if (confirm(`⏸️ ¿Pausar reporte automático: ${tipo}?\n\nEl reporte dejará de enviarse automáticamente.`)) {
+                alert(`✅ Reporte ${tipo} pausado exitosamente\n` +
+                      `🔔 Podrás reactivarlo cuando desees\n` +
+                      `📧 Los destinatarios serán notificados`);
+            }
+        }
+
+        function activarReporteAuto(tipo) {
+            if (confirm(`▶️ ¿Activar reporte automático: ${tipo}?\n\nSe reanudará el envío según la programación.`)) {
+                alert(`✅ Reporte ${tipo} activado exitosamente\n` +
+                      `📧 Se enviará según la programación configurada\n` +
+                      `🔔 Próximo envío programado`);
+            }
+        }
+
+        function nuevoReporteAutomatico() {
+            alert(`➕ Crear Nuevo Reporte Automático\n\n` +
+                  `Pasos de configuración:\n` +
+                  `1. 📊 Seleccionar tipo de reporte\n` +
+                  `2. ⏰ Configurar frecuencia de envío\n` +
+                  `3. 👥 Definir lista de destinatarios\n` +
+                  `4. 🎨 Personalizar formato y contenido\n` +
+                  `5. 🔍 Establecer filtros automáticos\n` +
+                  `6. ✅ Confirmar y activar programación`);
+        }
+
+        // Funciones adicionales para análisis
+        function verTendenciasDetalladas() {
+            alert('📈 Análisis de Tendencias Detallado\n\n' +
+                  '📊 Métricas identificadas:\n' +
+                  '• Crecimiento mensual: +15.3%\n' +
+                  '• Mejor día de ventas: Miércoles\n' +
+                  '• Hora pico: 14:00-16:00\n' +
+                  '• Producto estrella: Guantes Látex\n' +
+                  '• Cliente más frecuente: Hospital San Juan\n' +
+                  '• Estacionalidad: Alta demanda en Q4\n\n' +
+                  '💡 Recomendaciones:\n' +
+                  '• Incrementar stock de protección\n' +
+                  '• Promociones los martes\n' +
+                  '• Contactar clientes inactivos');
+        }
+
+        function configurarAlertas() {
+            alert('🔔 Configuración de Alertas Inteligentes\n\n' +
+                  'Alertas Disponibles:\n' +
+                  '✅ Objetivos de venta alcanzados\n' +
+                  '⚠️ Caída significativa en ventas\n' +
+                  '🏆 Nuevos clientes VIP identificados\n' +
+                  '📦 Productos con alta rotación\n' +
+                  '📉 Stock bajo en productos clave\n' +
+                  '💰 Metas mensuales en riesgo\n' +
+                  '📧 Reportes programados fallidos\n\n' +
+                  'Canales de notificación:\n' +
+                  '• Email automático\n' +
+                  '• SMS de emergencia\n' +
+                  '• Notificaciones push\n' +
+                  '• Integración con Slack/Teams');
+        }
+
+        function compararPeriodos() {
+            alert('📊 Comparación Avanzada de Períodos\n\n' +
+                  'Opciones de Comparación:\n' +
+                  '• Mes actual vs mes anterior (+15.3%)\n' +
+                  '• Trimestre actual vs anterior (+8.7%)\n' +
+                  '• Año actual vs anterior (+28.2%)\n' +
+                  '• Mismo período año pasado\n' +
+                  '• Períodos personalizados\n\n' +
+                  'Métricas comparadas:\n' +
+                  '• Volumen de ventas\n' +
+                  '• Número de clientes\n' +
+                  '• Productos más vendidos\n' +
+                  '• Rentabilidad promedio\n' +
+                  '• Estacionalidad y tendencias');
+        }
+
+        // Funciones de navegación
+        function verVentas() {
+            alert('Mostrando detalles de ventas del mes...');
+        }
+
+        function verFacturas() {
+            alert('Mostrando facturas emitidas...');
+        }
+
+        function verTicket() {
+            alert('Mostrando análisis de ticket promedio...');
+        }
+
+        function verCobro() {
+            alert('Mostrando tasa de cobro...');
+        }
+
+        function verClientes() {
+            alert('Mostrando clientes activos...');
+        }
+
+        // Event Listeners y configuración inicial
+        document.addEventListener('DOMContentLoaded', function() {
+            // Actualizar timestamp cada minuto
+            setInterval(() => {
+                const ahora = new Date();
+                const timestamp = document.getElementById('ultima-actualizacion');
+                if (timestamp) {
+                    timestamp.textContent = ahora.toLocaleDateString('es-BO') + ' - ' + ahora.toLocaleTimeString('es-BO');
+                }
+            }, 60000);
+            
+            // Teclas de acceso rápido
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case 'e':
+                            e.preventDefault();
+                            exportarReporte('excel');
+                            break;
+                        case 'p':
+                            e.preventDefault();
+                            exportarReporte('pdf');
+                            break;
+                        case 'r':
+                            e.preventDefault();
+                            resetearFiltros();
+                            break;
+                        case 'm':
+                            e.preventDefault();
+                            enviarReporte();
+                            break;
+                    }
+                }
+            });
+            
+            // Tooltip para atajos de teclado
+            const atajos = document.createElement('div');
+            atajos.innerHTML = `
+                <div style="position: fixed; bottom: 20px; right: 20px; background: var(--bg-card); padding: 1rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); font-size: 0.75rem; color: var(--text-gray); max-width: 220px; z-index: 999; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                    <strong>⌨️ Atajos de Teclado:</strong><br>
+                    <span style="color: var(--color-blue);">Ctrl+E</span> - Exportar Excel<br>
+                    <span style="color: var(--color-blue);">Ctrl+P</span> - Exportar PDF<br>
+                    <span style="color: var(--color-blue);">Ctrl+M</span> - Enviar Email<br>
+                    <span style="color: var(--color-blue);">Ctrl+R</span> - Resetear Filtros<br><br>
+                    <span style="color: var(--text-gray); font-size: 0.7rem;">Haz clic para cerrar</span>
+                </div>
+            `;
+            document.body.appendChild(atajos);
+            
+            // Cerrar tooltip al hacer clic
+            atajos.addEventListener('click', () => {
+                atajos.style.opacity = '0';
+                atajos.style.transform = 'translateY(20px)';
+                setTimeout(() => atajos.remove(), 300);
+            });
+            
+            // Auto-cerrar tooltip después de 10 segundos
+            setTimeout(() => {
+                if (atajos.parentNode) {
+                    atajos.style.opacity = '0';
+                    atajos.style.transform = 'translateY(20px)';
+                    setTimeout(() => atajos.remove(), 300);
+                }
+            }, 10000);
+        });
+
+        // Animaciones de entrada
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card, .kpi-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Efecto hover para las cards de KPIs
+            document.querySelectorAll('.kpi-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-4px) scale(1.02)';
+                    this.style.boxShadow = 'var(--shadow-lg)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    this.style.boxShadow = 'var(--shadow-md)';
+                });
+            });
+        });
+
+        // Función de utilidad para mostrar notificaciones
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            const colores = {
+                'info': '#3B82F6',
+                'success': '#28C76F',
+                'warning': '#F59E0B',
+                'error': '#e53e3e'
+            };
+
+            const notificacion = document.createElement('div');
+            notificacion.innerHTML = `
+                <div style="
+                    position: fixed; 
+                    top: 90px; 
+                    right: 20px; 
+                    background: white; 
+                    padding: 1rem 1.5rem; 
+                    border-radius: var(--radius-lg); 
+                    box-shadow: var(--shadow-xl); 
+                    border-left: 4px solid ${colores[tipo]};
+                    max-width: 300px;
+                    z-index: 9999;
+                    animation: slideIn 0.3s ease;
+                ">
+                    ${mensaje}
+                </div>
+                <style>
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                </style>
+            `;
+            
+            document.body.appendChild(notificacion);
+            
+            setTimeout(() => {
+                notificacion.style.opacity = '0';
+                notificacion.style.transform = 'translateX(100%)';
+                setTimeout(() => notificacion.remove(), 300);
+            }, 5000);
+        }
+
+        // Inicialización del sistema
+        console.log('🚀 Sistema de Reportes Roy Representaciones iniciado');
+        console.log('📊 Módulos cargados: KPIs, Reportes, Filtros, Exportación, Alertas');
+        console.log('⌨️ Atajos disponibles: Ctrl+E, Ctrl+P, Ctrl+M, Ctrl+R');
+    </script>
+</body>
+</html>

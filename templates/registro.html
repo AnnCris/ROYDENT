@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Registro - Mundo Medico Y RoyDent</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+    :root {
+        /* Colores principales - Tema Dorado y Verde VIBRANTES */
+        --color-gold: #D4AF37;
+        --color-gold-light: #f6e06f;
+        --color-gold-dark: #B8860B;
+        --color-green: #2E8B57;
+        --color-green-light: #98FB98;
+        --color-green-dark: #1A5D34;
+        --text-dark: #2D3748;
+        --text-gray: #718096;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #FFFACD, #F0FFF0, #FFFAF0);
+        min-height: 100vh;
+        color: var(--text-dark);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    /* Efecto de vidrio con bordes animados */
+    .glass-card {
+        position: relative;
+        border-radius: 20px;
+        padding: 2.5rem;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+        z-index: 2;
+        width: 100%;
+        max-width: 800px;
+    }
+
+    /* Borde animado */
+    .glass-card::before {
+        content: "";
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        background: linear-gradient(45deg, 
+            var(--color-gold), 
+            var(--color-green), 
+            var(--color-gold-light),
+            var(--color-gold));
+        background-size: 300% 300%;
+        border-radius: 22px;
+        animation: gradientMove 4s ease infinite;
+        z-index: -1;
+    }
+
+    /* Fondo interior para el efecto de vidrio */
+    .glass-card::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        right: 2px;
+        bottom: 2px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 18px;
+        z-index: -1;
+    }
+
+    @keyframes gradientMove {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .card-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .form-input {
+        @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 transition duration-200 ease-in-out;
+        background: rgba(255, 255, 255, 0.8);
+    }
+    .form-input:focus {
+        border-color: var(--color-green);
+        box-shadow: 0 0 0 3px rgba(0, 200, 81, 0.3);
+    }
+
+    .form-select {
+        @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 transition duration-200 ease-in-out;
+        background: rgba(255, 255, 255, 0.8);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 1rem center;
+        background-repeat: no-repeat;
+        background-size: 1.25rem;
+        padding-right: 3rem;
+    }
+    .form-select:focus {
+        border-color: var(--color-green);
+        box-shadow: 0 0 0 3px rgba(0, 200, 81, 0.3);
+    }
+
+    .btn-primary {
+        background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+        @apply w-full text-white py-3 px-4 rounded-lg font-bold shadow-lg transition duration-300;
+        box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    }
+    .btn-primary:hover {
+        background: linear-gradient(90deg, var(--color-green), var(--color-gold));
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(255, 215, 0, 0.6);
+    }
+
+    .link {
+        color: var(--color-green);
+        transition: all 0.3s;
+        font-weight: 500;
+    }
+    .link:hover {
+        color: var(--color-gold);
+        text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+    }
+
+    .custom-image {
+        @apply w-32 h-32 mx-auto rounded-full shadow-lg object-cover;
+        box-shadow: 0 8px 32px rgba(255, 215, 0, 0.4);
+    }
+
+    .logo-default {
+        @apply w-32 h-32 mx-auto rounded-full flex items-center justify-center shadow-lg;
+        background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    }
+
+    /* Elementos decorativos de fondo */
+    .bg-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: 0.25;
+        z-index: 0;
+    }
+    
+    .blob-1 {
+        width: 400px;
+        height: 400px;
+        background: var(--color-gold);
+        top: -100px;
+        left: -100px;
+    }
+    
+    .blob-2 {
+        width: 500px;
+        height: 500px;
+        background: var(--color-green);
+        bottom: -150px;
+        right: -150px;
+    }
+    
+    .blob-3 {
+        width: 300px;
+        height: 300px;
+        background: var(--color-gold-light);
+        top: 50%;
+        left: 70%;
+    }
+
+    .form-label {
+        @apply block text-sm font-medium mb-2;
+        color: var(--color-green-dark);
+    }
+
+    /* Estilos para el ojito de contraseña */
+    .password-container {
+        position: relative;
+    }
+    
+    .toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 70%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: var(--color-gold-dark);
+        background: none;
+        border: none;
+        outline: none;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .toggle-password:hover {
+        color: var(--color-green);
+    }
+    
+    .toggle-password svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .glass-card {
+            margin: 10px;
+            padding: 1.5rem;
+        }
+        
+        .grid-cols-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+<body>
+    <!-- Elementos decorativos de fondo -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+    
+    <div class="glass-card mx-4">
+        <div class="card-content space-y-8">
+            <div class="text-center">
+                <!-- Imagen integrada desde código -->
+                <!-- IMPORTANTE: Cambia la ruta de la imagen según donde esté ubicada -->
+                <img src="assets/images/Roydent.png" alt="Logo de Mundo Medico y RoyDent" class="custom-image mb-4" id="customLogo" onerror="handleImageError()">
+                
+                <!-- Logo por defecto (oculto inicialmente) -->
+                <div class="logo-default" id="defaultLogo" style="display: none;">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+                    </svg>
+                </div>
+                
+                <h2 class="text-3xl font-bold text-[var(--text-dark)] mt-4">Crear Cuenta</h2>
+                <p class="mt-2 text-[var(--text-gray)]">
+                    Únete a <span class="font-semibold" style="color: var(--color-green);">RoyDent</span>
+                </p>
+            </div>
+
+            <form action="#" method="POST" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="form-label" for="username">Nombre de usuario</label>
+                        <input class="form-input" id="username" name="username" placeholder="Elige un nombre de usuario" required type="text"/>
+                    </div>
+                    <div class="password-container">
+                        <label class="form-label" for="password">Contraseña</label>
+                        <input class="form-input" id="password" name="password" placeholder="Crea una contraseña segura" required type="password"/>
+                        <button type="button" class="toggle-password" id="togglePassword">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="eye-open">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="eye-closed" style="display: none;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div>
+                        <label class="form-label" for="first-name">Nombres</label>
+                        <input class="form-input" id="first-name" name="first-name" placeholder="Ingresa tus nombres" required type="text"/>
+                    </div>
+                    <div>
+                        <label class="form-label" for="last-name-p">Apellido Paterno</label>
+                        <input class="form-input" id="last-name-p" name="last-name-p" placeholder="Ingresa tu apellido paterno" required type="text"/>
+                    </div>
+                    <div>
+                        <label class="form-label" for="last-name-m">Apellido Materno</label>
+                        <input class="form-input" id="last-name-m" name="last-name-m" placeholder="Ingresa tu apellido materno" type="text"/>
+                    </div>
+                    <div>
+                        <label class="form-label" for="ci">Cédula de Identidad</label>
+                        <input class="form-input" id="ci" name="ci" placeholder="Ingresa tu número de CI" required type="text"/>
+                    </div>
+                    <div>
+                        <label class="form-label" for="phone-number">Número de celular</label>
+                        <input class="form-input" id="phone-number" name="phone-number" placeholder="Ingresa tu número de celular" required type="tel"/>
+                    </div>
+                    <div>
+                        <label class="form-label" for="email">Correo electrónico</label>
+                        <input autocomplete="email" class="form-input" id="email" name="email" placeholder="Ingresa tu correo electrónico" required type="email"/>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label" for="client-type">Tipo de cliente</label>
+                    <select class="form-select" id="client-type" name="client-type" required>
+                        <option value="" disabled selected>Selecciona una opción</option>
+                        <option value="mayorista">Estudiante</option>
+                        <option value="minorista">Medico</option>
+                        <option value="distribuidor">Dentista</option>
+                        <option value="empresa">Empresa</option>
+                        <option value="particular">Particular</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary">Registrarse</button>
+            </form>
+
+            <p class="text-center text-sm text-[var(--text-gray)]">
+                ¿Ya tienes una cuenta?
+                <a href="login.html" class="link font-semibold">Inicia sesión aquí</a>
+            </p>
+        </div>
+    </div>
+    <script>
+        function handleImageError() {
+            document.getElementById('customLogo').style.display = 'none';
+            document.getElementById('defaultLogo').style.display = 'flex';
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const customImage = document.getElementById('customLogo');
+            
+            if (customImage && (customImage.complete && customImage.naturalHeight === 0)) {
+                handleImageError();
+            }
+            
+            setTimeout(function() {
+                if (customImage && (customImage.complete && customImage.naturalHeight === 0)) {
+                    handleImageError();
+                }
+            }, 1000);
+            
+            // Funcionalidad para el ojito de contraseña
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const eyeOpen = togglePassword.querySelector('.eye-open');
+            const eyeClosed = togglePassword.querySelector('.eye-closed');
+            
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                if (type === 'password') {
+                    eyeOpen.style.display = 'block';
+                    eyeClosed.style.display = 'none';
+                } else {
+                    eyeOpen.style.display = 'none';
+                    eyeClosed.style.display = 'block';
+                }
+            });
+
+            // Configurar validaciones ESTRICTAS en tiempo real
+            setupValidacionesEstrictas();
+
+            // Manejar el formulario de registro
+            const registroForm = document.querySelector('form');
+            
+            registroForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (!validarFormularioCompleto()) {
+                    mostrarError('Por favor corrige todos los errores antes de continuar');
+                    return;
+                }
+                
+                const formData = {
+                    nombre_usuario: document.getElementById('username').value.trim(),
+                    password: document.getElementById('password').value,
+                    confirmar_password: document.getElementById('password').value,
+                    nombre: document.getElementById('first-name').value.trim(),
+                    apellido_paterno: document.getElementById('last-name-p').value.trim(),
+                    apellido_materno: document.getElementById('last-name-m').value.trim(),
+                    cedula_identidad: document.getElementById('ci').value.trim(),
+                    numero_celular: document.getElementById('phone-number').value.trim(),
+                    correo: document.getElementById('email').value.trim().toLowerCase(),
+                    rol: 'CLIENTE'
+                };
+
+                try {
+                    mostrarCargando(true);
+                    
+                    const response = await fetch('/auth/api/registro/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        mostrarExito('¡Registro exitoso! Redirigiendo al login...');
+                        
+                        setTimeout(() => {
+                            window.location.href = '/login/';
+                        }, 2000);
+                        
+                    } else {
+                        let errorMessage = 'Error en el registro';
+                        
+                        if (data.detalles) {
+                            const errores = [];
+                            Object.keys(data.detalles).forEach(key => {
+                                if (Array.isArray(data.detalles[key])) {
+                                    errores.push(...data.detalles[key]);
+                                } else {
+                                    errores.push(data.detalles[key]);
+                                }
+                            });
+                            errorMessage = errores.join('. ');
+                        } else if (data.error) {
+                            errorMessage = data.error;
+                        }
+                        
+                        mostrarError(errorMessage);
+                    }
+                } catch (error) {
+                    mostrarError('Error de conexión. Verifica tu internet e inténtalo de nuevo.');
+                    console.error('Error:', error);
+                } finally {
+                    mostrarCargando(false);
+                }
+            });
+        });
+
+        function setupValidacionesEstrictas() {
+            // Validación ESTRICTA para nombre de usuario - SOLO permitir caracteres válidos
+            document.getElementById('username').addEventListener('input', function(e) {
+                // Permitir solo letras, números, puntos, guiones y guiones bajos
+                this.value = this.value.replace(/[^a-zA-Z0-9._-]/g, '');
+                if (this.value.length > 20) {
+                    this.value = this.value.substring(0, 20);
+                }
+            });
+            
+            document.getElementById('username').addEventListener('blur', function() {
+                validarNombreUsuario(this.value);
+            });
+
+            // Validación ESTRICTA para nombres - SOLO letras y espacios
+            document.getElementById('first-name').addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
+                if (this.value.length > 50) {
+                    this.value = this.value.substring(0, 50);
+                }
+            });
+            
+            document.getElementById('first-name').addEventListener('blur', function() {
+                validarNombre(this.value, 'nombre');
+            });
+
+            // Validación ESTRICTA para apellido paterno - SOLO letras y espacios
+            document.getElementById('last-name-p').addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
+                if (this.value.length > 50) {
+                    this.value = this.value.substring(0, 50);
+                }
+            });
+            
+            document.getElementById('last-name-p').addEventListener('blur', function() {
+                validarNombre(this.value, 'apellido paterno');
+            });
+
+            // Validación ESTRICTA para apellido materno - SOLO letras y espacios
+            document.getElementById('last-name-m').addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
+                if (this.value.length > 50) {
+                    this.value = this.value.substring(0, 50);
+                }
+            });
+            
+            document.getElementById('last-name-m').addEventListener('blur', function() {
+                if (this.value.trim()) {
+                    validarNombre(this.value, 'apellido materno');
+                } else {
+                    limpiarError('last-name-m');
+                }
+            });
+
+            // Validación ESTRICTA para cédula - SOLO números y guión con letras
+            document.getElementById('ci').addEventListener('input', function(e) {
+                // Permitir solo números, guión y letras después del guión
+                let valor = this.value.replace(/[^0-9\-A-Z]/g, '');
+                
+                // Controlar formato: máximo 8 números + guión + máximo 3 letras
+                if (valor.includes('-')) {
+                    let partes = valor.split('-');
+                    if (partes[0].length > 8) {
+                        partes[0] = partes[0].substring(0, 8);
+                    }
+                    if (partes[1] && partes[1].length > 3) {
+                        partes[1] = partes[1].substring(0, 3);
+                    }
+                    valor = partes[0] + '-' + (partes[1] || '');
+                } else if (valor.length > 8) {
+                    valor = valor.substring(0, 8);
+                }
+                
+                this.value = valor.toUpperCase();
+            });
+            
+            document.getElementById('ci').addEventListener('blur', function() {
+                validarCedula(this.value);
+            });
+
+            // Validación ESTRICTA para celular - SOLO números, máximo 8
+            document.getElementById('phone-number').addEventListener('input', function(e) {
+                // Permitir solo números
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                // Máximo 8 dígitos
+                if (this.value.length > 8) {
+                    this.value = this.value.substring(0, 8);
+                }
+            });
+            
+            document.getElementById('phone-number').addEventListener('blur', function() {
+                validarCelular(this.value);
+            });
+
+            // Validación para contraseña
+            document.getElementById('password').addEventListener('input', function() {
+                validarPassword(this.value);
+            });
+
+            // Validación para correo
+            document.getElementById('email').addEventListener('blur', function() {
+                validarCorreo(this.value);
+            });
+        }
+
+        function validarNombreUsuario(valor) {
+            const campo = 'username';
+            limpiarError(campo);
+            
+            if (!valor || !valor.trim()) {
+                mostrarErrorCampo(campo, 'El nombre de usuario es obligatorio');
+                return false;
+            }
+            
+            if (valor.trim().length < 3) {
+                mostrarErrorCampo(campo, 'Debe tener al menos 3 caracteres');
+                return false;
+            }
+            
+            if (valor.trim().length > 20) {
+                mostrarErrorCampo(campo, 'No puede tener más de 20 caracteres');
+                return false;
+            }
+            
+            if (!/^[a-zA-Z0-9._-]+$/.test(valor.trim())) {
+                mostrarErrorCampo(campo, 'Solo letras, números, puntos, guiones y guiones bajos');
+                return false;
+            }
+            
+            mostrarExitoCampo(campo);
+            return true;
+        }
+
+        function validarPassword(valor) {
+            const campo = 'password';
+            limpiarError(campo);
+            
+            if (!valor) {
+                mostrarErrorCampo(campo, 'La contraseña es obligatoria');
+                return false;
+            }
+            
+            if (valor.length < 6) {
+                mostrarErrorCampo(campo, 'Debe tener al menos 6 caracteres');
+                return false;
+            }
+            
+            if (!/[A-Z]/.test(valor)) {
+                mostrarErrorCampo(campo, 'Debe contener al menos una mayúscula');
+                return false;
+            }
+            
+            if (!/[a-z]/.test(valor)) {
+                mostrarErrorCampo(campo, 'Debe contener al menos una minúscula');
+                return false;
+            }
+            
+            if (!/\d/.test(valor)) {
+                mostrarErrorCampo(campo, 'Debe contener al menos un número');
+                return false;
+            }
+            
+            if (!/[!@#$%^&*(),.?":{}|<>]/.test(valor)) {
+                mostrarErrorCampo(campo, 'Debe contener al menos un carácter especial (!@#$%^&*(),.?":{}|<>)');
+                return false;
+            }
+            
+            mostrarExitoCampo(campo);
+            return true;
+        }
+
+        function validarNombre(valor, tipoCampo) {
+                           tipoCampo === 'apellido paterno' ? 'last-name-p' : 'last-name-m';
+            
+            limpiarError(campoId);
+            
+            if (!valor || !valor.trim()) {
+                if (tipoCampo !== 'apellido materno') {
+                    mostrarErrorCampo(campoId, `El ${tipoCampo} es obligatorio`);
+                    return false;
+                }
+                return true;
+            }
+            
+            if (valor.trim().length < 2) {
+                mostrarErrorCampo(campoId, `El ${tipoCampo} debe tener al menos 2 caracteres`);
+                return false;
+            }
+            
+            if (valor.trim().length > 50) {
+                mostrarErrorCampo(campoId, `El ${tipoCampo} no puede tener más de 50 caracteres`);
+                return false;
+            }
+            
+            if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(valor.trim())) {
+                mostrarErrorCampo(campoId, `El ${tipoCampo} solo puede contener letras y espacios`);
+                return false;
+            }
+            
+            mostrarExitoCampo(campoId);
+            return true;
+        }
+
+        function validarCedula(valor) {
+            const campo = 'ci';
+            limpiarError(campo);
+            
+            if (!valor || !valor.trim()) {
+                mostrarErrorCampo(campo, 'La cédula de identidad es obligatoria');
+                return false;
+            }
+            
+            const cedulaClean = valor.trim().toUpperCase();
+            
+            if (!/^\d{7,8}(-[A-Z]{1,3})?$/.test(cedulaClean)) {
+                mostrarErrorCampo(campo, 'Formato inválido. Ejemplos: 1234567, 1234567-LP, 12345678-SC');
+                return false;
+            }
+            
+            mostrarExitoCampo(campo);
+            return true;
+        }
+
+        function validarCelular(valor) {
+            const campo = 'phone-number';
+            limpiarError(campo);
+            
+            if (!valor || !valor.trim()) {
+                mostrarErrorCampo(campo, 'El número de celular es obligatorio');
+                return false;
+            }
+            
+            const celularClean = valor.replace(/[^\d]/g, '');
+            
+            if (celularClean.length !== 8) {
+                mostrarErrorCampo(campo, 'Debe tener exactamente 8 dígitos');
+                return false;
+            }
+            
+            if (!celularClean.startsWith('6') && !celularClean.startsWith('7')) {
+                mostrarErrorCampo(campo, 'Debe empezar con 6 o 7');
+                return false;
+            }
+            
+            mostrarExitoCampo(campo);
+            return true;
+        }
+
+        function validarCorreo(valor) {
+            const campo = 'email';
+            limpiarError(campo);
+            
+            if (!valor || !valor.trim()) {
+                mostrarErrorCampo(campo, 'El correo electrónico es obligatorio');
+                return false;
+            }
+            
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(valor.trim())) {
+                mostrarErrorCampo(campo, 'Formato de correo electrónico inválido');
+                return false;
+            }
+            
+            mostrarExitoCampo(campo);
+            return true;
+        }
+
+        function validarFormularioCompleto() {
+            let esValido = true;
+            
+            esValido &= validarNombreUsuario(document.getElementById('username').value);
+            esValido &= validarPassword(document.getElementById('password').value);
+            esValido &= validarNombre(document.getElementById('first-name').value, 'nombre');
+            esValido &= validarNombre(document.getElementById('last-name-p').value, 'apellido paterno');
+            esValido &= validarCedula(document.getElementById('ci').value);
+            esValido &= validarCelular(document.getElementById('phone-number').value);
+            esValido &= validarCorreo(document.getElementById('email').value);
+            
+            return esValido;
+        }
+
+        function mostrarErrorCampo(campoId, mensaje) {
+            const campo = document.getElementById(campoId);
+            campo.style.borderColor = '#e53e3e';
+            campo.style.boxShadow = '0 0 0 3px rgba(229, 62, 62, 0.3)';
+            
+            let errorDiv = campo.parentNode.querySelector('.error-field');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'error-field';
+                errorDiv.style.cssText = `
+                    color: #e53e3e;
+                    font-size: 0.875rem;
+                    margin-top: 0.25rem;
+                    font-weight: 500;
+                `;
+                campo.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.textContent = mensaje;
+        }
+
+        function mostrarExitoCampo(campoId) {
+            const campo = document.getElementById(campoId);
+            campo.style.borderColor = '#10B981';
+            campo.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.3)';
+            
+            const errorDiv = campo.parentNode.querySelector('.error-field');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+
+        function limpiarError(campoId) {
+            const campo = document.getElementById(campoId);
+            campo.style.borderColor = '';
+            campo.style.boxShadow = '';
+            
+            const errorDiv = campo.parentNode.querySelector('.error-field');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+        }
+
+        function mostrarCargando(mostrar) {
+            const submitBtn = document.querySelector('button[type="submit"]');
+            if (mostrar) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Registrando...';
+                submitBtn.style.opacity = '0.7';
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Registrarse';
+                submitBtn.style.opacity = '1';
+            }
+        }
+
+        function mostrarError(mensaje) {
+            let alertDiv = document.getElementById('alertMessage');
+            if (!alertDiv) {
+                alertDiv = document.createElement('div');
+                alertDiv.id = 'alertMessage';
+                alertDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(239, 68, 68, 0.95);
+                    color: white;
+                    padding: 1rem 1.5rem;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                    z-index: 10000;
+                    max-width: 400px;
+                    backdrop-filter: blur(10px);
+                    border-left: 4px solid #dc2626;
+                `;
+                document.body.appendChild(alertDiv);
+            }
+            
+            alertDiv.textContent = mensaje;
+            alertDiv.style.background = 'rgba(239, 68, 68, 0.95)';
+            alertDiv.style.borderLeftColor = '#dc2626';
+            
+            setTimeout(() => {
+                if (alertDiv) alertDiv.remove();
+            }, 5000);
+        }
+
+        function mostrarExito(mensaje) {
+            let alertDiv = document.getElementById('alertMessage');
+            if (!alertDiv) {
+                alertDiv = document.createElement('div');
+                alertDiv.id = 'alertMessage';
+                alertDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(16, 185, 129, 0.95);
+                    color: white;
+                    padding: 1rem 1.5rem;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                    z-index: 10000;
+                    max-width: 400px;
+                    backdrop-filter: blur(10px);
+                    border-left: 4px solid #059669;
+                `;
+                document.body.appendChild(alertDiv);
+            }
+            
+            alertDiv.textContent = mensaje;
+            alertDiv.style.background = 'rgba(16, 185, 129, 0.95)';
+            alertDiv.style.borderLeftColor = '#059669';
+            
+            setTimeout(() => {
+                if (alertDiv) alertDiv.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

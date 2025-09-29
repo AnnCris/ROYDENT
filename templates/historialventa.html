@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Historial de Ventas - Sistema Roy Representaciones</title>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+:root {
+    /* Colores principales - Tema Dorado y Verde VIBRANTES */
+    --color-gold: #D4AF37;
+    --color-gold-light: #f6e06f;
+    --color-gold-dark: #B8860B;
+    --color-green: #2E8B57;
+    --color-green-light: #98FB98;
+    --color-green-dark: #1A5D34;
+    --text-dark: #2D3748;
+    --text-gray: #718096;
+    --text-light: #A0AEC0;
+    --text-muted: #9CA3AF;
+    
+    /* Colores de fondo */
+    --bg-primary: rgba(255, 255, 255, 0.85);
+    --bg-secondary: rgba(255, 250, 205, 0.7);
+    --bg-tertiary: rgba(240, 255, 240, 0.5);
+    
+    /* Estados */
+    --success: #00C851;
+    --warning: #FFD700;
+    --danger: #EF4444;
+    --info: #00C851;
+    
+    /* Sombras */
+    --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+    
+    /* Radios */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    
+    /* Espaciado */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #FFFACD, #F0FFF0, #FFFAF0);
+    min-height: 100vh;
+    color: var(--text-dark);
+    line-height: 1.6;
+    font-size: 16px;
+    background-attachment: fixed;
+    font-weight: 400;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Elementos decorativos de fondo */
+.bg-blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.25;
+    z-index: -1;
+}
+
+.blob-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--color-gold);
+    top: -100px;
+    left: -100px;
+}
+
+.blob-2 {
+    width: 500px;
+    height: 500px;
+    background: var(--color-green);
+    bottom: -150px;
+    right: -150px;
+}
+
+.blob-3 {
+    width: 300px;
+    height: 300px;
+    background: var(--color-gold-light);
+    top: 50%;
+    left: 70%;
+}
+
+/* ============ SIDEBAR MODERNO ============ */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-right: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    padding: var(--space-xl);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.sidebar-header::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: 0 0 22px 0;
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+}
+
+.sidebar-header::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 0 0 18px 0;
+    z-index: -1;
+}
+
+.sidebar-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    margin-bottom: var(--space-md);
+    width: 100%;
+}
+
+.sidebar-logo-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: var(--space-md);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    border-radius: 50%;
+}
+
+.logo-default {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-md);
+    color: white;
+    font-weight: 900;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.sidebar-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-green-dark);
+    letter-spacing: -0.01em;
+}
+
+.sidebar-subtitle {
+    font-size: 0.75rem;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: var(--space-xs);
+}
+
+.sidebar-nav {
+    padding: var(--space-md);
+}
+
+.nav-section {
+    margin-bottom: var(--space-xl);
+}
+
+.nav-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-md);
+    padding: 0 var(--space-md);
+}
+
+.nav-item {
+    margin-bottom: var(--space-xs);
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: var(--space-md);
+    color: var(--text-gray);
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.875rem;
+    gap: var(--space-sm);
+    background: rgba(255, 250, 205, 0.5);
+}
+
+.nav-link:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: var(--color-green-dark);
+    transform: translateX(4px);
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: var(--color-gold);
+}
+
+.nav-link.active .nav-icon {
+    color: white;
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* ============ MAIN CONTENT ============ */
+.main-content {
+    margin-left: 280px;
+    min-height: 100vh;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: var(--space-xl);
+}
+
+/* ============ NAVEGACIÓN MÓVIL ============ */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    z-index: 1001;
+    padding: var(--space-md);
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mobile-menu-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-green-dark);
+}
+
+.mobile-logo {
+    height: 40px;
+    object-fit: contain;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+/* ============ CONTENIDO ============ */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.section {
+    margin-bottom: var(--space-3xl);
+}
+
+.grid {
+    display: grid;
+    gap: var(--space-xl);
+}
+
+.grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+}
+
+.grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.grid-5 {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* ============ CARDS CON EFECTOS DE LUZ ============ */
+.card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: calc(var(--radius-xl) + 3px);
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+}
+
+.card::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: calc(var(--radius-xl) - 2px);
+    z-index: -1;
+}
+
+.card-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* ============ TIPOGRAFÍA MODERNA ============ */
+.text-display {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    margin-bottom: var(--space-lg);
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+}
+
+.text-h1 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--color-green-dark);
+    margin-bottom: var(--space-lg);
+    letter-spacing: -0.02em;
+}
+
+.text-h2 {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-green-dark);
+    margin-bottom: var(--space-md);
+    letter-spacing: -0.01em;
+}
+
+.text-h3 {
+    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-gold-dark);
+    margin-bottom: var(--space-md);
+}
+
+.text-body {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--text-gray);
+    margin-bottom: var(--space-md);
+    text-align: center;
+}
+
+/* ============ ESTADÍSTICAS ============ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: calc(var(--radius-lg) + 3px);
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::before {
+    opacity: 1;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+}
+
+.stat-card::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: calc(var(--radius-lg) - 2px);
+    z-index: -1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-gold-dark);
+    margin-bottom: var(--space-sm);
+    position: relative;
+    z-index: 1;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--color-green-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+
+/* ============ FORMULARIOS ============ */
+.form-group {
+    margin-bottom: var(--space-lg);
+}
+
+.form-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-dark);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+    backdrop-filter: blur(10px);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-green);
+    box-shadow: 0 0 0 4px rgba(0, 200, 81, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    transform: scale(1.01);
+}
+
+.form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 1rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25rem;
+    padding-right: 3rem;
+    appearance: none;
+}
+
+.text-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-xs);
+    display: block;
+}
+
+/* ============ BOTONES ============ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    letter-spacing: 0.025em;
+    position: relative;
+    overflow: hidden;
+    margin: var(--space-xs);
+}
+
+.btn::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: calc(var(--radius-lg) + 3px);
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.btn:hover::before {
+    opacity: 1;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    position: relative;
+    z-index: 1;
+}
+
+.btn-primary::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+    border-radius: calc(var(--radius-lg) - 2px);
+    z-index: -1;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--color-green-dark);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    position: relative;
+    z-index: 1;
+}
+
+.btn-secondary::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: calc(var(--radius-lg) - 2px);
+    z-index: -1;
+}
+
+.btn-secondary:hover {
+    background: var(--color-green);
+    color: white;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success), var(--color-green-dark));
+    color: white;
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--warning), var(--color-gold-dark));
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger), #DC2626);
+    color: white;
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+}
+
+.btn-info {
+    background: linear-gradient(135deg, var(--info), var(--color-green-dark));
+    color: white;
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
+/* ============ BADGES ============ */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 1rem;
+    border-radius: var(--radius-lg);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: var(--space-xs);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.badge:hover {
+    transform: scale(1.05);
+}
+
+.badge-pagado {
+    background: linear-gradient(135deg, var(--success), var(--color-green-dark));
+    color: white;
+}
+
+.badge-pendiente {
+    background: linear-gradient(135deg, var(--warning), var(--color-gold-dark));
+    color: white;
+}
+
+.badge-cancelado {
+    background: linear-gradient(135deg, var(--danger), #DC2626);
+    color: white;
+}
+
+.badge-credito {
+    background: linear-gradient(135deg, var(--info), var(--color-green-dark));
+    color: white;
+}
+
+/* ============ TABLA ============ */
+.table-container {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
+}
+
+th, td {
+    padding: var(--space-lg);
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+th {
+    background: rgba(255, 215, 0, 0.2);
+    font-weight: 700;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+tr {
+    transition: all 0.3s ease;
+}
+
+tbody tr:hover:not(.venta-detail) {
+    background: rgba(255, 215, 0, 0.1);
+    transform: scale(1.01);
+}
+
+tbody tr:hover {
+    cursor: pointer;
+}
+
+.venta-detail {
+    background: var(--bg-secondary);
+    display: none;
+}
+
+.venta-detail td {
+    padding: 0;
+}
+
+.venta-detail-content {
+    background: rgba(255, 255, 255, 0.95);
+    margin: var(--space-md);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+/* ============ BÚSQUEDA ============ */
+.search-container {
+    position: relative;
+    margin-bottom: var(--space-xl);
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
+
+.search-input {
+    padding-left: 3.5rem;
+    font-size: 1.1rem;
+}
+
+/* ============ PAGINACIÓN ============ */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+}
+
+.pagination button {
+    padding: 0.75rem 1.25rem;
+    border: 2px solid var(--color-green);
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--color-green);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+}
+
+.pagination button:hover {
+    background: var(--color-green);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
+.pagination button.active {
+    background: var(--color-green);
+    color: white;
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding-top: 70px;
+        padding: var(--space-md);
+    }
+
+    .mobile-header {
+        display: flex;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0;
+    }
+    
+    .grid-2, .grid-3, .grid-4, .grid-5 {
+        grid-template-columns: 1fr;
+    }
+    
+    .card {
+        padding: var(--space-lg);
+    }
+
+    table {
+        min-width: 800px;
+    }
+    
+    th, td {
+        padding: var(--space-sm);
+        font-size: 0.875rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding-top: 60px;
+        padding: var(--space-sm);
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Elementos decorativos de fondo -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <!-- Logo desde la carpeta assets -->
+                <img src="assets/images/Roydent.png" alt="Logo de RoyDent" class="sidebar-logo-img" id="sidebarLogo" onerror="handleLogoError()">
+                <!-- Logo por defecto (oculto inicialmente) -->
+                <div class="logo-default" id="defaultLogo" style="display: none;">
+                    ROY
+                </div>
+                <div>
+                    <div class="sidebar-title">Sistema RoyDent</div>
+                    <div class="sidebar-subtitle">Y Mundo Medico</div>
+                </div>
+            </a>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-title">Principal</div>
+                <div class="nav-item">
+                    <a href="panel-admin.html" class="nav-link">
+                        <div class="nav-icon">🏠</div>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📊</div>
+                        Analíticas
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Productos</div>
+                <div class="nav-item">
+                    <a href="agregarproducto.html" class="nav-link">
+                        <div class="nav-icon">➕</div>
+                        Agregar Producto
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📦</div>
+                        Lista de Productos
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestioncategorias.html" class="nav-link">
+                        <div class="nav-icon">🏷️</div>
+                        Categorías
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">🔄</div>
+                        Control FIFO
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Inventario</div>
+                <div class="nav-item">
+                    <a href="inventario.html" class="nav-link">
+                        <div class="nav-icon">📋</div>
+                        Inventario General
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">⚠️</div>
+                        Stock Bajo
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📍</div>
+                        Ubicaciones
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestionproveedores.html" class="nav-link">
+                        <div class="nav-icon">👨‍💼</div>
+                        Proveedores
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Ventas</div>
+                <div class="nav-item">
+                    <a href="nuevaventa.html" class="nav-link">
+                        <div class="nav-icon">🛒</div>
+                        Nueva Venta
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="historialventa.html" class="nav-link active">
+                        <div class="nav-icon">💰</div>
+                        Historial Ventas
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestionclientes.html" class="nav-link">
+                        <div class="nav-icon">👥</div>
+                        Clientes
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Reportes</div>
+                <div class="nav-item">
+                    <a href="reportesventa.html" class="nav-link">
+                        <div class="nav-icon">📈</div>
+                        Reportes de Ventas
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📉</div>
+                        Análisis de Inventario
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">💼</div>
+                        Reportes Financieros
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Configuración</div>
+                <div class="nav-item">
+                    <a href="configuracion.html" class="nav-link">
+                        <div class="nav-icon">⚙️</div>
+                        Configuración
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="perfilusuario.html" class="nav-link">
+                        <div class="nav-icon">👤</div>
+                        Perfil
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="usuarios.html" class="nav-link">
+                        <div class="nav-icon">👥</div>
+                        Usuarios
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="backups.html" class="nav-link">
+                        <div class="nav-icon">💾</div>
+                        Backup
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Mobile Header -->
+    <header class="mobile-header" id="mobile-header">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+        <img src="assets/images/Roydent.png" alt="Logo de RoyDent" class="mobile-logo" id="mobileLogo" onerror="handleMobileLogoError()">
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="section">
+                <div class="card">
+                    <div class="card-content">
+                        <h1 class="text-display">Historial de Ventas</h1>
+                        <p class="text-body">Visualiza y gestiona todas las transacciones de venta registradas</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas Rápidas -->
+            <div class="section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">1,247</div>
+                        <div class="stat-label">Ventas Totales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">Bs. 342,580</div>
+                        <div class="stat-label">Monto Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">89</div>
+                        <div class="stat-label">Ventas Este Mes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">Bs. 28,495</div>
+                        <div class="stat-label">Promedio Mensual</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">Pendientes Cobro</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="section">
+                <div class="card">
+                    <div class="card-content">
+                        <h2 class="text-h2">Filtros de Búsqueda</h2>
+                        <div class="grid grid-5">
+                            <div class="form-group">
+                                <label class="text-label">Fecha Desde</label>
+                                <input type="date" class="form-input" id="fecha-desde" value="2024-09-01">
+                            </div>
+                            <div class="form-group">
+                                <label class="text-label">Fecha Hasta</label>
+                                <input type="date" class="form-input" id="fecha-hasta" value="2024-09-09">
+                            </div>
+                            <div class="form-group">
+                                <label class="text-label">Estado</label>
+                                <select class="form-input form-select" id="estado">
+                                    <option value="todos">Todos los estados</option>
+                                    <option value="pagado">Pagado</option>
+                                    <option value="pendiente">Pendiente</option>
+                                    <option value="credito">Crédito</option>
+                                    <option value="cancelado">Cancelado</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-label">Cliente</label>
+                                <select class="form-input form-select" id="cliente">
+                                    <option value="todos">Todos los clientes</option>
+                                    <option value="dr-mendoza">Dr. Carlos Mendoza</option>
+                                    <option value="dra-garcia">Dra. Ana García</option>
+                                    <option value="clinica-norte">Clínica Dental Norte</option>
+                                    <option value="hospital-san-juan">Hospital San Juan</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-label">Vendedor</label>
+                                <select class="form-input form-select" id="vendedor">
+                                    <option value="todos">Todos</option>
+                                    <option value="juan-perez">Juan Pérez</option>
+                                    <option value="maria-lopez">María López</option>
+                                    <option value="carlos-ruiz">Carlos Ruiz</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="search-container">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" class="form-input search-input" id="busqueda" placeholder="Buscar por número de factura, cliente o producto...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Ventas -->
+            <div class="section">
+                <div class="card">
+                    <div class="card-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl); flex-wrap: wrap; gap: var(--space-md);">
+                            <h2 class="text-h2" style="margin-bottom: 0;">Lista de Ventas</h2>
+                            <div>
+                                <button class="btn btn-secondary">📊 Exportar Excel</button>
+                                <button class="btn btn-info">📈 Generar Reporte</button>
+                                <button class="btn btn-primary">➕ Nueva Venta</button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Factura</th>
+                                        <th>Fecha</th>
+                                        <th>Cliente</th>
+                                        <th>Vendedor</th>
+                                        <th>Productos</th>
+                                        <th>Subtotal</th>
+                                        <th>Descuento</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ventas-table">
+                                    <tr onclick="toggleDetalle('VT-2024-157')">
+                                        <td><strong>VT-2024-157</strong></td>
+                                        <td>09/09/2024 14:30</td>
+                                        <td>Dr. Carlos Mendoza</td>
+                                        <td>Juan Pérez</td>
+                                        <td>3 items</td>
+                                        <td>Bs. 180.50</td>
+                                        <td>5%</td>
+                                        <td><strong>Bs. 171.48</strong></td>
+                                        <td><span class="badge badge-pagado">Pagado</span></td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" onclick="event.stopPropagation(); verDetalle('VT-2024-157')">👁️</button>
+                                            <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); imprimirFactura('VT-2024-157')">📄</button>
+                                        </td>
+                                    </tr>
+                                    <tr id="detalle-VT-2024-157" class="venta-detail">
+                                        <td colspan="10">
+                                            <div class="venta-detail-content">
+                                                <h4 style="margin-bottom: var(--space-md); color: var(--color-purple);">Detalle de Productos</h4>
+                                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-md);">
+                                                    <div>• Anestesia Lidocaína 2% x 50ml - Cantidad: 2 - Bs. 90.00</div>
+                                                    <div>• Guantes Látex Talla M x 100 - Cantidad: 1 - Bs. 28.50</div>
+                                                    <div>• Seda Dental Fluorada x 50m - Cantidad: 3 - Bs. 54.00</div>
+                                                </div>
+                                                <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid #e5e7eb;">
+                                                    <strong>Observaciones:</strong> Entrega programada para el 10/09/2024
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr onclick="toggleDetalle('VT-2024-156')">
+                                        <td><strong>VT-2024-156</strong></td>
+                                        <td>08/09/2024 16:45</td>
+                                        <td>Clínica Dental Norte</td>
+                                        <td>María López</td>
+                                        <td>5 items</td>
+                                        <td>Bs. 425.00</td>
+                                        <td>10%</td>
+                                        <td><strong>Bs. 382.50</strong></td>
+                                        <td><span class="badge badge-credito">Crédito</span></td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" onclick="event.stopPropagation(); verDetalle('VT-2024-156')">👁️</button>
+                                            <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); gestionarCobro('VT-2024-156')">💰</button>
+                                        </td>
+                                    </tr>
+                                    <tr id="detalle-VT-2024-156" class="venta-detail">
+                                        <td colspan="10">
+                                            <div class="venta-detail-content">
+                                                <h4 style="margin-bottom: var(--space-md); color: var(--color-purple);">Detalle de Productos</h4>
+                                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-md);">
+                                                    <div>• Cápsulas Amalgama x 50 - Cantidad: 2 - Bs. 250.00</div>
+                                                    <div>• Guantes Látex Talla M x 100 - Cantidad: 3 - Bs. 85.50</div>
+                                                    <div>• Anestesia Lidocaína 2% x 50ml - Cantidad: 1 - Bs. 45.00</div>
+                                                    <div>• Mascarilla Quirúrgica 3 Capas x 50 - Cantidad: 1 - Bs. 35.00</div>
+                                                    <div>• Seda Dental Fluorada x 50m - Cantidad: 1 - Bs. 18.00</div>
+                                                </div>
+                                                <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid #e5e7eb;">
+                                                    <strong>Condiciones:</strong> Crédito 30 días - Vencimiento: 08/10/2024
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr onclick="toggleDetalle('VT-2024-155')">
+                                        <td><strong>VT-2024-155</strong></td>
+                                        <td>07/09/2024 11:20</td>
+                                        <td>Dra. Ana García</td>
+                                        <td>Carlos Ruiz</td>
+                                        <td>2 items</td>
+                                        <td>Bs. 73.50</td>
+                                        <td>0%</td>
+                                        <td><strong>Bs. 73.50</strong></td>
+                                        <td><span class="badge badge-pagado">Pagado</span></td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" onclick="event.stopPropagation(); verDetalle('VT-2024-155')">👁️</button>
+                                            <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); imprimirFactura('VT-2024-155')">📄</button>
+                                        </td>
+                                    </tr>
+                                    <tr id="detalle-VT-2024-155" class="venta-detail">
+                                        <td colspan="10">
+                                            <div class="venta-detail-content">
+                                                <h4 style="margin-bottom: var(--space-md); color: var(--color-purple);">Detalle de Productos</h4>
+                                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-md);">
+                                                    <div>• Anestesia Lidocaína 2% x 50ml - Cantidad: 1 - Bs. 45.00</div>
+                                                    <div>• Guantes Látex Talla M x 100 - Cantidad: 1 - Bs. 28.50</div>
+                                                </div>
+                                                <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid #e5e7eb;">
+                                                    <strong>Método de Pago:</strong> Transferencia bancaria
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr onclick="toggleDetalle('VT-2024-154')">
+                                        <td><strong>VT-2024-154</strong></td>
+                                        <td>06/09/2024 09:15</td>
+                                        <td>Hospital San Juan</td>
+                                        <td>Juan Pérez</td>
+                                        <td>8 items</td>
+                                        <td>Bs. 856.00</td>
+                                        <td>15%</td>
+                                        <td><strong>Bs. 727.60</strong></td>
+                                        <td><span class="badge badge-pendiente">Pendiente</span></td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" onclick="event.stopPropagation(); verDetalle('VT-2024-154')">👁️</button>
+                                            <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); gestionarCobro('VT-2024-154')">💰</button>
+                                        </td>
+                                    </tr>
+                                    <tr id="detalle-VT-2024-154" class="venta-detail">
+                                        <td colspan="10">
+                                            <div class="venta-detail-content">
+                                                <h4 style="margin-bottom: var(--space-md); color: var(--color-purple);">Detalle de Productos</h4>
+                                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-md);">
+                                                    <div>• Cápsulas Amalgama x 50 - Cantidad: 4 - Bs. 500.00</div>
+                                                    <div>• Guantes Látex Talla M x 100 - Cantidad: 10 - Bs. 285.00</div>
+                                                    <div>• Mascarilla Quirúrgica 3 Capas x 50 - Cantidad: 2 - Bs. 70.00</div>
+                                                    <div>• Anestesia Lidocaína 2% x 50ml - Cantidad: 1 - Bs. 45.00</div>
+                                                </div>
+                                                <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid #e5e7eb;">
+                                                    <strong>Estado:</strong> Pendiente de confirmación de pago
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr onclick="toggleDetalle('VT-2024-153')">
+                                        <td><strong>VT-2024-153</strong></td>
+                                        <td>05/09/2024 14:30</td>
+                                        <td>Dr. Luis Martínez</td>
+                                        <td>María López</td>
+                                        <td>1 item</td>
+                                        <td>Bs. 125.00</td>
+                                        <td>0%</td>
+                                        <td><strong>Bs. 125.00</strong></td>
+                                        <td><span class="badge badge-cancelado">Cancelado</span></td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" onclick="event.stopPropagation(); verDetalle('VT-2024-153')">👁️</button>
+                                            <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); verCancelacion('VT-2024-153')">❌</button>
+                                        </td>
+                                    </tr>
+                                    <tr id="detalle-VT-2024-153" class="venta-detail">
+                                        <td colspan="10">
+                                            <div class="venta-detail-content">
+                                                <h4 style="margin-bottom: var(--space-md); color: var(--color-purple);">Detalle de Productos</h4>
+                                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-md);">
+                                                    <div>• Cápsulas Amalgama x 50 - Cantidad: 1 - Bs. 125.00</div>
+                                                </div>
+                                                <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid #e5e7eb;">
+                                                    <strong>Motivo Cancelación:</strong> Cliente canceló el pedido por cambio de proveedor
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Paginación -->
+                        <div class="pagination">
+                            <button onclick="cambiarPagina(-1)">‹ Anterior</button>
+                            <button class="active" onclick="cambiarPagina(1)">1</button>
+                            <button onclick="cambiarPagina(2)">2</button>
+                            <button onclick="cambiarPagina(3)">3</button>
+                            <button onclick="cambiarPagina(1)">Siguiente ›</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen del Período -->
+            <div class="section">
+                <div class="grid grid-3">
+                    <div class="card">
+                        <div class="card-content">
+                            <h3 class="text-h3">Resumen Financiero</h3>
+                            <div style="margin-bottom: var(--space-md);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-sm);">
+                                    <span>Total Ventas:</span>
+                                    <strong>Bs. 1,537.08</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-sm);">
+                                    <span>Descuentos:</span>
+                                    <span style="color: var(--danger);">Bs. 150.92</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-sm);">
+                                    <span>Pendientes:</span>
+                                    <span style="color: var(--warning);">Bs. 727.60</span>
+                                </div>
+                                <hr style="margin: var(--space-md) 0;">
+                                <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700;">
+                                    <span>Cobrado:</span>
+                                    <span style="color: var(--success);">Bs. 809.48</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-content">
+                            <h3 class="text-h3">Top Productos</h3>
+                            <div>
+                                <div style="margin-bottom: var(--space-sm);">
+                                    <div style="font-weight: 600;">Guantes Látex Talla M</div>
+                                    <div style="font-size: 0.875rem; color: var(--text-gray);">15 unidades vendidas</div>
+                                </div>
+                                <div style="margin-bottom: var(--space-sm);">
+                                    <div style="font-weight: 600;">Cápsulas Amalgama</div>
+                                    <div style="font-size: 0.875rem; color: var(--text-gray);">7 cajas vendidas</div>
+                                </div>
+                                <div style="margin-bottom: var(--space-sm);">
+                                    <div style="font-weight: 600;">Anestesia Lidocaína</div>
+                                    <div style="font-size: 0.875rem; color: var(--text-gray);">5 frascos vendidos</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-content">
+                            <h3 class="text-h3">Top Clientes</h3>
+                            <div>
+                                <div style="margin-bottom: var(--space-sm);">
+                                    <div style="font-weight: 600;">Hospital San Juan</div>
+                                    <div style="font-size: 0.875rem; color: var(--text-gray);">Bs. 727.60</div>
+                                </div>
+                                <div style="margin-bottom: var(--space-sm);">
+                                    <div style="font-weight: 600;">Clínica Dental Norte</div>
+                                    <div style="font-size: 0.875rem; color: var(--text-gray);">Bs. 382.50</div>
+                                </div>
+                                <div style="margin-bottom: var(--space-sm);">
+                                    <div style="font-weight: 600;">Dr. Carlos Mendoza</div>
+                                    <div style="font-size: 0.875rem; color: var(--text-gray);">Bs. 171.48</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ============ MANEJO DE LOGOS ============
+        function handleLogoError() {
+            document.getElementById('sidebarLogo').style.display = 'none';
+            document.getElementById('defaultLogo').style.display = 'flex';
+        }
+        
+        function handleMobileLogoError() {
+            const mobileLogo = document.getElementById('mobileLogo');
+            mobileLogo.src = '';
+            mobileLogo.alt = 'Sistema Roy';
+            mobileLogo.style.fontFamily = 'Inter, sans-serif';
+            mobileLogo.style.fontWeight = '700';
+            mobileLogo.style.fontSize = '1.2rem';
+            mobileLogo.style.color = 'var(--color-purple)';
+        }
+        
+        // Verificar si las imágenes se cargaron correctamente
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarLogo = document.getElementById('sidebarLogo');
+            const mobileLogo = document.getElementById('mobileLogo');
+            
+            if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
+                handleLogoError();
+            }
+            
+            if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
+                handleMobileLogoError();
+            }
+            
+            setTimeout(function() {
+                if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
+                    handleLogoError();
+                }
+                if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
+                    handleMobileLogoError();
+                }
+            }, 1000);
+
+            // ============ ANIMACIONES DE ENTRADA ============
+            const cards = document.querySelectorAll('.card, .stat-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // ============ FILTROS EN TIEMPO REAL ============
+            const filtros = ['fecha-desde', 'fecha-hasta', 'estado', 'cliente', 'vendedor', 'busqueda'];
+            
+            filtros.forEach(filtroId => {
+                const elemento = document.getElementById(filtroId);
+                if (elemento) {
+                    elemento.addEventListener('change', filtrarVentas);
+                    elemento.addEventListener('input', filtrarVentas);
+                }
+            });
+        });
+
+        // ============ FUNCIONES DEL SIDEBAR ============
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // ============ FUNCIONES DE VENTAS ============
+        function toggleDetalle(facturaId) {
+            const detalle = document.getElementById('detalle-' + facturaId);
+            if (detalle.style.display === 'none' || detalle.style.display === '') {
+                detalle.style.display = 'table-row';
+                mostrarAlerta('Mostrando detalle de la factura ' + facturaId, 'info');
+            } else {
+                detalle.style.display = 'none';
+            }
+        }
+
+        function verDetalle(facturaId) {
+            mostrarAlerta('Abriendo vista detallada de la factura ' + facturaId, 'info');
+        }
+
+        function imprimirFactura(facturaId) {
+            mostrarAlerta('Generando factura para impresión: ' + facturaId, 'success');
+        }
+
+        function gestionarCobro(facturaId) {
+            mostrarAlerta('Abriendo gestión de cobro para factura: ' + facturaId, 'warning');
+        }
+
+        function verCancelacion(facturaId) {
+            mostrarAlerta('Mostrando detalles de cancelación: ' + facturaId, 'danger');
+        }
+
+        // ============ FUNCIÓN PARA CAMBIAR PÁGINA ============
+        function cambiarPagina(pagina) {
+            const botones = document.querySelectorAll('.pagination button');
+            botones.forEach(btn => btn.classList.remove('active'));
+            
+            if (typeof pagina === 'number' && pagina > 0) {
+                const botonActivo = document.querySelector(`.pagination button:nth-child(${pagina + 1})`);
+                if (botonActivo) {
+                    botonActivo.classList.add('active');
+                }
+            }
+            
+            mostrarAlerta('Cargando página ' + pagina, 'info');
+            console.log('Cargando página:', pagina);
+        }
+
+        // ============ FILTROS DE VENTAS ============
+        function filtrarVentas() {
+            const busqueda = document.getElementById('busqueda').value.toLowerCase();
+            const estado = document.getElementById('estado').value;
+            const cliente = document.getElementById('cliente').value;
+            const vendedor = document.getElementById('vendedor').value;
+            const fechaDesde = document.getElementById('fecha-desde').value;
+            const fechaHasta = document.getElementById('fecha-hasta').value;
+            
+            const filas = document.querySelectorAll('#ventas-table tr:not(.venta-detail)');
+            let ventasMostradas = 0;
+            
+            filas.forEach(fila => {
+                const texto = fila.textContent.toLowerCase();
+                let mostrar = true;
+                
+                // Filtro de búsqueda
+                if (busqueda && !texto.includes(busqueda)) {
+                    mostrar = false;
+                }
+                
+                // Filtro de estado
+                if (estado !== 'todos') {
+                    const badgeEstado = fila.querySelector('.badge');
+                    if (badgeEstado && !badgeEstado.textContent.toLowerCase().includes(estado)) {
+                        mostrar = false;
+                    }
+                }
+                
+                // Filtro de cliente
+                if (cliente !== 'todos') {
+                    const clienteTexto = fila.cells[2].textContent.toLowerCase();
+                    const clienteMap = {
+                        'dr-mendoza': 'carlos mendoza',
+                        'dra-garcia': 'ana garcía',
+                        'clinica-norte': 'clínica dental norte',
+                        'hospital-san-juan': 'hospital san juan'
+                    };
+                    if (!clienteTexto.includes(clienteMap[cliente] || cliente)) {
+                        mostrar = false;
+                    }
+                }
+                
+                // Filtro de vendedor
+                if (vendedor !== 'todos') {
+                    const vendedorTexto = fila.cells[3].textContent.toLowerCase();
+                    const vendedorMap = {
+                        'juan-perez': 'juan pérez',
+                        'maria-lopez': 'maría lópez',
+                        'carlos-ruiz': 'carlos ruiz'
+                    };
+                    if (!vendedorTexto.includes(vendedorMap[vendedor] || vendedor)) {
+                        mostrar = false;
+                    }
+                }
+                
+                fila.style.display = mostrar ? '' : 'none';
+                
+                if (mostrar) {
+                    ventasMostradas++;
+                }
+                
+                // Ocultar detalle si se oculta la fila principal
+                if (!mostrar) {
+                    const facturaId = fila.cells[0].textContent.trim();
+                    const detalle = document.getElementById('detalle-' + facturaId);
+                    if (detalle) {
+                        detalle.style.display = 'none';
+                    }
+                }
+            });
+            
+            // Mostrar mensaje si no hay resultados
+            if (ventasMostradas === 0 && (busqueda || estado !== 'todos' || cliente !== 'todos' || vendedor !== 'todos')) {
+                mostrarAlerta('No se encontraron ventas que coincidan con los filtros aplicados', 'warning');
+            }
+        }
+
+        // ============ FUNCIÓN PARA MOSTRAR ALERTAS ============
+        function mostrarAlerta(mensaje, tipo) {
+            const alerta = document.createElement('div');
+            alerta.className = `alert alert-${tipo}`;
+            alerta.innerHTML = `<strong>${tipo === 'success' ? 'Éxito!' : tipo === 'warning' ? 'Advertencia:' : tipo === 'danger' ? 'Crítico:' : 'Info:'}</strong> ${mensaje}`;
+            alerta.style.position = 'fixed';
+            alerta.style.top = '20px';
+            alerta.style.right = '20px';
+            alerta.style.zIndex = '1000';
+            alerta.style.minWidth = '300px';
+            alerta.style.boxShadow = 'var(--shadow-lg)';
+            alerta.style.padding = 'var(--space-lg)';
+            alerta.style.borderRadius = 'var(--radius-lg)';
+            alerta.style.background = 'rgba(255, 255, 255, 0.95)';
+            alerta.style.backdropFilter = 'blur(10px)';
+            alerta.style.border = '1px solid rgba(255, 255, 255, 0.3)';
+            
+            // Agregar colores según el tipo
+            if (tipo === 'success') {
+                alerta.style.borderLeft = '4px solid var(--success)';
+                alerta.style.color = 'var(--success)';
+            } else if (tipo === 'warning') {
+                alerta.style.borderLeft = '4px solid var(--warning)';
+                alerta.style.color = '#D97706';
+            } else if (tipo === 'danger') {
+                alerta.style.borderLeft = '4px solid var(--danger)';
+                alerta.style.color = 'var(--danger)';
+            } else {
+                alerta.style.borderLeft = '4px solid var(--info)';
+                alerta.style.color = 'var(--info)';
+            }
+            
+            document.body.appendChild(alerta);
+            
+            setTimeout(() => {
+                alerta.style.opacity = '0';
+                alerta.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    alerta.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // ============ FUNCIONES DE EXPORTACIÓN ============
+        function exportarExcel() {
+            mostrarAlerta('Generando archivo Excel con el historial de ventas...', 'info');
+            setTimeout(() => {
+                mostrarAlerta('Archivo Excel generado exitosamente', 'success');
+            }, 2000);
+        }
+
+        function generarReporte() {
+            mostrarAlerta('Creando reporte detallado de ventas...', 'info');
+            setTimeout(() => {
+                mostrarAlerta('Reporte de ventas generado correctamente', 'success');
+            }, 3000);
+        }
+
+        function nuevaVenta() {
+            mostrarAlerta('Redirigiendo a nueva venta...', 'info');
+            setTimeout(() => {
+                window.location.href = 'nuevaventa.html';
+            }, 1000);
+        }
+
+        // ============ ACTUALIZACIÓN DE ESTADÍSTICAS ============
+        function actualizarEstadisticas() {
+            const stats = [
+                { selector: '.stat-card:nth-child(1) .stat-number', min: 1200, max: 1300, prefix: '', suffix: '' },
+                { selector: '.stat-card:nth-child(2) .stat-number', min: 320000, max: 370000, prefix: 'Bs. ', suffix: '' },
+                { selector: '.stat-card:nth-child(3) .stat-number', min: 80, max: 95, prefix: '', suffix: '' },
+                { selector: '.stat-card:nth-child(4) .stat-number', min: 25000, max: 32000, prefix: 'Bs. ', suffix: '' },
+                { selector: '.stat-card:nth-child(5) .stat-number', min: 10, max: 20, prefix: '', suffix: '' }
+            ];
+
+            stats.forEach(stat => {
+                const elemento = document.querySelector(stat.selector);
+                if (elemento) {
+                    const nuevoValor = Math.floor(Math.random() * (stat.max - stat.min + 1)) + stat.min;
+                    const valorFormateado = stat.prefix + nuevoValor.toLocaleString() + stat.suffix;
+                    
+                    elemento.style.transform = 'scale(1.1)';
+                    elemento.style.transition = 'transform 0.3s ease';
+                    
+                    setTimeout(() => {
+                        elemento.textContent = valorFormateado;
+                        elemento.style.transform = 'scale(1)';
+                    }, 150);
+                }
+            });
+        }
+
+        // ============ NAVEGACIÓN ============
+        function irADashboard() {
+            mostrarAlerta('Redirigiendo al dashboard...', 'info');
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
+        }
+
+        function irAProductos() {
+            mostrarAlerta('Abriendo gestión de productos...', 'info');
+            setTimeout(() => {
+                window.location.href = 'agregarproducto.html';
+            }, 1000);
+        }
+
+        function irAInventario() {
+            mostrarAlerta('Accediendo al inventario...', 'info');
+            setTimeout(() => {
+                window.location.href = 'inventario.html';
+            }, 1000);
+        }
+
+        function irAReportes() {
+            mostrarAlerta('Abriendo módulo de reportes...', 'info');
+            setTimeout(() => {
+                window.location.href = 'reportesventa.html';
+            }, 1000);
+        }
+
+        // ============ EVENTOS DE BOTONES ============
+        document.addEventListener('click', function(e) {
+            if (e.target.textContent.includes('Exportar Excel')) {
+                e.preventDefault();
+                exportarExcel();
+            }
+            if (e.target.textContent.includes('Generar Reporte')) {
+                e.preventDefault();
+                generarReporte();
+            }
+            if (e.target.textContent.includes('Nueva Venta')) {
+                e.preventDefault();
+                nuevaVenta();
+            }
+        });
+
+        // Actualizar estadísticas cada 2 minutos
+        setInterval(actualizarEstadisticas, 120000);
+
+        // ============ FUNCIONALIDAD AVANZADA ============
+        function buscarVentaAvanzada() {
+            const busqueda = document.getElementById('busqueda').value;
+            if (busqueda.length > 2) {
+                mostrarAlerta(`Buscando ventas relacionadas con: "${busqueda}"`, 'info');
+                filtrarVentas();
+            }
+        }
+
+        // Buscar mientras se escribe (debounced)
+        let timeoutBusqueda;
+        document.getElementById('busqueda').addEventListener('input', function() {
+            clearTimeout(timeoutBusqueda);
+            timeoutBusqueda = setTimeout(buscarVentaAvanzada, 500);
+        });
+
+        // ============ MANEJO DE ERRORES ============
+        window.addEventListener('error', function(e) {
+            console.error('Error en Historial de Ventas:', e.error);
+            mostrarAlerta('Se detectó un error. Por favor recarga la página.', 'danger');
+        });
+
+        console.log('Sistema de Historial de Ventas - Roy Representaciones iniciado');
+        console.log('Funcionalidades: Filtros avanzados, exportación, reportes, gestión de cobros');
+    </script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Iniciar Sesión - Mundo Medico Y RoyDent</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+    :root {
+        /* Colores principales - Tema Dorado y Verde VIBRANTES */
+        --color-gold: #D4AF37;
+        --color-gold-light: #f6e06f;
+        --color-gold-dark: #B8860B;
+        --color-green: #2E8B57;
+        --color-green-light: #98FB98;
+        --color-green-dark: #1A5D34;
+        --text-dark: #2D3748;
+        --text-gray: #718096;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #FFFACD, #F0FFF0, #FFFAF0);
+        min-height: 100vh;
+        color: var(--text-dark);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    /* Efecto de vidrio con bordes animados */
+    .glass-card {
+        position: relative;
+        border-radius: 20px;
+        padding: 2.5rem;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+        z-index: 2;
+        width: 100%;
+        max-width: 450px;
+    }
+
+    /* Borde animado */
+    .glass-card::before {
+        content: "";
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        background: linear-gradient(45deg, 
+            var(--color-gold), 
+            var(--color-green), 
+            var(--color-gold-light),
+            var(--color-gold));
+        background-size: 300% 300%;
+        border-radius: 22px;
+        animation: gradientMove 4s ease infinite;
+        z-index: -1;
+    }
+
+    /* Fondo interior para el efecto de vidrio */
+    .glass-card::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        right: 2px;
+        bottom: 2px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 18px;
+        z-index: -1;
+    }
+
+    @keyframes gradientMove {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .card-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .form-input {
+        @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 transition duration-200 ease-in-out;
+        background: rgba(255, 255, 255, 0.8);
+    }
+    .form-input:focus {
+        border-color: var(--color-green);
+        box-shadow: 0 0 0 3px rgba(0, 200, 81, 0.3);
+    }
+
+    .btn-primary {
+        background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+        @apply w-full text-white py-3 px-4 rounded-lg font-bold shadow-lg transition duration-300;
+        box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    }
+    .btn-primary:hover {
+        background: linear-gradient(90deg, var(--color-green), var(--color-gold));
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(255, 215, 0, 0.6);
+    }
+
+    .link {
+        color: var(--color-green);
+        transition: all 0.3s;
+        font-weight: 500;
+    }
+    .link:hover {
+        color: var(--color-gold);
+        text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+    }
+
+    .custom-image {
+        @apply w-32 h-32 mx-auto rounded-full shadow-lg object-cover;
+        box-shadow: 0 8px 32px rgba(255, 215, 0, 0.4);
+    }
+
+    .logo-default {
+        @apply w-32 h-32 mx-auto rounded-full flex items-center justify-center shadow-lg;
+        background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    }
+
+    /* Elementos decorativos de fondo */
+    .bg-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: 0.25;
+        z-index: 0;
+    }
+    
+    .blob-1 {
+        width: 400px;
+        height: 400px;
+        background: var(--color-gold);
+        top: -100px;
+        left: -100px;
+    }
+    
+    .blob-2 {
+        width: 500px;
+        height: 500px;
+        background: var(--color-green);
+        bottom: -150px;
+        right: -150px;
+    }
+    
+    .blob-3 {
+        width: 300px;
+        height: 300px;
+        background: var(--color-gold-light);
+        top: 50%;
+        left: 70%;
+    }
+    
+    .password-container {
+        position: relative;
+    }
+    
+    .toggle-password {
+        position: absolute;
+        right: 12px;
+        top: 70%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: var(--color-gold-dark);
+    }
+    
+    .toggle-password:hover {
+        color: var(--color-green);
+    }
+    
+    .error-message {
+        color: #e53e3e;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: none;
+    }
+</style>
+</head>
+<body>
+    <!-- Elementos decorativos de fondo -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+    
+    <div class="glass-card mx-4">
+        <div class="card-content space-y-6">
+            <div class="text-center">
+                <!-- Imagen integrada desde código -->
+                <!-- IMPORTANTE: Cambia la ruta de la imagen según donde esté ubicada -->
+                <img src="assets/images/Roydent.png" alt="Logo de Mundo Medico y RoyDent" class="custom-image mb-4" id="customLogo" onerror="handleImageError()">
+                
+                <!-- Logo por defecto (oculto inicialmente) -->
+                <div class="logo-default" id="defaultLogo" style="display: none;">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+                    </svg>
+                </div>
+                
+                <h2 class="text-3xl font-bold text-[var(--text-dark)] mt-4">Iniciar Sesión</h2>
+                <p class="mt-2 text-[var(--text-gray)]">
+                    Bienvenido de nuevo a <span class="font-semibold" style="color: var(--color-green);">RoyDent</span>
+                </p>
+            </div>
+
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-[var(--text-gray)] mb-2">Nombre de usuario</label>
+                    <input id="username" name="username" type="text" required placeholder="anacrisitincadteorondega@gmail.com" class="form-input"/>
+                </div>
+                <div class="password-container">
+                    <label for="password" class="block text-sm font-medium text-[var(--text-gray)] mb-2">Contraseña</label>
+                    <input id="password" name="password" type="password" required placeholder="··············" class="form-input"/>
+                    <i class="toggle-password fas fa-eye" id="togglePassword"></i>
+                </div>
+
+                <div class="flex items-center justify-end">
+                    <a href="cambiocontrasena.html" class="link text-sm">¿Olvidó su contraseña?</a>
+                </div>
+
+                <button type="submit" class="btn-primary">Ingresar</button>
+                
+                <div class="error-message text-center" id="errorMessage"></div>
+            </form>
+
+            <p class="text-center text-sm text-[var(--text-gray)]">
+                ¿No tienes una cuenta?
+                <a href="/registro/" class="link font-semibold">Regístrate</a>
+            </p>
+        </div>
+    </div>
+   <script>
+        function handleImageError() {
+            document.getElementById('customLogo').style.display = 'none';
+            document.getElementById('defaultLogo').style.display = 'flex';
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const customImage = document.getElementById('customLogo');
+            
+            if (customImage && (customImage.complete && customImage.naturalHeight === 0)) {
+                handleImageError();
+            }
+            
+            setTimeout(function() {
+                if (customImage && (customImage.complete && customImage.naturalHeight === 0)) {
+                    handleImageError();
+                }
+            }, 1000);
+            
+            // Funcionalidad para mostrar/ocultar contraseña
+            const togglePassword = document.getElementById('togglePassword');
+            const password = document.getElementById('password');
+            
+            togglePassword.addEventListener('click', function() {
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+
+            // Validaciones en tiempo real para login
+            setupValidacionesLogin();
+            
+            // Manejar el envío del formulario
+            const loginForm = document.getElementById('loginForm');
+            
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+                
+                if (!validarFormularioLogin(username, password)) {
+                    return;
+                }
+
+                try {
+                    mostrarCargando(true);
+                    
+                    const response = await fetch('/auth/api/login/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            nombre_usuario: username,
+                            password: password
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        mostrarExito('Login exitoso. Redirigiendo...');
+                        
+                        localStorage.setItem('access_token', data.access);
+                        localStorage.setItem('refresh_token', data.refresh);
+                        localStorage.setItem('usuario_info', JSON.stringify(data.usuario));
+                        
+                        const roles = data.usuario.roles;
+                        if (roles && roles.length > 0) {
+                            const primerRol = roles[0].nombre;
+                            
+                            switch (primerRol) {
+                                case 'ADMINISTRADOR':
+                                    window.location.href = '/admin/';
+                                    break;
+                                case 'VENDEDOR_ROYDENT':
+                                    window.location.href = '/dashboard/roydent/';
+                                    break;
+                                case 'VENDEDOR_MUNDO_MEDICO':
+                                    window.location.href = '/dashboard/mundo-medico/';
+                                    break;
+                                case 'CLIENTE':
+                                    window.location.href = '/catalogo/';
+                                    break;
+                                default:
+                                    window.location.href = '/dashboard/';
+                            }
+                        } else {
+                            window.location.href = '/dashboard/';
+                        }
+                        
+                    } else {
+                        mostrarError(data.error || 'Credenciales inválidas');
+                    }
+                } catch (error) {
+                    mostrarError('Error de conexión. Verifica tu internet e inténtalo de nuevo.');
+                    console.error('Error:', error);
+                } finally {
+                    mostrarCargando(false);
+                }
+            });
+        });
+
+        function setupValidacionesLogin() {
+            document.getElementById('username').addEventListener('blur', function() {
+                validarCampoUsuario(this.value);
+            });
+
+            document.getElementById('password').addEventListener('blur', function() {
+                validarCampoPassword(this.value);
+            });
+
+            document.getElementById('username').addEventListener('input', function() {
+                limpiarErrorCampo('username');
+            });
+
+            document.getElementById('password').addEventListener('input', function() {
+                limpiarErrorCampo('password');
+            });
+        }
+
+        function validarCampoUsuario(valor) {
+            if (!valor || valor.trim().length < 3) {
+                mostrarErrorEnCampo('username', 'El nombre de usuario debe tener al menos 3 caracteres');
+                return false;
+            }
+            
+            mostrarExitoEnCampo('username');
+            return true;
+        }
+
+        function validarCampoPassword(valor) {
+            if (!valor || valor.length < 6) {
+                mostrarErrorEnCampo('password', 'La contraseña debe tener al menos 6 caracteres');
+                return false;
+            }
+            
+            mostrarExitoEnCampo('password');
+            return true;
+        }
+
+        function validarFormularioLogin(username, password) {
+            let esValido = true;
+            
+            if (!validarCampoUsuario(username)) {
+                esValido = false;
+            }
+            
+            if (!validarCampoPassword(password)) {
+                esValido = false;
+            }
+            
+            if (!esValido) {
+                mostrarError('Por favor completa correctamente todos los campos');
+            }
+            
+            return esValido;
+        }
+
+        function mostrarErrorEnCampo(campoId, mensaje) {
+            const campo = document.getElementById(campoId);
+            campo.style.borderColor = '#e53e3e';
+            campo.style.boxShadow = '0 0 0 3px rgba(229, 62, 62, 0.3)';
+            
+            const errorDiv = document.getElementById('errorMessage');
+            if (errorDiv) {
+                errorDiv.textContent = mensaje;
+                errorDiv.style.display = 'block';
+                errorDiv.style.color = '#e53e3e';
+            }
+        }
+
+        function mostrarExitoEnCampo(campoId) {
+            const campo = document.getElementById(campoId);
+            campo.style.borderColor = '#10B981';
+            campo.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.3)';
+        }
+
+        function limpiarErrorCampo(campoId) {
+            const campo = document.getElementById(campoId);
+            campo.style.borderColor = '';
+            campo.style.boxShadow = '';
+            
+            const errorDiv = document.getElementById('errorMessage');
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+        }
+
+        function mostrarCargando(mostrar) {
+            const submitBtn = document.querySelector('button[type="submit"]');
+            if (mostrar) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Ingresando...';
+                submitBtn.style.opacity = '0.7';
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Ingresar';
+                submitBtn.style.opacity = '1';
+            }
+        }
+
+        function mostrarError(mensaje) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = mensaje;
+            errorDiv.style.display = 'block';
+            errorDiv.style.color = '#e53e3e';
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function mostrarExito(mensaje) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = mensaje;
+            errorDiv.style.display = 'block';
+            errorDiv.style.color = '#10B981';
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

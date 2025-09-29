@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Nueva Venta - Sistema Roy Representaciones</title>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <style>
+:root {
+    /* Colores principales - Tema Dorado y Verde VIBRANTES */
+    --color-gold: #D4AF37;
+    --color-gold-light: #f6e06f;
+    --color-gold-dark: #B8860B;
+    --color-green: #2E8B57;
+    --color-green-light: #98FB98;
+    --color-green-dark: #1A5D34;
+    --text-dark: #2D3748;
+    --text-gray: #718096;
+    --text-light: #A0AEC0;
+    --text-muted: #9CA3AF;
+    
+    /* Colores de fondo */
+    --bg-primary: rgba(255, 255, 255, 0.85);
+    --bg-secondary: rgba(255, 250, 205, 0.7);
+    --bg-tertiary: rgba(240, 255, 240, 0.5);
+    
+    /* Estados */
+    --success: #00C851;
+    --warning: #FFD700;
+    --danger: #EF4444;
+    --info: #00C851;
+    
+    /* Sombras */
+    --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+    
+    /* Radios */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    
+    /* Espaciado */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #FFFACD, #F0FFF0, #FFFAF0);
+    min-height: 100vh;
+    color: var(--text-dark);
+    line-height: 1.6;
+    font-size: 16px;
+    background-attachment: fixed;
+    font-weight: 400;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Elementos decorativos de fondo */
+.bg-blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.25;
+    z-index: -1;
+}
+
+.blob-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--color-gold);
+    top: -100px;
+    left: -100px;
+}
+
+.blob-2 {
+    width: 500px;
+    height: 500px;
+    background: var(--color-green);
+    bottom: -150px;
+    right: -150px;
+}
+
+.blob-3 {
+    width: 300px;
+    height: 300px;
+    background: var(--color-gold-light);
+    top: 50%;
+    left: 70%;
+}
+
+/* ============ SIDEBAR MODERNO ============ */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-right: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    padding: var(--space-xl);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.sidebar-header::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: 0 0 22px 0;
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+}
+
+.sidebar-header::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 0 0 18px 0;
+    z-index: -1;
+}
+
+.sidebar-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    margin-bottom: var(--space-md);
+    width: 100%;
+}
+
+.sidebar-logo-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: var(--space-md);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    border-radius: 50%;
+}
+
+.logo-default {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-md);
+    color: white;
+    font-weight: 900;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.sidebar-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-green-dark);
+    letter-spacing: -0.01em;
+}
+
+.sidebar-subtitle {
+    font-size: 0.75rem;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: var(--space-xs);
+}
+
+.sidebar-nav {
+    padding: var(--space-md);
+}
+
+.nav-section {
+    margin-bottom: var(--space-xl);
+}
+
+.nav-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-md);
+    padding: 0 var(--space-md);
+}
+
+.nav-item {
+    margin-bottom: var(--space-xs);
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: var(--space-md);
+    color: var(--text-gray);
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.875rem;
+    gap: var(--space-sm);
+    background: rgba(255, 250, 205, 0.5);
+}
+
+.nav-link:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: var(--color-green-dark);
+    transform: translateX(4px);
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: var(--color-gold);
+}
+
+.nav-link.active .nav-icon {
+    color: white;
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* ============ MAIN CONTENT ============ */
+.main-content {
+    margin-left: 280px;
+    min-height: 100vh;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: var(--space-xl);
+}
+
+/* ============ NAVEGACIÓN MÓVIL ============ */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    z-index: 1001;
+    padding: var(--space-md);
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mobile-menu-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-green-dark);
+}
+
+.mobile-logo {
+    height: 40px;
+    object-fit: contain;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+/* ============ CONTENIDO ============ */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.section {
+    margin-bottom: var(--space-2xl);
+}
+
+.grid {
+    display: grid;
+    gap: var(--space-2xl);
+}
+
+.grid-2 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* ============ CARDS CON EFECTOS DE LUZ ============ */
+.card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: calc(var(--radius-xl) + 3px);
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+}
+
+.card::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: calc(var(--radius-xl) - 2px);
+    z-index: -1;
+}
+
+.card-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* ============ TIPOGRAFÍA MODERNA ============ */
+.text-display {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    margin-bottom: var(--space-lg);
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+}
+
+.text-h1 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--color-green-dark);
+    margin-bottom: var(--space-lg);
+    letter-spacing: -0.02em;
+}
+
+.text-h2 {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-green-dark);
+    margin-bottom: var(--space-md);
+    letter-spacing: -0.01em;
+}
+
+.text-h3 {
+    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-gold-dark);
+    margin-bottom: var(--space-md);
+}
+
+.text-body {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--text-gray);
+    margin-bottom: var(--space-md);
+    text-align: center;
+}
+
+/* ============ FORMULARIOS ============ */
+.form-group {
+    margin-bottom: var(--space-xl);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.form-input {
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-dark);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+    backdrop-filter: blur(10px);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-green);
+    box-shadow: 0 0 0 4px rgba(0, 200, 81, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    transform: scale(1.01);
+}
+
+.form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23DAA520' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 1rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25rem;
+    padding-right: 3rem;
+    appearance: none;
+}
+
+.text-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-xs);
+    display: block;
+}
+
+/* ============ BOTONES ============ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    letter-spacing: 0.025em;
+    position: relative;
+    overflow: hidden;
+    margin: var(--space-xs);
+}
+
+.btn::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: calc(var(--radius-lg) + 3px);
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.btn:hover::before {
+    opacity: 1;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    position: relative;
+    z-index: 1;
+}
+
+.btn-primary::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+    border-radius: calc(var(--radius-lg) - 2px);
+    z-index: -1;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--color-green-dark);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    position: relative;
+    z-index: 1;
+}
+
+.btn-secondary::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: calc(var(--radius-lg) - 2px);
+    z-index: -1;
+}
+
+.btn-secondary:hover {
+    background: var(--color-green);
+    color: white;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success), #2E7D32);
+    color: white;
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--warning), #DAA520);
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger), #DC2626);
+    color: white;
+    box-shadow: var(--shadow-md);
+}
+
+/* ============ TABLA ============ */
+.table-container {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+th, td {
+    padding: var(--space-md);
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+th {
+    background: rgba(255, 215, 0, 0.2);
+    font-weight: 700;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+tr {
+    transition: all 0.3s ease;
+}
+
+tbody tr:hover {
+    background: rgba(0, 200, 81, 0.05);
+    transform: scale(1.01);
+}
+
+/* ============ BÚSQUEDA ============ */
+.search-container {
+    position: relative;
+    margin-bottom: var(--space-xl);
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-gold-dark);
+    font-size: 1.2rem;
+}
+
+.search-input {
+    padding-left: 3.5rem;
+    font-size: 1.1rem;
+}
+
+/* ============ RESUMEN DE VENTA ============ */
+.resumen-venta {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--text-dark);
+    padding: var(--space-xl);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    backdrop-filter: blur(12px);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    min-height: fit-content;
+    height: auto;
+}
+
+.resumen-venta h2 {
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--space-xl);
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.productos-container {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-xl);
+    min-height: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.productos-container h3 {
+    color: var(--color-gold-dark);
+    margin-bottom: var(--space-lg);
+    font-size: 1.125rem;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    background: rgba(255, 255, 255, 0.9);
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    z-index: 5;
+}
+
+.totales-container {
+    border-top: 2px solid rgba(255, 215, 0, 0.3);
+    padding-top: var(--space-xl);
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md);
+    font-size: 1rem;
+}
+
+.total-final {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-top: var(--space-lg);
+    padding-top: var(--space-lg);
+    border-top: 2px solid rgba(255, 215, 0, 0.3);
+    color: var(--color-green);
+}
+
+.descuento-input {
+    width: 80px;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    text-align: right;
+    background: white;
+    font-weight: 600;
+}
+
+.botones-accion {
+    margin-top: var(--space-2xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+/* ============ CLIENTE INFO STYLING ============ */
+.cliente-info {
+    background: linear-gradient(135deg, rgba(0, 200, 81, 0.05), rgba(255, 215, 0, 0.05));
+    border: 2px solid rgba(0, 200, 81, 0.2);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    margin-top: var(--space-xl);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-sm);
+}
+
+.cliente-info h3 {
+    color: var(--color-green);
+    margin-bottom: var(--space-lg);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.cliente-info p {
+    margin-bottom: var(--space-md);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.cliente-info p:last-child {
+    margin-bottom: 0;
+}
+
+/* ============ SECTION HEADERS ============ */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+}
+
+.section-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.producto-item {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.producto-item:hover {
+    background: rgba(0, 200, 81, 0.05);
+    transform: translateX(5px);
+}
+
+.cantidad-input {
+    width: 80px;
+    text-align: center;
+    margin: 0 var(--space-sm);
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+}
+
+/* ============ ALERTAS ============ */
+.alert {
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    margin: var(--space-lg) 0;
+    border-left: 4px solid;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(10px);
+}
+
+.alert-success {
+    background: rgba(0, 200, 81, 0.1);
+    border-left-color: var(--success);
+    color: #2E7D32;
+}
+
+.alert-warning {
+    background: rgba(255, 215, 0, 0.1);
+    border-left-color: var(--warning);
+    color: #8B7500;
+}
+
+.alert-info {
+    background: rgba(0, 200, 81, 0.1);
+    border-left-color: var(--info);
+    color: #2E7D32;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1200px) {
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+    
+    .resumen-venta {
+        order: -1;
+        margin-bottom: var(--space-xl);
+    }
+}
+
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: var(--space-lg);
+        padding-top: 80px;
+    }
+
+    .mobile-header {
+        display: flex;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0;
+    }
+    
+    .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+    }
+    
+    .card {
+        padding: var(--space-lg);
+    }
+
+    table {
+        min-width: 500px;
+    }
+    
+    th, td {
+        padding: var(--space-sm);
+        font-size: 0.875rem;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-sm);
+    }
+    
+    .btn {
+        width: 100%;
+        margin: var(--space-xs) 0;
+    }
+    
+    .botones-accion {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .main-content {
+        padding: var(--space-md);
+        padding-top: 70px;
+    }
+    
+    .card {
+        padding: var(--space-md);
+    }
+    
+    .text-display {
+        font-size: 2rem;
+    }
+    
+    .resumen-venta {
+        padding: var(--space-lg);
+    }
+    
+    .productos-container {
+        padding: var(--space-md);
+    }
+    
+    .producto-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-sm);
+    }
+    
+    .producto-item > div:last-child {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .search-input {
+        font-size: 1rem;
+        padding: 1rem 1rem 1rem 3rem;
+    }
+    
+    .search-icon {
+        left: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: var(--space-sm);
+        padding-top: 60px;
+    }
+    
+    .form-input {
+        padding: 1rem;
+    }
+    
+    .total-final {
+        font-size: 1.25rem;
+    }
+    
+    .descuento-input {
+        width: 60px;
+    }
+}
+
+/* Mejoras específicas para el resumen de venta */
+.sticky-resumen {
+    position: sticky;
+    top: 20px;
+}
+
+/* Mejora para la tabla en móviles */
+.table-scroll-container {
+    overflow-x: auto;
+    width: 100%;
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-xl);
+}
+    </style>
+</head>
+<body>
+    <!-- Elementos decorativos de fondo -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <!-- Logo desde la carpeta assets -->
+                <img src="assets/images/Roydent.png" alt="Logo de RoyDent" class="sidebar-logo-img" id="sidebarLogo" onerror="handleLogoError()">
+                <!-- Logo por defecto (oculto inicialmente) -->
+                <div class="logo-default" id="defaultLogo" style="display: none;">
+                    ROY
+                </div>
+                <div>
+                    <div class="sidebar-title">Sistema RoyDent</div>
+                    <div class="sidebar-subtitle">Y Mundo Medico</div>
+                </div>
+            </a>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-title">Principal</div>
+                <div class="nav-item">
+                    <a href="panel-admin.html" class="nav-link">
+                        <div class="nav-icon">🏠</div>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📊</div>
+                        Analíticas
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Productos</div>
+                <div class="nav-item">
+                    <a href="agregarproducto.html" class="nav-link">
+                        <div class="nav-icon">➕</div>
+                        Agregar Producto
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📦</div>
+                        Lista de Productos
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestioncategorias.html" class="nav-link">
+                        <div class="nav-icon">🏷️</div>
+                        Categorías
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">🔄</div>
+                        Control FIFO
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Inventario</div>
+                <div class="nav-item">
+                    <a href="inventario.html" class="nav-link">
+                        <div class="nav-icon">📋</div>
+                        Inventario General
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">⚠️</div>
+                        Stock Bajo
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📍</div>
+                        Ubicaciones
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestionproveedores.html" class="nav-link">
+                        <div class="nav-icon">👨‍💼</div>
+                        Proveedores
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Ventas</div>
+                <div class="nav-item">
+                    <a href="nuevaventa.html" class="nav-link active">
+                        <div class="nav-icon">🛒</div>
+                        Nueva Venta
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="historialventa.html" class="nav-link">
+                        <div class="nav-icon">💰</div>
+                        Historial Ventas
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestionclientes.html" class="nav-link">
+                        <div class="nav-icon">👥</div>
+                        Clientes
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Reportes</div>
+                <div class="nav-item">
+                    <a href="reportesventa.html" class="nav-link">
+                        <div class="nav-icon">📈</div>
+                        Reportes de Ventas
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📉</div>
+                        Análisis de Inventario
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">💼</div>
+                        Reportes Financieros
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Configuración</div>
+                <div class="nav-item">
+                    <a href="configuracion.html" class="nav-link">
+                        <div class="nav-icon">⚙️</div>
+                        Configuración
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="perfilusuario.html" class="nav-link">
+                        <div class="nav-icon">👤</div>
+                        Perfil
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestionusuario.html" class="nav-link">
+                        <div class="nav-icon">👥</div>
+                        Usuarios
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="backups.html" class="nav-link">
+                        <div class="nav-icon">💾</div>
+                        Backup
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Mobile Header -->
+    <header class="mobile-header" id="mobile-header">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+        <img src="assets/images/Roydent.png" alt="Logo de RoyDent" class="mobile-logo" id="mobileLogo" onerror="handleMobileLogoError()">
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="section">
+                <div class="card">
+                    <div class="card-content">
+                        <h1 class="text-display">Nueva Venta</h1>
+                        <p class="text-body">Registra una nueva venta con control automático de inventario FIFO</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-2" style="align-items: start;">
+                <!-- Resumen de Venta (ahora primero en móviles) -->
+                <div class="sticky-resumen">
+                    <div class="card resumen-venta">
+                        <h2>Resumen de Venta</h2>
+                        
+                        <div class="productos-container">
+                            <h3>Productos Seleccionados</h3>
+                            <div id="productos-venta">
+                                <p style="color: var(--text-gray); text-align: center; padding: var(--space-xl);">
+                                    No hay productos seleccionados
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="totales-container">
+                            <div class="total-row">
+                                <span>Subtotal:</span>
+                                <span id="subtotal" style="font-weight: 600;">Bs. 0.00</span>
+                            </div>
+                            <div class="total-row">
+                                <span>Descuento:</span>
+                                <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                    <input type="number" id="descuento" value="0" min="0" max="100" class="descuento-input" onchange="calcularTotal()">
+                                    <span>%</span>
+                                </div>
+                            </div>
+                            <div class="total-final">
+                                <span>TOTAL:</span>
+                                <span id="total">Bs. 0.00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="botones-accion">
+                            <button class="btn btn-success" style="width: 100%; font-size: 1.1rem; padding: 1.25rem;" onclick="procesarVenta()">
+                                💳 Procesar Venta
+                            </button>
+                            <button class="btn btn-secondary" style="width: 100%;" onclick="limpiarVenta()">
+                                🗑️ Limpiar Todo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de Venta -->
+                <div style="display: flex; flex-direction: column; gap: var(--space-2xl);">
+                    <!-- Información del Cliente -->
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="section-header">
+                                <div class="section-icon">👤</div>
+                                <h2 class="text-h2" style="margin-bottom: 0;">Información del Cliente</h2>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="text-label">Cliente</label>
+                                    <select class="form-input form-select" id="cliente">
+                                        <option value="">Seleccionar cliente...</option>
+                                        <option value="nuevo">➕ Nuevo Cliente</option>
+                                        <option value="1">Dr. Carlos Mendoza - CI: 12345678</option>
+                                        <option value="2">Dra. Ana García - CI: 87654321</option>
+                                        <option value="3">Clínica Dental Norte - NIT: 123456789</option>
+                                        <option value="4">Hospital San Juan - NIT: 987654321</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="text-label">Tipo de Venta</label>
+                                    <select class="form-input form-select" id="tipo-venta">
+                                        <option value="contado">Al Contado</option>
+                                        <option value="qr">Pago QR</option>
+                                        <option value="transferencia">Transferencia Bancaria</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div id="cliente-info" class="cliente-info" style="display: none;">
+                                <h3>Datos del Cliente</h3>
+                                <p><strong>Nombre:</strong> <span id="cliente-nombre"></span></p>
+                                <p><strong>Documento:</strong> <span id="cliente-documento"></span></p>
+                                <p><strong>Teléfono:</strong> <span id="cliente-telefono"></span></p>
+                                <p><strong>Dirección:</strong> <span id="cliente-direccion"></span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Búsqueda y Selección de Productos -->
+                    <div class="card">
+                        <div class="card-content">
+                            <div class="section-header">
+                                <div class="section-icon">🛍️</div>
+                                <h2 class="text-h2" style="margin-bottom: 0;">Agregar Productos</h2>
+                            </div>
+                            
+                            <div class="search-container">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" class="form-input search-input" id="buscar-producto" placeholder="Buscar por código, nombre o marca...">
+                            </div>
+                            
+                            <div class="table-scroll-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Producto</th>
+                                            <th>Stock</th>
+                                            <th>Precio</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="productos-disponibles">
+                                        <tr>
+                                            <td><strong>ANE001</strong></td>
+                                            <td>Anestesia Lidocaína 2% x 50ml</td>
+                                            <td><span style="color: var(--success); font-weight: 600;">15 unidades</span></td>
+                                            <td><strong>Bs. 45.00</strong></td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" onclick="agregarProducto('ANE001', 'Anestesia Lidocaína 2% x 50ml', 45.00, 15)">➕ Agregar</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>GUA025</strong></td>
+                                            <td>Guantes Látex Talla M x 100</td>
+                                            <td><span style="color: var(--success); font-weight: 600;">250 pares</span></td>
+                                            <td><strong>Bs. 28.50</strong></td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" onclick="agregarProducto('GUA025', 'Guantes Látex Talla M x 100', 28.50, 250)">➕ Agregar</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SED089</strong></td>
+                                            <td>Seda Dental Fluorada x 50m</td>
+                                            <td><span style="color: var(--warning); font-weight: 600;">2 unidades</span></td>
+                                            <td><strong>Bs. 18.00</strong></td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" onclick="agregarProducto('SED089', 'Seda Dental Fluorada x 50m', 18.00, 2)">➕ Agregar</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>CAP156</strong></td>
+                                            <td>Cápsulas Amalgama x 50</td>
+                                            <td><span style="color: var(--success); font-weight: 600;">12 cajas</span></td>
+                                            <td><strong>Bs. 125.00</strong></td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" onclick="agregarProducto('CAP156', 'Cápsulas Amalgama x 50', 125.00, 12)">➕ Agregar</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>DEN789</strong></td>
+                                            <td>Pasta Dental Blanqueadora x 100g</td>
+                                            <td><span style="color: var(--success); font-weight: 600;">45 tubos</span></td>
+                                            <td><strong>Bs. 35.50</strong></td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" onclick="agregarProducto('DEN789', 'Pasta Dental Blanqueadora x 100g', 35.50, 45)">➕ Agregar</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>TUR123</strong></td>
+                                            <td>Turbina Dental Kavo</td>
+                                            <td><span style="color: var(--danger); font-weight: 600;">1 unidad</span></td>
+                                            <td><strong>Bs. 2,450.00</strong></td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" onclick="agregarProducto('TUR123', 'Turbina Dental Kavo', 2450.00, 1)">➕ Agregar</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ============ MANEJO DE LOGOS ============
+        function handleLogoError() {
+            document.getElementById('sidebarLogo').style.display = 'none';
+            document.getElementById('defaultLogo').style.display = 'flex';
+        }
+        
+        function handleMobileLogoError() {
+            const mobileLogo = document.getElementById('mobileLogo');
+            mobileLogo.src = '';
+            mobileLogo.alt = 'Sistema Roy';
+            mobileLogo.style.fontFamily = 'Inter, sans-serif';
+            mobileLogo.style.fontWeight = '700';
+            mobileLogo.style.fontSize = '1.2rem';
+            mobileLogo.style.color = 'var(--color-purple)';
+        }
+        
+        // Verificar si las imágenes se cargaron correctamente
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarLogo = document.getElementById('sidebarLogo');
+            const mobileLogo = document.getElementById('mobileLogo');
+            
+            if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
+                handleLogoError();
+            }
+            
+            if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
+                handleMobileLogoError();
+            }
+            
+            setTimeout(function() {
+                if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
+                    handleLogoError();
+                }
+                if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
+                    handleMobileLogoError();
+                }
+            }, 1000);
+
+            // ============ ANIMACIONES DE ENTRADA ============
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // ============ FUNCIONES DEL SIDEBAR ============
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // ============ VARIABLES GLOBALES ============
+        let productosVenta = [];
+        let subtotalVenta = 0;
+
+        // Datos de clientes de ejemplo
+        const clientes = {
+            '1': {
+                nombre: 'Dr. Carlos Mendoza',
+                documento: 'CI: 12345678',
+                telefono: '+591 70123456',
+                direccion: 'Av. Arce #1234, La Paz'
+            },
+            '2': {
+                nombre: 'Dra. Ana García',
+                documento: 'CI: 87654321',
+                telefono: '+591 77789456',
+                direccion: 'Calle Murillo #567, La Paz'
+            },
+            '3': {
+                nombre: 'Clínica Dental Norte',
+                documento: 'NIT: 123456789',
+                telefono: '+591 2-2345678',
+                direccion: 'Zona Norte, Calle 15 #890'
+            },
+            '4': {
+                nombre: 'Hospital San Juan',
+                documento: 'NIT: 987654321',
+                telefono: '+591 2-2876543',
+                direccion: 'Av. 6 de Agosto #2345'
+            }
+        };
+
+        // ============ GESTIÓN DE CLIENTES ============
+        document.getElementById('cliente').addEventListener('change', function() {
+            const clienteId = this.value;
+            const clienteInfo = document.getElementById('cliente-info');
+            
+            if (clienteId && clientes[clienteId]) {
+                const cliente = clientes[clienteId];
+                document.getElementById('cliente-nombre').textContent = cliente.nombre;
+                document.getElementById('cliente-documento').textContent = cliente.documento;
+                document.getElementById('cliente-telefono').textContent = cliente.telefono;
+                document.getElementById('cliente-direccion').textContent = cliente.direccion;
+                clienteInfo.style.display = 'block';
+                mostrarAlerta(`Cliente "${cliente.nombre}" seleccionado`, 'success');
+            } else if (clienteId === 'nuevo') {
+                mostrarAlerta('Funcionalidad de nuevo cliente próximamente', 'info');
+                clienteInfo.style.display = 'none';
+            } else {
+                clienteInfo.style.display = 'none';
+            }
+        });
+
+        // ============ GESTIÓN DE PRODUCTOS ============
+        function agregarProducto(codigo, nombre, precio, stock) {
+            const productoExistente = productosVenta.find(p => p.codigo === codigo);
+            
+            if (productoExistente) {
+                if (productoExistente.cantidad < stock) {
+                    productoExistente.cantidad++;
+                    productoExistente.total = productoExistente.cantidad * productoExistente.precio;
+                    mostrarAlerta(`Cantidad actualizada: ${productoExistente.cantidad} x ${nombre}`, 'info');
+                } else {
+                    mostrarAlerta('No hay suficiente stock disponible', 'warning');
+                    return;
+                }
+            } else {
+                productosVenta.push({
+                    codigo: codigo,
+                    nombre: nombre,
+                    precio: precio,
+                    cantidad: 1,
+                    stock: stock,
+                    total: precio
+                });
+                mostrarAlerta(`Producto agregado: ${nombre}`, 'success');
+            }
+            
+            actualizarResumenVenta();
+        }
+
+        function removerProducto(codigo) {
+            const producto = productosVenta.find(p => p.codigo === codigo);
+            if (producto) {
+                mostrarAlerta(`Producto removido: ${producto.nombre}`, 'warning');
+                productosVenta = productosVenta.filter(p => p.codigo !== codigo);
+                actualizarResumenVenta();
+            }
+        }
+
+        function actualizarCantidad(codigo, nuevaCantidad) {
+            const producto = productosVenta.find(p => p.codigo === codigo);
+            if (producto) {
+                if (nuevaCantidad <= producto.stock && nuevaCantidad > 0) {
+                    producto.cantidad = nuevaCantidad;
+                    producto.total = producto.cantidad * producto.precio;
+                    actualizarResumenVenta();
+                } else {
+                    mostrarAlerta('Cantidad no válida o insuficiente stock', 'warning');
+                    // Restaurar el valor anterior
+                    event.target.value = producto.cantidad;
+                }
+            }
+        }
+
+        // ============ ACTUALIZAR RESUMEN DE VENTA ============
+        function actualizarResumenVenta() {
+            const contenedor = document.getElementById('productos-venta');
+            
+            if (productosVenta.length === 0) {
+                contenedor.innerHTML = `
+                    <p style="color: var(--text-gray); text-align: center; padding: var(--space-lg);">
+                        No hay productos seleccionados
+                    </p>
+                `;
+            } else {
+                contenedor.innerHTML = productosVenta.map(producto => `
+                    <div class="producto-item" style="background: rgba(111, 66, 193, 0.08); color: var(--text-dark); border: 1px solid rgba(111, 66, 193, 0.2); display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                        <div>
+                            <div style="font-weight: 600; color: var(--text-dark);">${producto.nombre}</div>
+                            <div style="font-size: 0.875rem; color: var(--text-gray);">${producto.codigo}</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                            <input type="number" value="${producto.cantidad}" min="1" max="${producto.stock}" 
+                                   class="cantidad-input" style="background: white; color: var(--text-dark); border: 1px solid rgba(111, 66, 193, 0.3);"
+                                   onchange="actualizarCantidad('${producto.codigo}', parseInt(this.value))">
+                            <span style="font-weight: 600; color: var(--color-purple);">Bs. ${producto.total.toFixed(2)}</span>
+                            <button onclick="removerProducto('${producto.codigo}')" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: var(--radius-sm); padding: 0.25rem 0.5rem; cursor: pointer; transition: all 0.3s ease;">✕</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            calcularTotal();
+        }
+
+        // ============ CÁLCULOS FINANCIEROS ============
+        function calcularTotal() {
+            subtotalVenta = productosVenta.reduce((sum, producto) => sum + producto.total, 0);
+            const descuento = parseFloat(document.getElementById('descuento').value) || 0;
+            const total = subtotalVenta * (1 - descuento / 100);
+            
+            document.getElementById('subtotal').textContent = `Bs. ${subtotalVenta.toFixed(2)}`;
+            document.getElementById('total').textContent = `Bs. ${total.toFixed(2)}`;
+        }
+
+        // ============ PROCESAR VENTA ============
+        function procesarVenta() {
+            const clienteId = document.getElementById('cliente').value;
+            const tipoVenta = document.getElementById('tipo-venta').value;
+            
+            if (!clienteId) {
+                mostrarAlerta('Por favor selecciona un cliente', 'warning');
+                return;
+            }
+            
+            if (productosVenta.length === 0) {
+                mostrarAlerta('Por favor agrega al menos un producto', 'warning');
+                return;
+            }
+            
+            const descuento = parseFloat(document.getElementById('descuento').value) || 0;
+            const total = subtotalVenta * (1 - descuento / 100);
+            const cliente = clientes[clienteId];
+            
+            if (confirm(`¿Confirmar venta por Bs. ${total.toFixed(2)} a ${cliente ? cliente.nombre : 'cliente seleccionado'}?`)) {
+                // Simular procesamiento
+                mostrarAlerta('Procesando venta...', 'info');
+                
+                setTimeout(() => {
+                    const numeroFactura = 'VT-2024-' + String(Math.floor(Math.random() * 1000) + 1).padStart(3, '0');
+                    mostrarAlerta(`Venta procesada exitosamente! Factura ${numeroFactura} generada`, 'success');
+                    limpiarVenta();
+                }, 2000);
+            }
+        }
+
+        // ============ LIMPIAR VENTA ============
+        function limpiarVenta() {
+            productosVenta = [];
+            document.getElementById('cliente').value = '';
+            document.getElementById('cliente-info').style.display = 'none';
+            document.getElementById('descuento').value = '0';
+            actualizarResumenVenta();
+            mostrarAlerta('Venta limpiada correctamente', 'info');
+        }
+
+        // ============ BÚSQUEDA DE PRODUCTOS ============
+        document.getElementById('buscar-producto').addEventListener('input', function() {
+            const busqueda = this.value.toLowerCase();
+            const filas = document.querySelectorAll('#productos-disponibles tr');
+            
+            filas.forEach(fila => {
+                const texto = fila.textContent.toLowerCase();
+                fila.style.display = texto.includes(busqueda) ? '' : 'none';
+            });
+        });
+
+        // ============ FUNCIÓN PARA MOSTRAR ALERTAS ============
+        function mostrarAlerta(mensaje, tipo) {
+            const alerta = document.createElement('div');
+            alerta.className = `alert alert-${tipo}`;
+            alerta.innerHTML = `<strong>${tipo === 'success' ? 'Éxito!' : tipo === 'warning' ? 'Advertencia:' : tipo === 'danger' ? 'Error:' : 'Info:'}</strong> ${mensaje}`;
+            alerta.style.position = 'fixed';
+            alerta.style.top = '20px';
+            alerta.style.right = '20px';
+            alerta.style.zIndex = '1000';
+            alerta.style.minWidth = '300px';
+            alerta.style.boxShadow = 'var(--shadow-lg)';
+            alerta.style.padding = 'var(--space-lg)';
+            alerta.style.borderRadius = 'var(--radius-lg)';
+            alerta.style.background = 'rgba(255, 255, 255, 0.95)';
+            alerta.style.backdropFilter = 'blur(10px)';
+            alerta.style.border = '1px solid rgba(255, 255, 255, 0.3)';
+            
+            // Agregar colores según el tipo
+            if (tipo === 'success') {
+                alerta.style.borderLeft = '4px solid var(--success)';
+                alerta.style.color = '#047857';
+            } else if (tipo === 'warning') {
+                alerta.style.borderLeft = '4px solid var(--warning)';
+                alerta.style.color = '#92400E';
+            } else if (tipo === 'danger') {
+                alerta.style.borderLeft = '4px solid var(--danger)';
+                alerta.style.color = '#991B1B';
+            } else {
+                alerta.style.borderLeft = '4px solid var(--info)';
+                alerta.style.color = '#1E3A8A';
+            }
+            
+            document.body.appendChild(alerta);
+            
+            setTimeout(() => {
+                alerta.style.opacity = '0';
+                alerta.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    alerta.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // ============ NAVEGACIÓN ============
+        function irADashboard() {
+            mostrarAlerta('Redirigiendo al dashboard...', 'info');
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
+        }
+
+        function irAHistorialVentas() {
+            mostrarAlerta('Abriendo historial de ventas...', 'info');
+            setTimeout(() => {
+                window.location.href = 'historial-ventas.html';
+            }, 1000);
+        }
+
+        function irAProductos() {
+            mostrarAlerta('Abriendo gestión de productos...', 'info');
+            setTimeout(() => {
+                window.location.href = 'agregarproducto.html';
+            }, 1000);
+        }
+
+        function irAInventario() {
+            mostrarAlerta('Accediendo al inventario...', 'info');
+            setTimeout(() => {
+                window.location.href = 'inventario-fifo.html';
+            }, 1000);
+        }
+
+        // ============ ATAJOS DE TECLADO ============
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + Enter para procesar venta
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                procesarVenta();
+            }
+            
+            // Escape para limpiar venta
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                if (confirm('¿Deseas limpiar la venta actual?')) {
+                    limpiarVenta();
+                }
+            }
+            
+            // F1 para buscar producto
+            if (e.key === 'F1') {
+                e.preventDefault();
+                document.getElementById('buscar-producto').focus();
+            }
+        });
+
+        // ============ VALIDACIONES ADICIONALES ============
+        function validarFormulario() {
+            const cliente = document.getElementById('cliente').value;
+            const tipoVenta = document.getElementById('tipo-venta').value;
+            
+            if (!cliente) {
+                mostrarAlerta('Debe seleccionar un cliente para continuar', 'warning');
+                return false;
+            }
+            
+            if (productosVenta.length === 0) {
+                mostrarAlerta('Debe agregar al menos un producto', 'warning');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // ============ FORMATO DE NÚMEROS ============
+        function formatearMoneda(cantidad) {
+            return new Intl.NumberFormat('es-BO', {
+                style: 'currency',
+                currency: 'BOB',
+                minimumFractionDigits: 2
+            }).format(cantidad);
+        }
+
+        // ============ AUTO-GUARDADO TEMPORAL ============
+        function guardarTemporal() {
+            const datosVenta = {
+                cliente: document.getElementById('cliente').value,
+                tipoVenta: document.getElementById('tipo-venta').value,
+                productos: productosVenta,
+                descuento: document.getElementById('descuento').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            sessionStorage.setItem('ventaTemporal', JSON.stringify(datosVenta));
+        }
+
+        function cargarTemporal() {
+            const datos = sessionStorage.getItem('ventaTemporal');
+            if (datos) {
+                try {
+                    const datosVenta = JSON.parse(datos);
+                    
+                    // Verificar si los datos no son muy antiguos (1 hora)
+                    const timestamp = new Date(datosVenta.timestamp);
+                    const ahora = new Date();
+                    const diferencia = ahora - timestamp;
+                    
+                    if (diferencia < 3600000) { // 1 hora en milisegundos
+                        document.getElementById('cliente').value = datosVenta.cliente || '';
+                        document.getElementById('tipo-venta').value = datosVenta.tipoVenta || 'contado';
+                        productosVenta = datosVenta.productos || [];
+                        document.getElementById('descuento').value = datosVenta.descuento || '0';
+                        
+                        actualizarResumenVenta();
+                        mostrarAlerta('Se han restaurado los datos de la venta anterior', 'info');
+                    } else {
+                        sessionStorage.removeItem('ventaTemporal');
+                    }
+                } catch (error) {
+                    console.error('Error al cargar datos temporales:', error);
+                    sessionStorage.removeItem('ventaTemporal');
+                }
+            }
+        }
+
+        // Guardar automáticamente cada 30 segundos
+        setInterval(guardarTemporal, 30000);
+
+        // Cargar datos temporales al iniciar
+        setTimeout(cargarTemporal, 1000);
+
+        // ============ MANEJO DE ERRORES ============
+        window.addEventListener('error', function(e) {
+            console.error('Error en Nueva Venta:', e.error);
+            mostrarAlerta('Se detectó un error. Por favor recarga la página.', 'danger');
+        });
+
+        // ============ NOTIFICACIONES EN TIEMPO REAL ============
+        function verificarStockBajo() {
+            const productosStockBajo = productosVenta.filter(p => p.stock <= 5);
+            
+            if (productosStockBajo.length > 0) {
+                const productos = productosStockBajo.map(p => p.nombre).join(', ');
+                mostrarAlerta(`Alerta: Los siguientes productos tienen stock bajo: ${productos}`, 'warning');
+            }
+        }
+
+        // Verificar stock cada vez que se actualiza el resumen
+        const originalActualizarResumen = actualizarResumenVenta;
+        actualizarResumenVenta = function() {
+            originalActualizarResumen();
+            verificarStockBajo();
+        };
+
+        console.log('Sistema de Nueva Venta - Roy Representaciones iniciado');
+        console.log('Funcionalidades: Gestión de clientes, productos, cálculos automáticos, control de stock');
+        console.log('Atajos: Ctrl+Enter (procesar), Escape (limpiar), F1 (buscar)');
+    </script>
+</body>
+</html>

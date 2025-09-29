@@ -1,0 +1,1845 @@
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Gestión de Inventario FIFO - Sistema Roy Representaciones</title>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+:root {
+    /* Colores principales - Tema Dorado y Verde VIBRANTES */
+    --color-gold: #D4AF37;
+    --color-gold-light: #f6e06f;
+    --color-gold-dark: #B8860B;
+    --color-green: #2E8B57;
+    --color-green-light: #98FB98;
+    --color-green-dark: #1A5D34;
+    --text-dark: #2D3748;
+    --text-gray: #718096;
+    --text-light: #A0AEC0;
+    --text-muted: #9CA3AF;
+    
+    /* Colores de fondo */
+    --bg-primary: rgba(255, 255, 255, 0.85);
+    --bg-secondary: rgba(255, 250, 205, 0.7);
+    --bg-tertiary: rgba(240, 255, 240, 0.5);
+    
+    /* Estados */
+    --success: #00C851;
+    --warning: #FFD700;
+    --danger: #EF4444;
+    --info: #00C851;
+    
+    /* Sombras */
+    --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+    
+    /* Radios */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    
+    /* Espaciado */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #FFFACD, #F0FFF0, #FFFAF0);
+    min-height: 100vh;
+    color: var(--text-dark);
+    line-height: 1.6;
+    font-size: 16px;
+    background-attachment: fixed;
+    font-weight: 400;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Elementos decorativos de fondo */
+.bg-blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.25;
+    z-index: -1;
+}
+
+.blob-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--color-gold);
+    top: -100px;
+    left: -100px;
+}
+
+.blob-2 {
+    width: 500px;
+    height: 500px;
+    background: var(--color-green);
+    bottom: -150px;
+    right: -150px;
+}
+
+.blob-3 {
+    width: 300px;
+    height: 300px;
+    background: var(--color-gold-light);
+    top: 50%;
+    left: 70%;
+}
+
+/* ============ SIDEBAR MODERNO ============ */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-right: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    padding: var(--space-xl);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.sidebar-header::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: 0 0 22px 0;
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+}
+
+.sidebar-header::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 0 0 18px 0;
+    z-index: -1;
+}
+
+.sidebar-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    margin-bottom: var(--space-md);
+    width: 100%;
+}
+
+.sidebar-logo-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: var(--space-md);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    border-radius: 50%;
+}
+
+.logo-default {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-md);
+    color: white;
+    font-weight: 900;
+    font-size: 1.5rem;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.sidebar-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-green-dark);
+    letter-spacing: -0.01em;
+}
+
+.sidebar-subtitle {
+    font-size: 0.75rem;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: var(--space-xs);
+}
+
+.sidebar-nav {
+    padding: var(--space-md);
+}
+
+.nav-section {
+    margin-bottom: var(--space-xl);
+}
+
+.nav-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-md);
+    padding: 0 var(--space-md);
+}
+
+.nav-item {
+    margin-bottom: var(--space-xs);
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: var(--space-md);
+    color: var(--text-gray);
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.875rem;
+    gap: var(--space-sm);
+    background: rgba(255, 250, 205, 0.5);
+}
+
+.nav-link:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: var(--color-green-dark);
+    transform: translateX(4px);
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: var(--color-gold);
+}
+
+.nav-link.active .nav-icon {
+    color: white;
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* ============ MAIN CONTENT ============ */
+.main-content {
+    margin-left: 280px;
+    min-height: 100vh;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: var(--space-xl);
+}
+
+/* ============ NAVEGACIÓN MÓVIL ============ */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    z-index: 1001;
+    padding: var(--space-md);
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mobile-menu-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-green-dark);
+}
+
+.mobile-logo {
+    height: 40px;
+    object-fit: contain;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+/* ============ CONTENIDO ============ */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.section {
+    margin-bottom: var(--space-3xl);
+}
+
+.grid {
+    display: grid;
+    gap: var(--space-xl);
+}
+
+.grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+}
+
+.grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* ============ CARDS CON EFECTOS DE LUZ ============ */
+.card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: calc(var(--radius-xl) + 3px);
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+}
+
+.card::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: calc(var(--radius-xl) - 2px);
+    z-index: -1;
+}
+
+.card-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* ============ TIPOGRAFÍA MODERNA ============ */
+.text-display {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    margin-bottom: var(--space-lg);
+    background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+}
+
+.text-h1 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--color-green-dark);
+    margin-bottom: var(--space-lg);
+    letter-spacing: -0.02em;
+}
+
+.text-h2 {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-green-dark);
+    margin-bottom: var(--space-md);
+    letter-spacing: -0.01em;
+}
+
+.text-h3 {
+    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-gold-dark);
+    margin-bottom: var(--space-md);
+}
+
+.text-body {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--text-gray);
+    margin-bottom: var(--space-md);
+    text-align: center;
+}
+
+/* ============ ESTADÍSTICAS ============ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: calc(var(--radius-lg) + 3px);
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::before {
+    opacity: 1;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+}
+
+.stat-card::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: calc(var(--radius-lg) - 2px);
+    z-index: -1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-gold-dark);
+    margin-bottom: var(--space-sm);
+    position: relative;
+    z-index: 1;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--color-green-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+
+/* ============ FORMULARIOS ============ */
+.form-group {
+    margin-bottom: var(--space-lg);
+}
+
+.form-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-dark);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+    backdrop-filter: blur(10px);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-green);
+    box-shadow: 0 0 0 4px rgba(0, 200, 81, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    transform: scale(1.01);
+}
+
+.form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 1rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25rem;
+    padding-right: 3rem;
+    appearance: none;
+}
+
+.location-filter {
+    background: rgba(255, 215, 0, 0.2);
+    border: 2px solid var(--color-gold);
+    color: var(--color-gold-dark);
+    font-weight: 600;
+}
+
+.text-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-xs);
+    display: block;
+}
+
+/* ============ BOTONES ============ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    letter-spacing: 0.025em;
+    position: relative;
+    overflow: hidden;
+    margin: var(--space-xs);
+}
+
+.btn::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+    background-size: 300% 300%;
+    border-radius: calc(var(--radius-lg) + 3px);
+    animation: gradientMove 4s ease infinite;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.btn:hover::before {
+    opacity: 1;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+    position: relative;
+    z-index: 1;
+}
+
+.btn-primary::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+    border-radius: calc(var(--radius-lg) - 2px);
+    z-index: -1;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--color-green-dark);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    position: relative;
+    z-index: 1;
+}
+
+.btn-secondary::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: calc(var(--radius-lg) - 2px);
+    z-index: -1;
+}
+
+.btn-secondary:hover {
+    background: var(--color-green);
+    color: white;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--warning), var(--color-gold-dark));
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger), #DC2626);
+    color: white;
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+}
+
+.btn-info {
+    background: linear-gradient(135deg, var(--info), var(--color-green-dark));
+    color: white;
+    box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+}
+
+/* ============ BADGES Y ESTADOS ============ */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 1rem;
+    border-radius: var(--radius-lg);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: var(--space-xs);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.badge:hover {
+    transform: scale(1.05);
+}
+
+.badge-available {
+    background: linear-gradient(135deg, var(--success), var(--color-green-dark));
+    color: white;
+}
+
+.badge-low-stock {
+    background: linear-gradient(135deg, var(--warning), var(--color-gold-dark));
+    color: white;
+}
+
+.badge-out-of-stock {
+    background: linear-gradient(135deg, var(--danger), #DC2626);
+    color: white;
+}
+
+.badge-paused {
+    background: linear-gradient(135deg, #6B7280, #4B5563);
+    color: white;
+}
+
+.badge-vencimiento-critico {
+    background: linear-gradient(135deg, #DC2626, #7F1D1D);
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+.badge-vencimiento-medio {
+    background: linear-gradient(135deg, var(--warning), var(--color-gold-dark));
+    color: white;
+}
+
+.badge-vencimiento-seguro {
+    background: linear-gradient(135deg, var(--success), var(--color-green-dark));
+    color: white;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* ============ TABLA ============ */
+.table-container {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px;
+}
+
+th, td {
+    padding: var(--space-lg);
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+th {
+    background: rgba(255, 215, 0, 0.2);
+    font-weight: 700;
+    color: var(--color-gold-dark);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+tr {
+    transition: all 0.3s ease;
+}
+
+tbody tr:hover {
+    background: rgba(255, 215, 0, 0.1);
+    transform: scale(1.01);
+}
+
+/* ============ BÚSQUEDA ============ */
+.search-container {
+    position: relative;
+    margin-bottom: var(--space-xl);
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
+
+.search-input {
+    padding-left: 3.5rem;
+    font-size: 1.1rem;
+}
+
+/* ============ CUSTOM STYLES ============ */
+.fifo-indicator {
+    background: linear-gradient(45deg, var(--color-gold), var(--color-gold-dark));
+    color: white;
+    font-weight: 800;
+    font-size: 0.65rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+    margin-left: var(--space-xs);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+.product-image {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    border: 2px solid var(--bg-secondary);
+    box-shadow: var(--shadow-sm);
+}
+
+.vencimiento-days {
+    font-weight: 700;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+}
+
+.days-critical { 
+    background: rgba(239, 68, 68, 0.1); 
+    color: #991B1B; 
+    border: 1px solid #FEE2E2;
+}
+.days-warning { 
+    background: rgba(255, 215, 0, 0.1); 
+    color: var(--color-gold-dark); 
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+.days-safe { 
+    background: rgba(0, 200, 81, 0.1); 
+    color: var(--color-green-dark); 
+    border: 1px solid rgba(0, 200, 81, 0.3);
+}
+
+/* ============ ALERTAS ============ */
+.alert {
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    margin: var(--space-lg) 0;
+    border-left: 4px solid;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1);
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.alert-warning {
+    background: rgba(255, 215, 0, 0.1);
+    border-left-color: var(--warning);
+    color: var(--color-gold-dark);
+}
+
+.alert-danger {
+    background: rgba(239, 68, 68, 0.1);
+    border-left-color: var(--danger);
+    color: #991B1B;
+}
+
+.alert-info {
+    background: rgba(0, 200, 81, 0.1);
+    border-left-color: var(--info);
+    color: var(--color-green-dark);
+}
+
+/* ============ UTILITIES ============ */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.font-bold { font-weight: 700; }
+.mb-0 { margin-bottom: 0; }
+.mr-sm { margin-right: var(--space-sm); }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding-top: 70px;
+        padding: var(--space-md);
+    }
+
+    .mobile-header {
+        display: flex;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0;
+    }
+    
+    .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+    }
+    
+    .card {
+        padding: var(--space-lg);
+    }
+
+    table {
+        min-width: 800px;
+    }
+    
+    th, td {
+        padding: var(--space-sm);
+        font-size: 0.875rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding-top: 60px;
+        padding: var(--space-sm);
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Elementos decorativos de fondo -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <!-- Logo desde la carpeta assets -->
+                <img src="assets/images/Roydent.png" alt="Logo de RoyDent" class="sidebar-logo-img" id="sidebarLogo" onerror="handleLogoError()">
+                <!-- Logo por defecto (oculto inicialmente) -->
+                <div class="logo-default" id="defaultLogo" style="display: none;">
+                    ROY
+                </div>
+                <div>
+                    <div class="sidebar-title">Sistema RoyDent</div>
+                    <div class="sidebar-subtitle">Y Mundo Medico</div>
+                </div>
+            </a>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-title">Principal</div>
+                <div class="nav-item">
+                    <a href="panel-admin.html" class="nav-link">
+                        <div class="nav-icon">🏠</div>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📊</div>
+                        Analíticas
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Productos</div>
+                <div class="nav-item">
+                    <a href="agregarproducto.html" class="nav-link">
+                        <div class="nav-icon">➕</div>
+                        Agregar Producto
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📦</div>
+                        Lista de Productos
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestioncategorias.html" class="nav-link">
+                        <div class="nav-icon">🏷️</div>
+                        Categorías
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">🔄</div>
+                        Control FIFO
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Inventario</div>
+                <div class="nav-item">
+                    <a href="inventario.html" class="nav-link">
+                        <div class="nav-icon">📋</div>
+                        Inventario General
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <div class="nav-icon">⚠️</div>
+                        Gestión FIFO
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📍</div>
+                        Ubicaciones
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestionproveedores.html" class="nav-link">
+                        <div class="nav-icon">👨‍💼</div>
+                        Proveedores
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Ventas</div>
+                <div class="nav-item">
+                    <a href="nuevaventa.html" class="nav-link">
+                        <div class="nav-icon">🛒</div>
+                        Nueva Venta
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="historial-ventas.html" class="nav-link">
+                        <div class="nav-icon">💰</div>
+                        Historial Ventas
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestionclientes.html" class="nav-link">
+                        <div class="nav-icon">👥</div>
+                        Clientes
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Reportes</div>
+                <div class="nav-item">
+                    <a href="reportesventa.html" class="nav-link">
+                        <div class="nav-icon">📈</div>
+                        Reportes de Ventas
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📉</div>
+                        Análisis de Inventario
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">💼</div>
+                        Reportes Financieros
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Configuración</div>
+                <div class="nav-item">
+                    <a href="configuracion.html" class="nav-link">
+                        <div class="nav-icon">⚙️</div>
+                        Configuración
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="perfilusuario.html" class="nav-link">
+                        <div class="nav-icon">👤</div>
+                        Perfil
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="usuarios.html" class="nav-link">
+                        <div class="nav-icon">👥</div>
+                        Usuarios
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="backups.html" class="nav-link">
+                        <div class="nav-icon">💾</div>
+                        Backup
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Mobile Header -->
+    <header class="mobile-header" id="mobile-header">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+        <img src="assets/images/Roydent.png" alt="Logo de RoyDent" class="mobile-logo" id="mobileLogo" onerror="handleMobileLogoError()">
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="section">
+                <div class="card">
+                    <div class="card-content">
+                        <h1 class="text-display">Gestión de Inventario FIFO</h1>
+                        <p class="text-body">Control inteligente de inventario con método First In, First Out y alertas de vencimiento automáticas</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas Rápidas -->
+            <div class="section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">1,962</div>
+                        <div class="stat-label">Productos Totales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">245</div>
+                        <div class="stat-label">Stock Bajo</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">38</div>
+                        <div class="stat-label">Próximos a Vencer</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">Críticos (&lt;30 días)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">En Pausa</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros y Búsqueda -->
+            <div class="section">
+                <div class="card">
+                    <div class="card-content">
+                        <h2 class="text-h2">Filtros de Inventario</h2>
+                        <div class="grid grid-4">
+                            <div class="form-group">
+                                <label class="text-label">Ubicación</label>
+                                <select class="form-input form-select location-filter" id="ubicacion">
+                                    <option value="todas">Todas las ubicaciones</option>
+                                    <option value="deposito">Depósito Principal</option>
+                                    <option value="roydent">Roydent (Tienda Central)</option>
+                                    <option value="mundo_medico">Mundo Médico (Sucursal)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-label">Estado del Producto</label>
+                                <select class="form-input form-select" id="estado">
+                                    <option value="todos">Todos los estados</option>
+                                    <option value="activo">Activo</option>
+                                    <option value="pausa">En Pausa</option>
+                                    <option value="descontinuado">Descontinuado</option>
+                                    <option value="estacional">Estacional</option>
+                                    <option value="solo_pedido">Solo por Pedido</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-label">Nivel de Stock</label>
+                                <select class="form-input form-select" id="stock">
+                                    <option value="todos">Todos los niveles</option>
+                                    <option value="disponible">Disponible</option>
+                                    <option value="stock_bajo">Stock Bajo</option>
+                                    <option value="agotado">Agotado</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-label">Vencimiento</label>
+                                <select class="form-input form-select" id="vencimiento">
+                                    <option value="todos">Todos</option>
+                                    <option value="critico">Crítico (&lt;30 días)</option>
+                                    <option value="medio">Medio (30-60 días)</option>
+                                    <option value="seguro">Seguro (&gt;60 días)</option>
+                                    <option value="sin_vencimiento">Sin fecha vencimiento</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="search-container">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" class="form-input search-input" id="busqueda" placeholder="Buscar por código, nombre, marca o categoría...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alertas Críticas -->
+            <div class="section">
+                <div class="alert alert-danger">
+                    <strong>⚠️ Productos Críticos:</strong> 15 productos vencen en menos de 30 días. 
+                    <button class="btn btn-danger btn-sm" style="margin-left: 1rem;" onclick="verProductosCriticos()">Ver Productos Críticos</button>
+                </div>
+                <div class="alert alert-warning">
+                    <strong>📦 Stock Bajo:</strong> 245 productos están por debajo del stock mínimo. 
+                    <button class="btn btn-warning btn-sm" style="margin-left: 1rem;" onclick="generarPedidoAutomatico()">Generar Pedido Automático</button>
+                </div>
+            </div>
+
+            <!-- Tabla de Inventario -->
+            <div class="section">
+                <div class="card">
+                    <div class="card-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl); flex-wrap: wrap; gap: var(--space-md);">
+                            <h2 class="text-h2 mb-0">Inventario Detallado</h2>
+                            <div>
+                                <button class="btn btn-secondary" onclick="exportarExcel()">📊 Exportar Excel</button>
+                                <button class="btn btn-primary" onclick="nuevoIngreso()">➕ Nuevo Ingreso</button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>FIFO</th>
+                                        <th>Imagen</th>
+                                        <th>Código</th>
+                                        <th>Producto</th>
+                                        <th>Marca</th>
+                                        <th>Categoría</th>
+                                        <th>Ubicación</th>
+                                        <th>Stock Base</th>
+                                        <th>Empaque</th>
+                                        <th>Fecha Ingreso</th>
+                                        <th>Vencimiento</th>
+                                        <th>Días Rest.</th>
+                                        <th>Estado</th>
+                                        <th>Precio</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventario-table">
+                                    <tr>
+                                        <td><span class="fifo-indicator">1°</span></td>
+                                        <td><img src="https://via.placeholder.com/60x60/6F42C1/FFFFFF?text=ANEST" alt="Producto" class="product-image"></td>
+                                        <td><strong>ANE001</strong></td>
+                                        <td>Anestesia Lidocaína 2% x 50ml</td>
+                                        <td>Braun</td>
+                                        <td>Anestésicos</td>
+                                        <td>Roydent</td>
+                                        <td><strong>15</strong> frascos</td>
+                                        <td>3 cajas (5 frascos/caja)</td>
+                                        <td>2024-08-15</td>
+                                        <td>2025-02-15</td>
+                                        <td><span class="vencimiento-days days-warning">160 días</span></td>
+                                        <td><span class="badge badge-available">Disponible</span></td>
+                                        <td>Bs. 45.00</td>
+                                        <td>
+                                            <button class="btn btn-secondary btn-sm" onclick="editarProducto('ANE001')">📝</button>
+                                            <button class="btn btn-warning btn-sm" onclick="ajustarStock('ANE001')">📦</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="fifo-indicator">2°</span></td>
+                                        <td><img src="https://via.placeholder.com/60x60/007BFF/FFFFFF?text=GUAN" alt="Producto" class="product-image"></td>
+                                        <td><strong>GUA025</strong></td>
+                                        <td>Guantes Látex Talla M x 100</td>
+                                        <td>Sempermed</td>
+                                        <td>Protección</td>
+                                        <td>Mundo Médico</td>
+                                        <td><strong>250</strong> pares</td>
+                                        <td>5 cajas (50 pares/caja)</td>
+                                        <td>2024-09-01</td>
+                                        <td>2026-09-01</td>
+                                        <td><span class="vencimiento-days days-safe">732 días</span></td>
+                                        <td><span class="badge badge-available">Disponible</span></td>
+                                        <td>Bs. 28.50</td>
+                                        <td>
+                                            <button class="btn btn-secondary btn-sm" onclick="editarProducto('GUA025')">📝</button>
+                                            <button class="btn btn-warning btn-sm" onclick="ajustarStock('GUA025')">📦</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="fifo-indicator">3°</span></td>
+                                        <td><img src="https://via.placeholder.com/60x60/28C76F/FFFFFF?text=MASK" alt="Producto" class="product-image"></td>
+                                        <td><strong>MAS112</strong></td>
+                                        <td>Mascarilla Quirúrgica 3 Capas x 50</td>
+                                        <td>3M</td>
+                                        <td>Protección</td>
+                                        <td>Depósito</td>
+                                        <td><strong>8</strong> cajas</td>
+                                        <td>2 cajas (50 unidades/caja)</td>
+                                        <td>2024-07-20</td>
+                                        <td>2025-01-15</td>
+                                        <td><span class="vencimiento-days days-critical">22 días</span></td>
+                                        <td><span class="badge badge-vencimiento-critico">Crítico</span></td>
+                                        <td>Bs. 35.00</td>
+                                        <td>
+                                            <button class="btn btn-danger btn-sm" onclick="gestionarCritico('MAS112')">⚠️</button>
+                                            <button class="btn btn-warning btn-sm" onclick="ajustarStock('MAS112')">📦</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="fifo-indicator">4°</span></td>
+                                        <td><img src="https://via.placeholder.com/60x60/FFD700/000000?text=SEDA" alt="Producto" class="product-image"></td>
+                                        <td><strong>SED089</strong></td>
+                                        <td>Seda Dental Fluorada x 50m</td>
+                                        <td>Oral-B</td>
+                                        <td>Higiene Oral</td>
+                                        <td>Roydent</td>
+                                        <td><strong>2</strong> unidades</td>
+                                        <td>Casi agotado</td>
+                                        <td>2024-06-10</td>
+                                        <td>2027-06-10</td>
+                                        <td><span class="vencimiento-days days-safe">1,004 días</span></td>
+                                        <td><span class="badge badge-low-stock">Stock Bajo</span></td>
+                                        <td>Bs. 18.00</td>
+                                        <td>
+                                            <button class="btn btn-secondary btn-sm" onclick="editarProducto('SED089')">📝</button>
+                                            <button class="btn btn-primary btn-sm" onclick="ordenarReposicion('SED089')">🛒</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="fifo-indicator">5°</span></td>
+                                        <td><img src="https://via.placeholder.com/60x60/EF4444/FFFFFF?text=AGUJ" alt="Producto" class="product-image"></td>
+                                        <td><strong>AGU201</strong></td>
+                                        <td>Agujas Hipodérmicas 21G x 100</td>
+                                        <td>BD</td>
+                                        <td>Material Médico</td>
+                                        <td>Mundo Médico</td>
+                                        <td><strong>0</strong> cajas</td>
+                                        <td>Agotado</td>
+                                        <td>2024-05-15</td>
+                                        <td>2026-05-15</td>
+                                        <td><span class="vencimiento-days days-safe">613 días</span></td>
+                                        <td><span class="badge badge-out-of-stock">Agotado</span></td>
+                                        <td>Bs. 65.00</td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm" onclick="ordenarReposicion('AGU201')">🛒</button>
+                                            <button class="btn btn-secondary btn-sm" onclick="contactarProveedor('AGU201')">📞</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="fifo-indicator">-</span></td>
+                                        <td><img src="https://via.placeholder.com/60x60/6B7280/FFFFFF?text=CAPS" alt="Producto" class="product-image"></td>
+                                        <td><strong>CAP156</strong></td>
+                                        <td>Cápsulas Amalgama x 50</td>
+                                        <td>Heraeus</td>
+                                        <td>Odontología</td>
+                                        <td>Roydent</td>
+                                        <td><strong>12</strong> cajas</td>
+                                        <td>4 cajas (50 cápsulas/caja)</td>
+                                        <td>2024-08-30</td>
+                                        <td>Sin vencimiento</td>
+                                        <td><span class="vencimiento-days days-safe">∞</span></td>
+                                        <td><span class="badge badge-paused">Pausado</span></td>
+                                        <td>Bs. 125.00</td>
+                                        <td>
+                                            <button class="btn btn-secondary btn-sm" onclick="activarProducto('CAP156')">▶️</button>
+                                            <button class="btn btn-warning btn-sm" onclick="ajustarStock('CAP156')">📦</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen y Acciones -->
+            <div class="section">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-content">
+                            <h3 class="text-h3">Acciones Rápidas</h3>
+                            <div class="grid grid-2">
+                                <button class="btn btn-primary" onclick="nuevoIngreso()">📦 Nuevo Ingreso</button>
+                                <button class="btn btn-secondary" onclick="reporteFIFO()">📊 Reporte FIFO</button>
+                                <button class="btn btn-warning" onclick="verProductosCriticos()">⚠️ Ver Críticos</button>
+                                <button class="btn btn-info" onclick="actualizarStock()">🔄 Actualizar Stock</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-content">
+                            <h3 class="text-h3">Próximas Acciones</h3>
+                            <div class="alert alert-info">
+                                <strong>📅 Recordatorios:</strong>
+                                <ul style="margin-top: 0.5rem; margin-bottom: 0;">
+                                    <li>15 productos vencen en menos de 30 días</li>
+                                    <li>3 proveedores pendientes de contactar</li>
+                                    <li>Inventario físico programado para el 15/09</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ============ MANEJO DE LOGOS ============
+        function handleLogoError() {
+            document.getElementById('sidebarLogo').style.display = 'none';
+            document.getElementById('defaultLogo').style.display = 'flex';
+        }
+        
+        function handleMobileLogoError() {
+            const mobileLogo = document.getElementById('mobileLogo');
+            mobileLogo.src = '';
+            mobileLogo.alt = 'Sistema Roy';
+            mobileLogo.style.fontFamily = 'Inter, sans-serif';
+            mobileLogo.style.fontWeight = '700';
+            mobileLogo.style.fontSize = '1.2rem';
+            mobileLogo.style.color = 'var(--color-purple)';
+        }
+        
+        // Verificar si las imágenes se cargaron correctamente
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarLogo = document.getElementById('sidebarLogo');
+            const mobileLogo = document.getElementById('mobileLogo');
+            
+            if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
+                handleLogoError();
+            }
+            
+            if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
+                handleMobileLogoError();
+            }
+            
+            setTimeout(function() {
+                if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
+                    handleLogoError();
+                }
+                if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
+                    handleMobileLogoError();
+                }
+            }, 1000);
+
+            // ============ ANIMACIONES DE ENTRADA ============
+            const cards = document.querySelectorAll('.card, .stat-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // ============ CONFIGURAR FILTROS ============
+            const ubicacionSelect = document.getElementById('ubicacion');
+            const estadoSelect = document.getElementById('estado');
+            const stockSelect = document.getElementById('stock');
+            const vencimientoSelect = document.getElementById('vencimiento');
+            const busquedaInput = document.getElementById('busqueda');
+            
+            // Event listeners para filtros
+            busquedaInput.addEventListener('input', filtrarTabla);
+            ubicacionSelect.addEventListener('change', filtrarTabla);
+            estadoSelect.addEventListener('change', filtrarTabla);
+            stockSelect.addEventListener('change', filtrarTabla);
+            vencimientoSelect.addEventListener('change', filtrarTabla);
+        });
+
+        // ============ FUNCIONES DEL SIDEBAR ============
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // ============ FUNCIÓN PARA FILTRAR TABLA ============
+        function filtrarTabla() {
+            const rows = document.querySelectorAll('#inventario-table tr');
+            const busqueda = document.getElementById('busqueda').value.toLowerCase();
+            const ubicacion = document.getElementById('ubicacion').value;
+            const estado = document.getElementById('estado').value;
+            const stock = document.getElementById('stock').value;
+            const vencimiento = document.getElementById('vencimiento').value;
+            
+            let productosVisible = 0;
+            
+            rows.forEach(row => {
+                const texto = row.textContent.toLowerCase();
+                let mostrar = true;
+                
+                // Filtro de búsqueda
+                if (busqueda && !texto.includes(busqueda)) {
+                    mostrar = false;
+                }
+                
+                // Filtro de ubicación
+                if (ubicacion !== 'todas') {
+                    const ubicacionTexto = row.cells[6] ? row.cells[6].textContent.toLowerCase() : '';
+                    const ubicacionMap = {
+                        'deposito': 'depósito',
+                        'roydent': 'roydent',
+                        'mundo_medico': 'mundo médico'
+                    };
+                    if (!ubicacionTexto.includes(ubicacionMap[ubicacion] || ubicacion)) {
+                        mostrar = false;
+                    }
+                }
+                
+                // Filtro de estado del producto
+                if (estado !== 'todos') {
+                    const estadoTexto = row.cells[12] ? row.cells[12].textContent.toLowerCase() : '';
+                    if (estado === 'activo' && !estadoTexto.includes('disponible')) {
+                        mostrar = false;
+                    } else if (estado === 'pausa' && !estadoTexto.includes('pausado')) {
+                        mostrar = false;
+                    }
+                }
+                
+                // Filtro de stock
+                if (stock !== 'todos') {
+                    const stockTexto = row.cells[12] ? row.cells[12].textContent.toLowerCase() : '';
+                    if (stock === 'disponible' && !stockTexto.includes('disponible')) {
+                        mostrar = false;
+                    } else if (stock === 'stock_bajo' && !stockTexto.includes('stock bajo')) {
+                        mostrar = false;
+                    } else if (stock === 'agotado' && !stockTexto.includes('agotado')) {
+                        mostrar = false;
+                    }
+                }
+                
+                // Filtro de vencimiento
+                if (vencimiento !== 'todos') {
+                    const diasTexto = row.cells[11] ? row.cells[11].textContent : '';
+                    if (vencimiento === 'critico' && !diasTexto.includes('days-critical')) {
+                        mostrar = false;
+                    } else if (vencimiento === 'medio' && !diasTexto.includes('days-warning')) {
+                        mostrar = false;
+                    } else if (vencimiento === 'seguro' && !diasTexto.includes('days-safe')) {
+                        mostrar = false;
+                    }
+                }
+                
+                row.style.display = mostrar ? '' : 'none';
+                
+                if (mostrar) {
+                    productosVisible++;
+                }
+            });
+            
+            // Mostrar mensaje si no hay resultados
+            if (productosVisible === 0 && busqueda) {
+                mostrarAlerta('No se encontraron productos que coincidan con los filtros aplicados', 'warning');
+            }
+        }
+
+        // ============ FUNCIONES DE INVENTARIO ============
+        function editarProducto(codigo) {
+            mostrarAlerta(`Abriendo editor para el producto ${codigo}`, 'info');
+        }
+
+        function ajustarStock(codigo) {
+            mostrarAlerta(`Ajustando stock del producto ${codigo}`, 'info');
+        }
+
+        function gestionarCritico(codigo) {
+            mostrarAlerta(`⚠️ Gestionando producto crítico ${codigo} - Vencimiento próximo`, 'danger');
+        }
+
+        function ordenarReposicion(codigo) {
+            mostrarAlerta(`Ordenando reposición automática para ${codigo}`, 'success');
+        }
+
+        function contactarProveedor(codigo) {
+            mostrarAlerta(`Contactando proveedor para el producto ${codigo}`, 'info');
+        }
+
+        function activarProducto(codigo) {
+            mostrarAlerta(`Activando producto pausado ${codigo}`, 'success');
+        }
+
+        // ============ FUNCIONES DE ACCIONES RÁPIDAS ============
+        function verProductosCriticos() {
+            mostrarAlerta('Mostrando vista detallada de productos con vencimiento crítico', 'warning');
+        }
+
+        function generarPedidoAutomatico() {
+            mostrarAlerta('Generando pedido automático basado en stock mínimo...', 'info');
+            setTimeout(() => {
+                mostrarAlerta('Pedido automático generado exitosamente', 'success');
+            }, 2000);
+        }
+
+        function exportarExcel() {
+            mostrarAlerta('Generando archivo Excel del inventario FIFO...', 'info');
+            setTimeout(() => {
+                mostrarAlerta('Archivo Excel exportado exitosamente', 'success');
+            }, 2000);
+        }
+
+        function nuevoIngreso() {
+            mostrarAlerta('Abriendo formulario de nuevo ingreso de inventario...', 'info');
+        }
+
+        function reporteFIFO() {
+            mostrarAlerta('Generando reporte completo del sistema FIFO...', 'info');
+            setTimeout(() => {
+                mostrarAlerta('Reporte FIFO generado correctamente', 'success');
+            }, 3000);
+        }
+
+        function actualizarStock() {
+            mostrarAlerta('Iniciando actualización masiva de stock...', 'info');
+            setTimeout(() => {
+                mostrarAlerta('Stock actualizado exitosamente', 'success');
+            }, 2500);
+        }
+
+        // ============ FUNCIÓN PARA MOSTRAR ALERTAS ============
+        function mostrarAlerta(mensaje, tipo) {
+            const alerta = document.createElement('div');
+            alerta.className = `alert alert-${tipo}`;
+            alerta.innerHTML = `<strong>${tipo === 'success' ? 'Éxito!' : tipo === 'warning' ? 'Advertencia:' : tipo === 'danger' ? 'Crítico:' : 'Info:'}</strong> ${mensaje}`;
+            alerta.style.position = 'fixed';
+            alerta.style.top = '20px';
+            alerta.style.right = '20px';
+            alerta.style.zIndex = '1000';
+            alerta.style.minWidth = '300px';
+            alerta.style.boxShadow = 'var(--shadow-lg)';
+            alerta.style.padding = 'var(--space-lg)';
+            alerta.style.borderRadius = 'var(--radius-lg)';
+            alerta.style.background = 'rgba(255, 255, 255, 0.95)';
+            alerta.style.backdropFilter = 'blur(10px)';
+            alerta.style.border = '1px solid rgba(255, 255, 255, 0.3)';
+            
+            // Agregar colores según el tipo
+            if (tipo === 'success') {
+                alerta.style.borderLeft = '4px solid var(--success)';
+                alerta.style.color = 'var(--success)';
+            } else if (tipo === 'warning') {
+                alerta.style.borderLeft = '4px solid var(--warning)';
+                alerta.style.color = '#D97706';
+            } else if (tipo === 'danger') {
+                alerta.style.borderLeft = '4px solid var(--danger)';
+                alerta.style.color = 'var(--danger)';
+            } else {
+                alerta.style.borderLeft = '4px solid var(--info)';
+                alerta.style.color = 'var(--info)';
+            }
+            
+            document.body.appendChild(alerta);
+            
+            setTimeout(() => {
+                alerta.style.opacity = '0';
+                alerta.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    alerta.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // ============ ACTUALIZACIÓN DE ESTADÍSTICAS ============
+        function actualizarEstadisticas() {
+            const stats = [
+                { selector: '.stat-card:nth-child(1) .stat-number', min: 1900, max: 2000, prefix: '', suffix: '' },
+                { selector: '.stat-card:nth-child(2) .stat-number', min: 200, max: 300, prefix: '', suffix: '' },
+                { selector: '.stat-card:nth-child(3) .stat-number', min: 30, max: 50, prefix: '', suffix: '' },
+                { selector: '.stat-card:nth-child(4) .stat-number', min: 10, max: 25, prefix: '', suffix: '' },
+                { selector: '.stat-card:nth-child(5) .stat-number', min: 3, max: 8, prefix: '', suffix: '' }
+            ];
+
+            stats.forEach(stat => {
+                const elemento = document.querySelector(stat.selector);
+                if (elemento) {
+                    const nuevoValor = Math.floor(Math.random() * (stat.max - stat.min + 1)) + stat.min;
+                    const valorFormateado = stat.prefix + nuevoValor.toLocaleString() + stat.suffix;
+                    
+                    elemento.style.transform = 'scale(1.1)';
+                    elemento.style.transition = 'transform 0.3s ease';
+                    
+                    setTimeout(() => {
+                        elemento.textContent = valorFormateado;
+                        elemento.style.transform = 'scale(1)';
+                    }, 150);
+                }
+            });
+        }
+
+        // ============ NAVEGACIÓN ============
+        function irADashboard() {
+            mostrarAlerta('Redirigiendo al dashboard...', 'info');
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
+        }
+
+        function irAProductos() {
+            mostrarAlerta('Abriendo gestión de productos...', 'info');
+            setTimeout(() => {
+                window.location.href = 'agregarproducto.html';
+            }, 1000);
+        }
+
+        function irAVentas() {
+            mostrarAlerta('Accediendo al módulo de ventas...', 'info');
+            setTimeout(() => {
+                window.location.href = 'nuevaventa.html';
+            }, 1000);
+        }
+
+        function irAReportes() {
+            mostrarAlerta('Abriendo módulo de reportes...', 'info');
+            setTimeout(() => {
+                window.location.href = 'reportesventa.html';
+            }, 1000);
+        }
+
+        // ============ FUNCIONALIDAD AVANZADA ============
+        function buscarProductoAvanzado() {
+            const busqueda = document.getElementById('busqueda').value;
+            if (busqueda.length > 2) {
+                mostrarAlerta(`Buscando productos relacionados con: "${busqueda}"`, 'info');
+                filtrarTabla();
+            }
+        }
+
+        // Buscar mientras se escribe (debounced)
+        let timeoutBusqueda;
+        document.getElementById('busqueda').addEventListener('input', function() {
+            clearTimeout(timeoutBusqueda);
+            timeoutBusqueda = setTimeout(buscarProductoAvanzado, 500);
+        });
+
+        // ============ MONITOREO DE VENCIMIENTOS ============
+        function verificarVencimientos() {
+            const productosVencimiento = document.querySelectorAll('.days-critical');
+            if (productosVencimiento.length > 0) {
+                mostrarAlerta(`Se detectaron ${productosVencimiento.length} productos con vencimiento crítico`, 'danger');
+            }
+        }
+
+        // ============ SISTEMA DE NOTIFICACIONES FIFO ============
+        function iniciarMonitoreoFIFO() {
+            // Verificar productos críticos cada 5 minutos
+            setInterval(verificarVencimientos, 300000);
+            
+            // Actualizar estadísticas cada 2 minutos
+            setInterval(actualizarEstadisticas, 120000);
+            
+            mostrarAlerta('Sistema de monitoreo FIFO iniciado correctamente', 'success');
+        }
+
+        // ============ MANEJO DE ERRORES ============
+        window.addEventListener('error', function(e) {
+            console.error('Error en Gestión de Inventario FIFO:', e.error);
+            mostrarAlerta('Se detectó un error. Por favor recarga la página.', 'danger');
+        });
+
+        // ============ EVENTOS DE BOTONES ============
+        document.addEventListener('click', function(e) {
+            if (e.target.textContent.includes('Ver Productos Críticos')) {
+                e.preventDefault();
+                verProductosCriticos();
+            }
+            if (e.target.textContent.includes('Generar Pedido Automático')) {
+                e.preventDefault();
+                generarPedidoAutomatico();
+            }
+            if (e.target.textContent.includes('Exportar Excel')) {
+                e.preventDefault();
+                exportarExcel();
+            }
+            if (e.target.textContent.includes('Nuevo Ingreso')) {
+                e.preventDefault();
+                nuevoIngreso();
+            }
+        });
+
+        // Inicializar sistema al cargar la página
+        setTimeout(iniciarMonitoreoFIFO, 2000);
+
+        console.log('Sistema de Gestión de Inventario FIFO - Roy Representaciones iniciado');
+        console.log('Funcionalidades: Control FIFO, alertas de vencimiento, gestión automática de stock');
+    </script>
+</body>

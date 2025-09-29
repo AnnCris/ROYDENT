@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Gestión de Categorías - Sistema Roy Representaciones</title>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Colores principales - Tema Dorado y Verde VIBRANTES (del código base) */
+            --color-gold: #D4AF37;
+            --color-gold-light: #f6e06f;
+            --color-gold-dark: #B8860B;
+            --color-green: #2E8B57;
+            --color-green-light: #98FB98;
+            --color-green-dark: #1A5D34;
+            --text-dark: #2D3748;
+            --text-gray: #718096;
+            --text-light: #A0AEC0;
+            
+            /* Colores de fondo */
+            --bg-primary: rgba(255, 255, 255, 0.85);
+            --bg-secondary: rgba(255, 250, 205, 0.7);
+            --bg-tertiary: rgba(240, 255, 240, 0.5);
+            
+            /* Sombras */
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+            
+            /* Radios */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            
+            /* Espaciado */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+
+            /* Colores de Estado */
+            --success: #28C76F;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #007BFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #FFFACD, #F0FFF0, #FFFAF0);
+            min-height: 100vh;
+            color: var(--text-dark);
+            line-height: 1.6;
+            font-size: 16px;
+            background-attachment: fixed;
+            font-weight: 400;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Elementos decorativos de fondo */
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.25;
+            z-index: -1;
+        }
+        
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--color-gold);
+            top: -100px;
+            left: -100px;
+        }
+        
+        .blob-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--color-green);
+            bottom: -150px;
+            right: -150px;
+        }
+        
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--color-gold-light);
+            top: 50%;
+            left: 70%;
+        }
+
+        /* ============ SIDEBAR MODERNO ============ */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: var(--space-xl);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .sidebar-header::before {
+            content: "";
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+            background-size: 300% 300%;
+            border-radius: 0 0 22px 0;
+            animation: gradientMove 4s ease infinite;
+            z-index: -1;
+        }
+
+        .sidebar-header::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 0 0 18px 0;
+            z-index: -1;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            margin-bottom: var(--space-md);
+            width: 100%;
+        }
+
+        .sidebar-logo-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: var(--space-md);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            border-radius: 50%;
+        }
+
+        .logo-default {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-md);
+            color: white;
+            font-weight: 900;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-green-dark);
+            letter-spacing: -0.01em;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.75rem;
+            color: var(--color-gold-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: var(--space-xs);
+        }
+
+        .sidebar-nav {
+            padding: var(--space-md);
+        }
+
+        .nav-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .nav-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--color-gold-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--space-md);
+            padding: 0 var(--space-md);
+        }
+
+        .nav-item {
+            margin-bottom: var(--space-xs);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: var(--space-md);
+            color: var(--text-gray);
+            text-decoration: none;
+            border-radius: var(--radius-lg);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.875rem;
+            gap: var(--space-sm);
+            background: rgba(255, 250, 205, 0.5);
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--color-green-dark);
+            transform: translateX(4px);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--color-gold);
+        }
+
+        .nav-link.active .nav-icon {
+            color: white;
+        }
+
+        /* ============ MAIN CONTENT ============ */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: var(--space-xl);
+        }
+
+        /* ============ NAVEGACIÓN MÓVIL ============ */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+            z-index: 1001;
+            padding: var(--space-md);
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--color-green-dark);
+        }
+
+        .mobile-logo {
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* ============ LAYOUT RESPONSIVO ============ */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: var(--space-3xl);
+        }
+
+        .grid {
+            display: grid;
+            gap: var(--space-xl);
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        /* ============ CARDS CON EFECTOS DE LUZ ============ */
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+            background-size: 300% 300%;
+            border-radius: calc(var(--radius-xl) + 3px);
+            animation: gradientMove 4s ease infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+        }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: calc(var(--radius-xl) - 2px);
+            z-index: -1;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============ TIPOGRAFÍA MODERNA ============ */
+        .text-display {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+            margin-bottom: var(--space-lg);
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .text-h1 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 800;
+            line-height: 1.2;
+            color: var(--color-green-dark);
+            margin-bottom: var(--space-lg);
+            letter-spacing: -0.02em;
+        }
+
+        .text-h2 {
+            font-size: clamp(1.25rem, 3vw, 2rem);
+            font-weight: 700;
+            line-height: 1.3;
+            color: var(--color-green-dark);
+            margin-bottom: var(--space-md);
+            letter-spacing: -0.01em;
+        }
+
+        .text-h3 {
+            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+            font-weight: 600;
+            line-height: 1.4;
+            color: var(--color-gold-dark);
+            margin-bottom: var(--space-md);
+        }
+
+        .text-body {
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.7;
+            color: var(--text-dark);
+            margin-bottom: var(--space-md);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            line-height: 1.4;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--space-xs);
+            display: block;
+        }
+
+        .text-secondary {
+            color: var(--text-gray);
+        }
+
+        /* ============ ESTADÍSTICAS ============ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: "";
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+            background-size: 300% 300%;
+            border-radius: calc(var(--radius-lg) + 3px);
+            animation: gradientMove 4s ease infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+        }
+
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: calc(var(--radius-lg) - 2px);
+            z-index: -1;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--color-gold-dark);
+            margin-bottom: var(--space-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--color-green-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============ BOTONES MODERNOS ============ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.875rem 2rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 0.875rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            margin: var(--space-sm);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.025em;
+            min-width: 140px;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+            background-size: 300% 300%;
+            border-radius: calc(var(--radius-lg) + 3px);
+            animation: gradientMove 4s ease infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+            border-radius: calc(var(--radius-lg) - 2px);
+            z-index: -1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--color-green-dark);
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-secondary::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: calc(var(--radius-lg) - 2px);
+            z-index: -1;
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-green);
+            color: white;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info), #1D4ED8);
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-info::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: linear-gradient(135deg, var(--info), #1D4ED8);
+            border-radius: calc(var(--radius-lg) - 2px);
+            z-index: -1;
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            min-width: auto;
+        }
+
+        /* ============ FORMULARIOS MODERNOS ============ */
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text-dark);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-green);
+            box-shadow: 0 0 0 4px rgba(0, 200, 81, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            transform: scale(1.01);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-light);
+        }
+
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 1rem center;
+            background-repeat: no-repeat;
+            background-size: 1.25rem;
+            padding-right: 3rem;
+            appearance: none;
+        }
+
+        /* ============ CATEGORÍAS ============ */
+        .category-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: "";
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+            background-size: 300% 300%;
+            border-radius: calc(var(--radius-xl) + 3px);
+            animation: gradientMove 4s ease infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .category-card:hover::before {
+            opacity: 1;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+        }
+
+        .category-card::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: calc(var(--radius-xl) - 2px);
+            z-index: -1;
+        }
+
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: var(--space-md);
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-stats {
+            background: rgba(255, 250, 205, 0.5);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            margin-top: var(--space-md);
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============ BÚSQUEDA ============ */
+        .search-container {
+            position: relative;
+            margin-bottom: var(--space-xl);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+
+        .search-input {
+            padding-left: 3.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* ============ COLOR PICKER ============ */
+        .color-picker {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: var(--space-sm);
+            margin-top: var(--space-sm);
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.selected {
+            border-color: var(--text-dark);
+            transform: scale(1.15);
+        }
+
+        /* ============ MODAL ============ */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            margin: 5% auto;
+            padding: var(--space-xl);
+            border-radius: var(--radius-2xl);
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .close {
+            color: var(--text-light);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: var(--text-dark);
+        }
+
+        /* ============ ALERTAS ============ */
+        .alert {
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            margin: var(--space-lg) 0;
+            border-left: 4px solid;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.1);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+        }
+
+        .alert-warning {
+            background: rgba(255, 215, 0, 0.1);
+            border-left-color: var(--color-gold);
+            color: #8B7500;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: #e53e3e;
+            color: #c53030;
+        }
+
+        .alert-info {
+            background: rgba(0, 200, 81, 0.1);
+            border-left-color: var(--color-green);
+            color: var(--color-green-dark);
+        }
+
+        .alert-success {
+            background: rgba(0, 200, 81, 0.1);
+            border-left-color: var(--color-green);
+            color: var(--color-green-dark);
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding-top: 70px;
+                padding: var(--space-md);
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0;
+            }
+            
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                padding: var(--space-lg);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding-top: 60px;
+                padding: var(--space-sm);
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Elementos decorativos de fondo (como en el login) -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <!-- Logo desde la carpeta assets -->
+                <img src="assets/images/Roydent.png" alt="Logo de RoyDent" class="sidebar-logo-img" id="sidebarLogo" onerror="handleLogoError()">
+                <!-- Logo por defecto (oculto inicialmente) -->
+                <div class="logo-default" id="defaultLogo" style="display: none;">
+                    ROY
+                </div>
+                <div>
+                    <div class="sidebar-title">Sistema RoyDent</div>
+                    <div class="sidebar-subtitle">Y Mundo Medico</div>
+                </div>
+            </a>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-title">Principal</div>
+                <div class="nav-item">
+                    <a href="panel-admin.html" class="nav-link">
+                        <div class="nav-icon">🏠</div>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📊</div>
+                        Analíticas
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Productos</div>
+                <div class="nav-item">
+                    <a href="agregarproducto.html" class="nav-link">
+                        <div class="nav-icon">➕</div>
+                        Agregar Producto
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📦</div>
+                        Lista de Productos
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestioncategorias.html" class="nav-link active">
+                        <div class="nav-icon">🏷️</div>
+                        Categorías
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">🔄</div>
+                        Control FIFO
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Inventario</div>
+                <div class="nav-item">
+                    <a href="inventario.html" class="nav-link">
+                        <div class="nav-icon">📋</div>
+                        Inventario General
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">⚠️</div>
+                        Stock Bajo
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📍</div>
+                        Ubicaciones
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestionproveedores.html" class="nav-link">
+                        <div class="nav-icon">👨‍💼</div>
+                        Proveedores
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Ventas</div>
+                <div class="nav-item">
+                    <a href="nuevaventa.html" class="nav-link">
+                        <div class="nav-icon">🛒</div>
+                        Nueva Venta
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="historialventa.html" class="nav-link">
+                        <div class="nav-icon">💰</div>
+                        Historial Ventas
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="gestionclientes.html" class="nav-link">
+                        <div class="nav-icon">👥</div>
+                        Clientes
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Reportes</div>
+                <div class="nav-item">
+                    <a href="reportesventa.html" class="nav-link">
+                        <div class="nav-icon">📈</div>
+                        Reportes de Ventas
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">📉</div>
+                        Análisis de Inventario
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <div class="nav-icon">💼</div>
+                        Reportes Financieros
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Configuración</div>
+                <div class="nav-item">
+                    <a href="configuracion.html" class="nav-link">
+                        <div class="nav-icon">⚙️</div>
+                        Configuración
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="perfilusuario.html" class="nav-link">
+                        <div class="nav-icon">👤</div>
+                        Perfil
+                    </a>
+                </div>
+                 <div class="nav-item">
+                    <a href="gestionusuario.html" class="nav-link">
+                        <div class="nav-icon">👥</div>
+                        Usuarios
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="backups.html" class="nav-link">
+                        <div class="nav-icon">💾</div>
+                        Backup
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Mobile Header -->
+    <header class="mobile-header" id="mobile-header">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+        <img src="assets/images/Roydent.png" alt="Logo de RoyDent" class="mobile-logo" id="mobileLogo" onerror="handleMobileLogoError()">
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="section">
+                <div class="card">
+                    <div class="card-content">
+                        <h1 class="text-display text-center">Gestión de Categorías</h1>
+                        <p class="text-body text-center text-secondary">Organiza tus productos médicos y odontológicos en categorías para una mejor gestión</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Categorías Activas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">847</div>
+                        <div class="stat-label">Productos Categorizados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">Más Populares</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label">Subcategorías</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Búsqueda y Filtros -->
+            <div class="section">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
+                        <h2 class="text-h2" style="margin-bottom: 0;">Buscar Categorías</h2>
+                        <button class="btn btn-primary" onclick="abrirModal()">Nueva Categoría</button>
+                    </div>
+                    
+                    <div class="search-container">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="form-input search-input" id="busqueda" placeholder="Buscar categorías por nombre o descripción...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categorías Principales -->
+            <div class="section">
+                <div class="card">
+                    <h2 class="text-h2">Categorías Principales</h2>
+                    <div class="grid grid-3" id="categorias-grid">
+                        <!-- Anestésicos -->
+                        <div class="category-card" onclick="verCategoria('anestesicos')">
+                            <div class="category-icon" style="background: linear-gradient(135deg, #EF4444, #DC2626);">💉</div>
+                            <h3 style="font-weight: 700; margin-bottom: var(--space-sm); position: relative; z-index: 1;">Anestésicos</h3>
+                            <p style="color: var(--text-gray); font-size: 0.875rem; margin-bottom: var(--space-md); position: relative; z-index: 1;">
+                                Productos para anestesia local y general
+                            </p>
+                            <div class="category-stats">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Productos:</span>
+                                    <strong>45</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Stock Total:</span>
+                                    <strong>2,340 unidades</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Valor:</span>
+                                    <strong>Bs. 125,450</strong>
+                                </div>
+                            </div>
+                            <div style="margin-top: var(--space-md); position: relative; z-index: 1;">
+                                <button class="btn btn-secondary btn-sm" onclick="editarCategoria('anestesicos', event)">Editar</button>
+                                <button class="btn btn-info btn-sm" onclick="verProductos('anestesicos', event)">Ver Productos</button>
+                            </div>
+                        </div>
+
+                        <!-- Protección -->
+                        <div class="category-card" onclick="verCategoria('proteccion')">
+                            <div class="category-icon" style="background: linear-gradient(135deg, #10B981, #059669);">🧤</div>
+                            <h3 style="font-weight: 700; margin-bottom: var(--space-sm); position: relative; z-index: 1;">Protección</h3>
+                            <p style="color: var(--text-gray); font-size: 0.875rem; margin-bottom: var(--space-md); position: relative; z-index: 1;">
+                                Equipos de protección personal médica
+                            </p>
+                            <div class="category-stats">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Productos:</span>
+                                    <strong>78</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Stock Total:</span>
+                                    <strong>15,678 unidades</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Valor:</span>
+                                    <strong>Bs. 89,320</strong>
+                                </div>
+                            </div>
+                            <div style="margin-top: var(--space-md); position: relative; z-index: 1;">
+                                <button class="btn btn-secondary btn-sm" onclick="editarCategoria('proteccion', event)">Editar</button>
+                                <button class="btn btn-info btn-sm" onclick="verProductos('proteccion', event)">Ver Productos</button>
+                            </div>
+                        </div>
+
+                        <!-- Odontología -->
+                        <div class="category-card" onclick="verCategoria('odontologia')">
+                            <div class="category-icon" style="background: linear-gradient(135deg, #3B82F6, #1D4ED8);">🦷</div>
+                            <h3 style="font-weight: 700; margin-bottom: var(--space-sm); position: relative; z-index: 1;">Odontología</h3>
+                            <p style="color: var(--text-gray); font-size: 0.875rem; margin-bottom: var(--space-md); position: relative; z-index: 1;">
+                                Instrumentos y materiales dentales
+                            </p>
+                            <div class="category-stats">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Productos:</span>
+                                    <strong>156</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Stock Total:</span>
+                                    <strong>8,920 unidades</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Valor:</span>
+                                    <strong>Bs. 234,670</strong>
+                                </div>
+                            </div>
+                            <div style="margin-top: var(--space-md); position: relative; z-index: 1;">
+                                <button class="btn btn-secondary btn-sm" onclick="editarCategoria('odontologia', event)">Editar</button>
+                                <button class="btn btn-info btn-sm" onclick="verProductos('odontologia', event)">Ver Productos</button>
+                            </div>
+                        </div>
+
+                        <!-- Higiene Oral -->
+                        <div class="category-card" onclick="verCategoria('higiene')">
+                            <div class="category-icon" style="background: linear-gradient(135deg, #F59E0B, #D97706);">🧼</div>
+                            <h3 style="font-weight: 700; margin-bottom: var(--space-sm); position: relative; z-index: 1;">Higiene Oral</h3>
+                            <p style="color: var(--text-gray); font-size: 0.875rem; margin-bottom: var(--space-md); position: relative; z-index: 1;">
+                                Productos para higiene y cuidado bucal
+                            </p>
+                            <div class="category-stats">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Productos:</span>
+                                    <strong>34</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Stock Total:</span>
+                                    <strong>4,567 unidades</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Valor:</span>
+                                    <strong>Bs. 45,890</strong>
+                                </div>
+                            </div>
+                            <div style="margin-top: var(--space-md); position: relative; z-index: 1;">
+                                <button class="btn btn-secondary btn-sm" onclick="editarCategoria('higiene', event)">Editar</button>
+                                <button class="btn btn-info btn-sm" onclick="verProductos('higiene', event)">Ver Productos</button>
+                            </div>
+                        </div>
+
+                        <!-- Instrumental -->
+                        <div class="category-card" onclick="verCategoria('instrumental')">
+                            <div class="category-icon" style="background: linear-gradient(135deg, #8B5CF6, #7C3AED);">🔬</div>
+                            <h3 style="font-weight: 700; margin-bottom: var(--space-sm); position: relative; z-index: 1;">Instrumental</h3>
+                            <p style="color: var(--text-gray); font-size: 0.875rem; margin-bottom: var(--space-md); position: relative; z-index: 1;">
+                                Instrumentos médicos y quirúrgicos
+                            </p>
+                            <div class="category-stats">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Productos:</span>
+                                    <strong>89</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Stock Total:</span>
+                                    <strong>1,234 unidades</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Valor:</span>
+                                    <strong>Bs. 567,890</strong>
+                                </div>
+                            </div>
+                            <div style="margin-top: var(--space-md); position: relative; z-index: 1;">
+                                <button class="btn btn-secondary btn-sm" onclick="editarCategoria('instrumental', event)">Editar</button>
+                                <button class="btn btn-info btn-sm" onclick="verProductos('instrumental', event)">Ver Productos</button>
+                            </div>
+                        </div>
+
+                        <!-- Material Médico -->
+                        <div class="category-card" onclick="verCategoria('material-medico')">
+                            <div class="category-icon" style="background: linear-gradient(135deg, #EC4899, #DB2777);">🏥</div>
+                            <h3 style="font-weight: 700; margin-bottom: var(--space-sm); position: relative; z-index: 1;">Material Médico</h3>
+                            <p style="color: var(--text-gray); font-size: 0.875rem; margin-bottom: var(--space-md); position: relative; z-index: 1;">
+                                Suministros médicos generales
+                            </p>
+                            <div class="category-stats">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Productos:</span>
+                                    <strong>67</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Stock Total:</span>
+                                    <strong>6,789 unidades</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Valor:</span>
+                                    <strong>Bs. 178,450</strong>
+                                </div>
+                            </div>
+                            <div style="margin-top: var(--space-md); position: relative; z-index: 1;">
+                                <button class="btn btn-secondary btn-sm" onclick="editarCategoria('material-medico', event)">Editar</button>
+                                <button class="btn btn-info btn-sm" onclick="verProductos('material-medico', event)">Ver Productos</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análisis de Categorías -->
+            <div class="section">
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3 class="text-h3">Top Categorías por Ventas</h3>
+                        <div style="margin-top: var(--space-lg);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); padding: var(--space-md); background: rgba(240, 244, 255, 0.5); border-radius: var(--radius-md);">
+                                <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                    <div style="width: 35px; height: 35px; background: linear-gradient(135deg, #10B981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.875rem;">🧤</div>
+                                    <div>
+                                        <div style="font-weight: 600;">Protección</div>
+                                        <div style="font-size: 0.75rem; color: var(--text-gray);">78 productos</div>
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-weight: 700; color: var(--success);">Bs. 89,320</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-light);">35% ventas</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); padding: var(--space-md); background: rgba(240, 244, 255, 0.5); border-radius: var(--radius-md);">
+                                <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                    <div style="width: 35px; height: 35px; background: linear-gradient(135deg, #3B82F6, #1D4ED8); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.875rem;">🦷</div>
+                                    <div>
+                                        <div style="font-weight: 600;">Odontología</div>
+                                        <div style="font-size: 0.75rem; color: var(--text-gray);">156 productos</div>
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-weight: 700; color: var(--success);">Bs. 67,890</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-light);">28% ventas</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); padding: var(--space-md); background: rgba(240, 244, 255, 0.5); border-radius: var(--radius-md);">
+                                <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                    <div style="width: 35px; height: 35px; background: linear-gradient(135deg, #EF4444, #DC2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.875rem;">💉</div>
+                                    <div>
+                                        <div style="font-weight: 600;">Anestésicos</div>
+                                        <div style="font-size: 0.75rem; color: var(--text-gray);">45 productos</div>
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-weight: 700; color: var(--success);">Bs. 45,230</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-light);">18% ventas</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 class="text-h3">Alertas de Categorías</h3>
+                        <div style="margin-top: var(--space-lg);">
+                            <div style="padding: var(--space-md); background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); border-radius: var(--radius-md); margin-bottom: var(--space-md);">
+                                <div style="font-weight: 600; color: #92400e;">Stock Bajo - Higiene Oral</div>
+                                <div style="font-size: 0.875rem; color: #92400e;">23 productos por debajo del mínimo</div>
+                            </div>
+                            
+                            <div style="padding: var(--space-md); background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--info); border-radius: var(--radius-md); margin-bottom: var(--space-md);">
+                                <div style="font-weight: 600; color: #1e3a8a;">Nueva Categoría Sugerida</div>
+                                <div style="font-size: 0.875rem; color: #1e3a8a;">Equipos de Esterilización recomendada</div>
+                            </div>
+                            
+                            <div style="padding: var(--space-md); background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--success); border-radius: var(--radius-md);">
+                                <div style="font-weight: 600; color: #047857;">Alto Rendimiento</div>
+                                <div style="font-size: 0.875rem; color: #047857;">Protección superó metas del mes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Nueva/Editar Categoría -->
+    <div id="modalCategoria" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <h2 class="text-h2" id="tituloModal">Nueva Categoría</h2>
+            
+            <form id="formCategoria">
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="text-label">Nombre de la Categoría</label>
+                        <input type="text" class="form-input" id="modal-nombre" placeholder="Ej: Equipos de Esterilización" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Código</label>
+                        <input type="text" class="form-input" id="modal-codigo" placeholder="Ej: EST" required>
+                        <small style="color: var(--text-light);">Código de 3 letras para identificación</small>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="text-label">Descripción</label>
+                    <textarea class="form-input" id="modal-descripcion" rows="3" placeholder="Descripción detallada de la categoría y sus productos"></textarea>
+                </div>
+                
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="text-label">Icono de la Categoría</label>
+                        <select class="form-input form-select" id="modal-icono">
+                            <option value="💉">💉 Inyección</option>
+                            <option value="🧤">🧤 Guantes</option>
+                            <option value="🦷">🦷 Diente</option>
+                            <option value="🧼">🧼 Higiene</option>
+                            <option value="🔬">🔬 Microscopio</option>
+                            <option value="🏥">🏥 Hospital</option>
+                            <option value="⚗️">⚗️ Laboratorio</option>
+                            <option value="🩺">🩺 Estetoscopio</option>
+                            <option value="💊">💊 Medicamentos</option>
+                            <option value="🧪">🧪 Tubos de ensayo</option>
+                            <option value="🔧">🔧 Herramientas</option>
+                            <option value="📦">📦 Suministros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Categoría Padre</label>
+                        <select class="form-input form-select" id="modal-padre">
+                            <option value="">Sin categoría padre</option>
+                            <option value="anestesicos">Anestésicos</option>
+                            <option value="proteccion">Protección</option>
+                            <option value="odontologia">Odontología</option>
+                            <option value="higiene">Higiene Oral</option>
+                            <option value="instrumental">Instrumental</option>
+                            <option value="material-medico">Material Médico</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="text-label">Color de la Categoría</label>
+                    <div class="color-picker">
+                        <div class="color-option" style="background: linear-gradient(135deg, #EF4444, #DC2626);" data-color="red" onclick="seleccionarColor('red')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #10B981, #059669);" data-color="green" onclick="seleccionarColor('green')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #3B82F6, #1D4ED8);" data-color="blue" onclick="seleccionarColor('blue')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #F59E0B, #D97706);" data-color="orange" onclick="seleccionarColor('orange')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #8B5CF6, #7C3AED);" data-color="purple" onclick="seleccionarColor('purple')"></div>
+                        <div class="color-option" style="background: linear-gradient(135deg, #EC4899, #DB2777);" data-color="pink" onclick="seleccionarColor('pink')"></div>
+                    </div>
+                    <input type="hidden" id="modal-color" value="blue">
+                </div>
+                
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="text-label">Estado</label>
+                        <select class="form-input form-select" id="modal-estado">
+                            <option value="activa">Activa</option>
+                            <option value="inactiva">Inactiva</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Orden de Visualización</label>
+                        <input type="number" class="form-input" id="modal-orden" value="1" min="1">
+                        <small style="color: var(--text-light);">Orden en que aparece la categoría</small>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: var(--space-md); justify-content: flex-end; margin-top: var(--space-xl);">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Categoría</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let colorSeleccionado = 'blue';
+
+        // ============ MANEJO DE LOGOS ============
+        function handleLogoError() {
+            // Ocultar imagen y mostrar logo por defecto en el sidebar
+            document.getElementById('sidebarLogo').style.display = 'none';
+            document.getElementById('defaultLogo').style.display = 'flex';
+        }
+        
+        function handleMobileLogoError() {
+            // Reemplazar logo móvil con texto si falla la carga
+            const mobileLogo = document.getElementById('mobileLogo');
+            mobileLogo.src = '';
+            mobileLogo.alt = 'Sistema Roy';
+            mobileLogo.style.fontFamily = 'Inter, sans-serif';
+            mobileLogo.style.fontWeight = '700';
+            mobileLogo.style.fontSize = '1.2rem';
+            mobileLogo.style.color = 'var(--color-purple)';
+        }
+        
+        // Verificar si las imágenes se cargaron correctamente al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarLogo = document.getElementById('sidebarLogo');
+            const mobileLogo = document.getElementById('mobileLogo');
+            
+            // Si la imagen del sidebar no se cargó correctamente
+            if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
+                handleLogoError();
+            }
+            
+            // Si la imagen móvil no se cargó correctamente
+            if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
+                handleMobileLogoError();
+            }
+            
+            // También verificar después de un tiempo por si la carga es lenta
+            setTimeout(function() {
+                if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
+                    handleLogoError();
+                }
+                if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
+                    handleMobileLogoError();
+                }
+            }, 1000);
+        });
+
+        // ============ FUNCIONES DEL SIDEBAR ============
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Función para abrir modal
+        function abrirModal(categoriaId = null) {
+            const modal = document.getElementById('modalCategoria');
+            const titulo = document.getElementById('tituloModal');
+            
+            if (categoriaId) {
+                titulo.textContent = 'Editar Categoría';
+                cargarDatosCategoria(categoriaId);
+            } else {
+                titulo.textContent = 'Nueva Categoría';
+                document.getElementById('formCategoria').reset();
+                seleccionarColor('blue');
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        // Función para cerrar modal
+        function cerrarModal() {
+            document.getElementById('modalCategoria').style.display = 'none';
+        }
+
+        // Función para seleccionar color
+        function seleccionarColor(color) {
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            document.querySelector(`[data-color="${color}"]`).classList.add('selected');
+            document.getElementById('modal-color').value = color;
+            colorSeleccionado = color;
+        }
+
+        // Función para cargar datos de categoría
+        function cargarDatosCategoria(categoriaId) {
+            const categorias = {
+                'anestesicos': {
+                    nombre: 'Anestésicos',
+                    codigo: 'ANE',
+                    descripcion: 'Productos para anestesia local y general',
+                    icono: '💉',
+                    color: 'red',
+                    estado: 'activa',
+                    orden: 1
+                },
+                'proteccion': {
+                    nombre: 'Protección',
+                    codigo: 'PRO',
+                    descripcion: 'Equipos de protección personal médica',
+                    icono: '🧤',
+                    color: 'green',
+                    estado: 'activa',
+                    orden: 2
+                }
+            };
+            
+            const categoria = categorias[categoriaId];
+            if (categoria) {
+                document.getElementById('modal-nombre').value = categoria.nombre;
+                document.getElementById('modal-codigo').value = categoria.codigo;
+                document.getElementById('modal-descripcion').value = categoria.descripcion;
+                document.getElementById('modal-icono').value = categoria.icono;
+                document.getElementById('modal-estado').value = categoria.estado;
+                document.getElementById('modal-orden').value = categoria.orden;
+                seleccionarColor(categoria.color);
+            }
+        }
+
+        // Función para ver categoría
+        function verCategoria(categoriaId) {
+            mostrarNotificacion('Viendo detalles de la categoría: ' + categoriaId, 'info');
+        }
+
+        // Función para editar categoría
+        function editarCategoria(categoriaId, event) {
+            event.stopPropagation();
+            abrirModal(categoriaId);
+        }
+
+        // Función para ver productos de categoría
+        function verProductos(categoriaId, event) {
+            event.stopPropagation();
+            mostrarNotificacion('Mostrando productos de la categoría: ' + categoriaId, 'info');
+        }
+
+        // Función para mostrar notificaciones
+        function mostrarNotificacion(mensaje, tipo) {
+            const notificacion = document.createElement('div');
+            notificacion.className = `alert alert-${tipo}`;
+            notificacion.innerHTML = `<strong>${tipo === 'success' ? 'Éxito!' : tipo === 'warning' ? 'Advertencia:' : tipo === 'danger' ? 'Crítico:' : 'Info:'}</strong> ${mensaje}`;
+            notificacion.style.position = 'fixed';
+            notificacion.style.top = '20px';
+            notificacion.style.right = '20px';
+            notificacion.style.zIndex = '1000';
+            notificacion.style.minWidth = '300px';
+            notificacion.style.boxShadow = 'var(--shadow-lg)';
+            
+            document.body.appendChild(notificacion);
+            
+            setTimeout(() => {
+                notificacion.remove();
+            }, 4000);
+        }
+
+        // Manejar envío del formulario
+        document.getElementById('formCategoria').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nombre = document.getElementById('modal-nombre').value;
+            const codigo = document.getElementById('modal-codigo').value;
+            
+            if (nombre && codigo) {
+                mostrarNotificacion(`Categoría "${nombre}" (${codigo}) guardada exitosamente`, 'success');
+                cerrarModal();
+            }
+        });
+
+        // Búsqueda en tiempo real
+        document.getElementById('busqueda').addEventListener('input', function() {
+            const busqueda = this.value.toLowerCase();
+            const cards = document.querySelectorAll('.category-card');
+            
+            cards.forEach(card => {
+                const texto = card.textContent.toLowerCase();
+                const mostrar = texto.includes(busqueda);
+                card.style.display = mostrar ? 'block' : 'none';
+            });
+        });
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalCategoria');
+            if (event.target === modal) {
+                cerrarModal();
+            }
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            seleccionarColor('blue');
+            
+            // Animaciones de entrada
+            const cards = document.querySelectorAll('.card, .category-card, .stat-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // Navegación por teclado
+        document.addEventListener('keydown', function(e) {
+            // Atajos globales
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'n':
+                        e.preventDefault();
+                        abrirModal();
+                        break;
+                    case 'f':
+                        e.preventDefault();
+                        document.getElementById('busqueda').focus();
+                        break;
+                }
+            }
+            
+            // Cerrar modal con Escape
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('modalCategoria');
+                if (modal.style.display === 'block') {
+                    cerrarModal();
+                }
+            }
+        });
+
+        console.log('Sistema de Gestión de Categorías Roy Representaciones iniciado');
+        console.log('Atajos: Ctrl+N (Nueva categoría), Ctrl+F (Buscar), Escape (Cerrar modal)');
+    </script>
+</body>
+</html>

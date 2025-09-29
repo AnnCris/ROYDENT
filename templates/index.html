@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roy Dent - Insumos Médicos y Dentales</title>
+    <style>
+        :root {
+            /* Colores principales - Tema Dorado y Verde VIBRANTES */
+            --color-gold: #D4AF37;
+            --color-gold-light: #f6e06f;
+            --color-gold-dark: #B8860B;
+            --color-green: #2E8B57;
+            --color-green-light: #98FB98;
+            --color-green-dark: #1A5D34;
+            
+            --bg-primary: #FDFEFE;
+            --bg-secondary: #F8FAFC;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --overlay-light: rgba(255, 255, 255, 0.3);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --celeste-baby: #E0F6FF;
+            --celeste-medium: #B3E5FC;
+            --celeste-light: #87CEEB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #FFFACD, #F0FFF0, #FFFAF0);
+        }
+
+        /* Header con efecto glassmorphism */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 2px solid rgba(255, 215, 0, 0.4);
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-image {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .logo-image:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.8);
+        }
+
+        .logo-text {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .logo-roy, .logo-mundo {
+            color: #000000;
+            transition: all 0.3s ease;
+            position: relative;
+            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+        }
+
+        .nav-link:hover {
+            color: var(--color-green);
+            background: rgba(255, 215, 0, 0.2);
+            backdrop-filter: blur(10px);
+            transform: translateY(-2px);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: -5px;
+            left: 50%;
+            background: linear-gradient(90deg, var(--color-gold), var(--color-green));
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .nav-link:hover::after {
+            width: 80%;
+            left: 10%;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(135deg, var(--color-green), var(--color-gold));
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 45px rgba(255, 215, 0, 0.8);
+            border-color: rgba(0, 200, 81, 0.7);
+        }
+
+        /* Hero Section con Carousel Moderno */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            z-index: 1;
+        }
+
+        .hero-background.active {
+            opacity: 1;
+        }
+
+        .hero-background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--overlay-light);
+            z-index: 1;
+        }
+
+        /* IMÁGENES LOCALES PARA EL CARRUSEL - ODONTOLOGÍA */
+        .hero-bg-1 {
+            background-image: url('static/img/hero-dental-1.jpeg');
+        }
+
+        .hero-bg-2 {
+            background-image: url('static/img/hero-dental-2.jpg');
+        }
+
+        .hero-bg-3 {
+            background-image: url('static/img/hero-dental-3.jpg');
+        }
+
+        .hero-content {
+            text-align: center;
+            color: var(--text-primary);
+            max-width: 900px;
+            padding: 3rem;
+            z-index: 2;
+            position: relative;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out;
+            line-height: 1.2;
+        }
+
+        .hero-roy, .hero-mundo {
+            color: #000000;
+            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.2s both;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn {
+            padding: 1.2rem 2.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.6);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.8);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: var(--color-green-dark);
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.4);
+            color: var(--color-green);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Secciones con efectos modernos */
+        .section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            scroll-margin-top: 100px;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.08), transparent 70%);
+            pointer-events: none;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green), var(--color-gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+            position: relative;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 4rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 500;
+        }
+
+        /* About Section */
+        .about {
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+        }
+
+        .about-banner {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .banner-image {
+            height: 350px;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .banner-image:hover {
+            transform: translateY(-15px) rotateY(5deg);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
+        }
+
+        .banner-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+            border-radius: 25px;
+        }
+
+        .banner-image:hover img {
+            transform: scale(1.1);
+        }
+
+        .about-text-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .about-text {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 25px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .about-text:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.15);
+        }
+
+        .about-text h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-green-dark);
+            font-weight: 800;
+        }
+
+        .about-text p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        /* Services Section */
+        .services {
+            background: var(--bg-secondary);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .service-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .service-card:hover::before {
+            left: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
+        }
+
+        .service-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover .service-icon {
+            transform: rotateY(180deg) scale(1.1);
+            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.7);
+        }
+
+        .service-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-green-dark);
+            font-weight: 700;
+        }
+
+        .service-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+
+        /* Products Section */
+        .products {
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+        }
+
+        .products-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .product-preview {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--glass-border);
+        }
+
+        .product-preview:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-image {
+            height: 220px;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.3s ease;
+        }
+
+        .product-preview:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        /* IMÁGENES LOCALES PARA PRODUCTOS DENTALES */
+        .product-image.dental {
+            background-image: url('static/img/productos-dental.jpeg');
+        }
+
+        .product-image.medical {
+            background-image: url('static/img/productos-instrumental.jpeg');
+        }
+
+        .product-image.surgical {
+            background-image: url('static/img/productos-restauracion.jpeg');
+        }
+
+        .product-image.lab {
+            background-image: url('static/img/productos-diagnostico.jpeg');
+        }
+
+        .product-info {
+            padding: 2rem;
+        }
+
+        .product-info h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            color: var(--color-green-dark);
+            font-weight: 700;
+        }
+
+        .product-info p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Nueva sección de Sucursales con mapa y logo */
+        .locations {
+            background: var(--bg-secondary);
+        }
+
+        .location-main {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        .location-logo-section {
+            margin-bottom: 3rem;
+        }
+
+        .location-logo {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 2rem;
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.6);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .location-logo:hover {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 30px 70px rgba(255, 215, 0, 0.8);
+        }
+
+        .location-logo img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .location-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .location-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-weight: 500;
+        }
+
+        .location-map {
+            width: 100%;
+            height: 400px;
+            border-radius: 20px;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+        }
+
+        .location-map iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 20px;
+        }
+
+        .location-details {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .location-address {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--color-green-dark);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .location-phone {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--color-gold-dark);
+            margin-bottom: 1rem;
+        }
+
+        .location-hours {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+            color: white;
+            text-align: center;
+            padding: 5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+        }
+
+        .cta-section h2 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 900;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Footer con fondo celeste bebé */
+        .footer {
+            background: linear-gradient(135deg, #E0F6FF, #B3E5FC, #87CEEB);
+            color: var(--text-primary);
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(135, 206, 235, 0.2);
+        }
+
+        .footer-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(135, 206, 235, 0.3);
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1.5rem;
+            color: var(--color-green);
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .footer-section p {
+            margin-bottom: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-weight: 500;
+        }
+
+        .footer-section a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .footer-section a:hover {
+            color: var(--color-green);
+            transform: translateX(8px);
+        }
+
+        .footer-section a::before {
+            content: '→';
+            position: absolute;
+            left: -25px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            color: var(--color-green);
+        }
+
+        .footer-section a:hover::before {
+            opacity: 1;
+            left: -20px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.4);
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo-circle {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.5);
+        }
+
+        .footer-logo-text {
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .footer-logo-roy, .footer-logo-mundo {
+            color: #000000;
+            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 2.8rem;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .about-banner {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .about-text-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .section {
+                padding: 4rem 1rem;
+            }
+
+            .section-title {
+                font-size: 2.2rem;
+            }
+
+            .location-main {
+                padding: 2rem;
+            }
+
+            .location-logo {
+                width: 120px;
+                height: 120px;
+            }
+
+            .location-title {
+                font-size: 2rem;
+            }
+
+            .location-map {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <img src="static/img/LOGO-1.png" alt="Logo Roy Dent & Mundo Médico" class="logo-image">
+                <div class="logo-text">
+                    <span class="logo-roy">Roy Dent</span>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#inicio" class="nav-link">Inicio</a></li>
+                <li><a href="#nosotros" class="nav-link">Nosotros</a></li>
+                <li><a href="#servicios" class="nav-link">Servicios</a></li>
+                <li><a href="#sucursales" class="nav-link">Dirección</a></li>
+            </ul>
+            <a href="/login/" class="login-btn">Iniciar Sesión</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section con Carousel Moderno y Fondo Claro -->
+    <section id="inicio" class="hero">
+        <div class="hero-background hero-bg-1 active"></div>
+        <div class="hero-background hero-bg-2"></div>
+        <div class="hero-background hero-bg-3"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="hero-roy">Roy Dent</span> 
+            </h1>
+            <p class="hero-subtitle">
+                Líderes en distribución de insumos médicos y dentales de la más alta calidad. 
+                Comprometidos con la excelencia en el cuidado de la salud.
+            </p>
+            <div class="hero-cta">
+                <a href="/login/" class="btn btn-primary">Ver Catálogo</a>
+                <a href="#nosotros" class="btn btn-secondary">Conoce Más</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section con Banner de 3 Imágenes -->
+    <section id="nosotros" class="section about">
+        <h2 class="section-title">Acerca de Nosotros</h2>
+        <p class="section-subtitle">
+            Somos una empresa boliviana dedicada a brindar soluciones integrales en equipos médicos y dentales
+        </p>
+        <div class="about-banner">
+            <div class="banner-image">
+                <img src="static/img/about-dental-1.png" alt="Consultorio dental profesional">
+            </div>
+            <div class="banner-image">
+                <img src="static/img/about-dental-2.png" alt="Instrumentos dentales especializados">
+            </div>
+            <div class="banner-image">
+                <img src="static/img/about-dental-3.jpeg" alt="Equipo odontológico avanzado">
+            </div>
+        </div>
+        <div class="about-text-content">
+            <div class="about-text">
+                <h3>Nuestra Misión</h3>
+                <p>
+                    En Roy Dent nos dedicamos a proporcionar equipos e insumos dentales y médicos 
+                    de la más alta calidad, contribuyendo al desarrollo de la salud oral y general en Bolivia mediante 
+                    productos confiables y servicios especializados.
+                </p>
+            </div>
+            <div class="about-text">
+                <h3>Nuestra Visión</h3>
+                <p>
+                    Ser la empresa líder en distribución de equipos dentales y médicos en Bolivia, 
+                    reconocida por nuestra calidad, innovación y compromiso con la excelencia 
+                    en el servicio al cliente odontológico.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section (Solo 3 servicios) -->
+    <section id="servicios" class="section services">
+        <h2 class="section-title">Nuestros Servicios</h2>
+        <p class="section-subtitle">
+            Ofrecemos una amplia gama de servicios especializados para profesionales de la salud dental
+        </p>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🦷</div>
+                <h3>Equipos Dentales</h3>
+                <p>Unidades dentales completas, sillones odontológicos y equipos de diagnóstico dental de las mejores marcas internacionales.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🔧</div>
+                <h3>Instrumental Dental</h3>
+                <p>Instrumental quirúrgico dental, turbinas, micromotor y herramientas especializadas para tratamientos odontológicos.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">💊</div>
+                <h3>Materiales Dentales</h3>
+                <p>Materiales de restauración, anestésicos, resinas y todos los insumos necesarios para la práctica odontológica.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="productos" class="section products">
+        <h2 class="section-title">Nuestros Productos</h2>
+        <p class="section-subtitle">
+            Descubre nuestra amplia variedad de equipos e insumos dentales especializados
+        </p>
+        <div class="products-showcase">
+            <div class="product-preview">
+                <div class="product-image dental"></div>
+                <div class="product-info">
+                    <h4>Unidades Dentales</h4>
+                    <p>Unidades dentales completas con sillón, lámpara, equipo de aspiración y sistemas integrados.</p>
+                </div>
+            </div>
+            <div class="product-preview">
+                <div class="product-image medical"></div>
+                <div class="product-info">
+                    <h4>Instrumental Dental</h4>
+                    <p>Turbinas de alta velocidad, contraángulos, piezas de mano y instrumental quirúrgico dental.</p>
+                </div>
+            </div>
+            <div class="product-preview">
+                <div class="product-image surgical"></div>
+                <div class="product-info">
+                    <h4>Material de Restauración</h4>
+                    <p>Resinas compuestas, amalgamas, cementos y materiales para endodoncia y periodoncia.</p>
+                </div>
+            </div>
+            <div class="product-preview">
+                <div class="product-image lab"></div>
+                <div class="product-info">
+                    <h4>Equipos de Diagnóstico</h4>
+                    <p>Rayos X dentales, cámaras intraorales, equipos de radiografía digital y sistemas de imagen.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="catalogo" class="cta-section">
+        <h2>Explora Nuestro Catálogo Completo</h2>
+        <p>Descubre toda nuestra gama de productos dentales y médicos especializados</p>
+        <a href="/login/" class="btn btn-secondary">Ver Catálogo Completo</a>
+    </section>
+
+    <!-- Nueva Sección de Sucursales con Logo, Mapa y Dirección -->
+    <section id="sucursales" class="section locations">
+        <h2 class="section-title">Nuestra Dirección</h2>
+        <p class="section-subtitle">
+            Encuéntranos en nuestra sucursal ubicada estratégicamente para tu comodidad
+        </p>
+        <div class="location-main">
+            <div class="location-logo-section">
+                <div class="location-logo">
+                    <img src="static/img/LOGO-1.png" alt="Logo Roy Dent">
+                </div>
+                <h3 class="location-title">ROYDENT</h3>
+                <p class="location-subtitle">Tu proveedor de confianza en equipos dentales</p>
+            </div>
+            
+            <div class="location-map">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d239.102869809241!2d-68.19364897468665!3d-16.4934573359562!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sbo!4v1758397833979!5m2!1ses-419!2sbo"
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+            
+            <div class="location-details">
+                <div class="location-address">
+                    Avenida Sucre A N° 33 frente<br>
+                    al emblemático UPEA Zona Los Andes El Alto.
+                </div>
+                <div class="location-phone">
+                    (+591) 74903088
+                </div>
+                <div class="location-hours">
+                    Horario de atención:<br>
+                    Lunes a Viernes: 8:00 - 18:00<br>
+                    Sábados: 8:00 - 12:00
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer con Fondo Celeste Bebé -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <div class="footer-logo-text">
+                        <span class="footer-logo-roy">Roy Dent</span>
+                    </div>
+                </div>
+                <p>Distribuidores especializados en equipos dentales y médicos de alta calidad para profesionales de la salud en Bolivia.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Enlaces Rápidos</h4>
+                <p><a href="#inicio">Inicio</a></p>
+                <p><a href="#nosotros">Nosotros</a></p>
+                <p><a href="#servicios">Servicios</a></p>
+                <p><a href="#sucursales">Sucursales</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>Productos</h4>
+                <p><a href="/login/">Unidades Dentales</a></p>
+                <p><a href="/login/">Instrumental Dental</a></p>
+                <p><a href="/login/">Material de Restauración</a></p>
+                <p><a href="/login/">Equipos de Diagnóstico</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>Contacto</h4>
+                <p>Email: info@roydent.com.bo</p>
+                <p>WhatsApp: +591 74903088</p>
+                <p>Horario: Lun-Vie 8:00-18:00</p>
+                <p>Sáb: 8:00-12:00</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Roy Dent. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript para el Carousel Automático -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const backgrounds = document.querySelectorAll('.hero-background');
+            let currentIndex = 0;
+
+            function changeBackground() {
+                // Remover clase active de todas las imágenes
+                backgrounds.forEach(bg => bg.classList.remove('active'));
+                
+                // Incrementar índice
+                currentIndex = (currentIndex + 1) % backgrounds.length;
+                
+                // Agregar clase active a la siguiente imagen
+                backgrounds[currentIndex].classList.add('active');
+            }
+
+            // Cambiar imagen cada 5 segundos
+            setInterval(changeBackground, 5000);
+
+            // Efectos de parallax suave en scroll
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                const heroContent = document.querySelector('.hero-content');
+                if (heroContent) {
+                    heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+            });
+
+            // Animaciones de entrada para elementos visibles
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observar elementos para animaciones
+            document.querySelectorAll('.service-card, .product-preview, .location-main, .banner-image').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'all 0.6s ease-out';
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

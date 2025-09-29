@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Premium - Roy Dent & Mundo Médico</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Colores principales - Tema Dorado y Verde VIBRANTES */
+            --color-gold: #D4AF37;
+            --color-gold-light: #f6e06f;
+            --color-gold-dark: #B8860B;
+            --color-green: #2E8B57;
+            --color-green-light: #98FB98;
+            --color-green-dark: #1A5D34;
+            --color-blue: #4169E1;
+            --text-dark: #2D3748;
+            --text-gray: #718096;
+            --text-gold: #DAA520;
+            --bg-light: #FFFACD;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 215, 0, 0.3);
+            --shadow-gold: rgba(255, 215, 0, 0.4);
+            --shadow-green: rgba(0, 200, 81, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #FFFACD, #F0FFF0, #FFFAF0);
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Elementos decorativos de fondo */
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.25;
+            z-index: 0;
+        }
+        
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--color-gold);
+            top: -100px;
+            left: -100px;
+        }
+        
+        .blob-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--color-green);
+            bottom: -150px;
+            right: -150px;
+        }
+        
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--color-gold-light);
+            top: 50%;
+            left: 70%;
+        }
+
+        /* Header con estilo vibrante */
+        .catalog-header {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green), var(--color-gold-dark));
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+        }
+
+        .catalog-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .catalog-header h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            letter-spacing: -1px;
+        }
+
+        .catalog-header p {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Barra de búsqueda con efectos vibrantes */
+        .search-container {
+            max-width: 1200px;
+            margin: -30px auto 3rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-box {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 50px var(--shadow-gold);
+            border: 2px solid var(--glass-border);
+            position: relative;
+        }
+
+        .search-box::before {
+            content: "";
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+            background-size: 300% 300%;
+            border-radius: 22px;
+            animation: gradientMove 4s ease infinite;
+            z-index: -1;
+        }
+
+        .search-box::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: var(--glass-bg);
+            border-radius: 18px;
+            z-index: -1;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .search-controls {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input-group {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem 1rem 3.5rem;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 25px var(--shadow-gold);
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--color-gold);
+            box-shadow: 0 12px 35px var(--shadow-gold);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-gold);
+            font-size: 1.2rem;
+        }
+
+        .filter-select {
+            padding: 1rem 1.5rem;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text-dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px var(--shadow-gold);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--color-gold);
+            box-shadow: 0 12px 35px var(--shadow-gold);
+        }
+
+        .view-toggle {
+            display: flex;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 0.5rem;
+            box-shadow: 0 8px 25px var(--shadow-gold);
+        }
+
+        .view-btn {
+            padding: 0.8rem 1.2rem;
+            border: none;
+            background: transparent;
+            color: var(--text-gray);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .view-btn.active {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+            color: white;
+            box-shadow: 0 8px 25px var(--shadow-gold);
+        }
+
+        /* Container principal */
+        .catalog-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Información de Resultados */
+        .results-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 15px;
+            box-shadow: 0 20px 50px var(--shadow-gold);
+            border: 2px solid var(--glass-border);
+        }
+
+        .results-count {
+            color: var(--text-gold);
+            font-weight: 600;
+        }
+
+        .results-sort {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Grid de Productos */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .products-grid.list-view {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        /* Tarjetas de productos con efectos vibrantes */
+        .product-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px var(--shadow-gold);
+            border: 2px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .product-card::before {
+            content: "";
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+            background-size: 300% 300%;
+            border-radius: 22px;
+            animation: gradientMove 4s ease infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .product-card:hover::before {
+            opacity: 1;
+        }
+
+        .product-card::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: var(--glass-bg);
+            border-radius: 18px;
+            z-index: -1;
+        }
+
+        .product-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 35px 80px rgba(255, 215, 0, 0.4);
+        }
+
+        .product-image {
+            position: relative;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .product-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 215, 0, 0.1), rgba(0, 200, 81, 0.1), rgba(218, 165, 32, 0.1));
+        }
+
+        /* Badges de estado mejorados */
+        .status-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 3;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .badge-available {
+            background: linear-gradient(135deg, var(--color-green), var(--color-green-dark));
+            color: white;
+        }
+
+        .badge-low-stock {
+            background: linear-gradient(135deg, #F59E0B, #e6900a);
+            color: white;
+        }
+
+        .badge-out-of-stock {
+            background: linear-gradient(135deg, #EF4444, #dc2626);
+            color: white;
+        }
+
+        .badge-featured {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
+            color: white;
+        }
+
+        /* Información del producto */
+        .product-info {
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .product-category {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .product-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .product-description {
+            color: var(--text-gray);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+            color: white;
+            box-shadow: 0 12px 35px var(--shadow-gold);
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--color-green), var(--color-gold));
+            transform: translateY(-3px);
+            box-shadow: 0 16px 45px var(--shadow-gold);
+        }
+
+        /* Vista de lista */
+        .products-grid.list-view .product-card {
+            display: flex;
+            flex-direction: row;
+            max-height: 200px;
+        }
+
+        .products-grid.list-view .product-image {
+            width: 250px;
+            height: 100%;
+            border-radius: 20px 0 0 20px;
+            flex-shrink: 0;
+        }
+
+        .products-grid.list-view .product-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.5rem;
+        }
+
+        .products-grid.list-view .product-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .products-grid.list-view .product-text {
+            flex: 1;
+            margin-right: 1.5rem;
+        }
+
+        .products-grid.list-view .product-actions {
+            flex-direction: column;
+            min-width: 150px;
+        }
+
+        .products-grid.list-view .product-description {
+            margin-bottom: 1rem;
+            display: block !important;
+        }
+
+        /* Estados de carga y sin resultados */
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-gray);
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px var(--shadow-gold);
+            border: 2px solid var(--glass-border);
+        }
+
+        .no-results h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-gold);
+        }
+
+        /* Modal para detalles del producto */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .modal-content {
+            position: relative;
+            background: var(--glass-bg);
+            margin: 5% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 1000px;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 35px 80px rgba(255, 215, 0, 0.5);
+            animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            color: white;
+            background: rgba(255, 215, 0, 0.9);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: var(--color-gold);
+            transform: rotate(90deg);
+        }
+
+        .modal-header {
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .modal-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to top, var(--glass-bg), transparent);
+        }
+
+        .modal-body {
+            padding: 3rem;
+            margin-top: -100px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .modal-category {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .modal-description {
+            color: var(--text-gray);
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .modal-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .detail-item {
+            padding: 1.5rem;
+            background: rgba(255, 250, 205, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px var(--shadow-gold);
+        }
+
+        .detail-item h4 {
+            color: var(--color-gold-dark);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-item p {
+            color: var(--text-dark);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 15px rgba(255, 215, 0, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .catalog-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .search-controls {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .products-grid.list-view .product-card {
+                flex-direction: column;
+                max-height: none;
+            }
+
+            .products-grid.list-view .product-image {
+                width: 100%;
+                height: 200px;
+                border-radius: 20px 20px 0 0;
+            }
+
+            .products-grid.list-view .product-main {
+                flex-direction: column;
+            }
+
+            .products-grid.list-view .product-actions {
+                flex-direction: row;
+                width: 100%;
+                margin-top: 1.5rem;
+            }
+
+            .results-info {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .modal-header {
+                height: 300px;
+            }
+
+            .modal-body {
+                padding: 2rem;
+            }
+
+            .modal-title {
+                font-size: 2rem;
+            }
+
+            .modal-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Elementos decorativos de fondo -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+
+    <!-- Header Premium -->
+    <header class="catalog-header">
+        <div class="header-content">
+            <h1>Catálogo Premium</h1>
+            <p>Roy Dent & Mundo Médico - Equipos de Excelencia</p>
+        </div>
+    </header>
+
+    <!-- Barra de Búsqueda Avanzada -->
+    <div class="search-container">
+        <div class="search-box">
+            <div class="search-controls">
+                <div class="search-input-group">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Buscar productos, categorías, marcas...">
+                </div>
+                <select id="categoryFilter" class="filter-select">
+                    <option value="">Todas las categorías</option>
+                    <option value="dental">Equipos Dentales</option>
+                    <option value="medical">Equipos Médicos</option>
+                    <option value="lab">Laboratorio</option>
+                    <option value="surgical">Instrumental Quirúrgico</option>
+                </select>
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="grid">⊞ Grid</button>
+                    <button class="view-btn" data-view="list">☰ Lista</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor Principal -->
+    <div class="catalog-container">
+        <!-- Información de Resultados -->
+        <div class="results-info">
+            <div class="results-count">
+                Mostrando <span id="resultCount">8</span> productos
+            </div>
+            <div class="results-sort">
+                <label for="sortSelect">Ordenar por:</label>
+                <select id="sortSelect" class="filter-select">
+                    <option value="name">Nombre A-Z</option>
+                    <option value="name-desc">Nombre Z-A</option>
+                    <option value="category">Categoría</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Grid de Productos -->
+        <div class="products-grid" id="productsGrid">
+            <!-- Producto 1: Destacado -->
+            <div class="product-card" data-category="dental" data-name="Unidad Dental Premium">
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Unidad Dental Premium">
+                    <div class="status-badge badge-featured">Destacado</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Equipos Dentales</div>
+                    <h3 class="product-title">Unidad Dental Premium Elite</h3>
+                    <p class="product-description">
+                        Sistema dental completo con tecnología alemana, aspiración dual, luz LED de 50,000 lux y bandeja instrumental motorizada.
+                    </p>
+                    <div class="product-actions">
+                        <a href="#" class="btn btn-primary view-details" data-product="1">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Producto 2: Disponible -->
+            <div class="product-card" data-category="medical" data-name="Estetoscopio Digital">
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1550572017-edd951b55104?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Estetoscopio Digital">
+                    <div class="status-badge badge-available">Disponible</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Equipos Médicos</div>
+                    <h3 class="product-title">Estetoscopio Digital Avanzado</h3>
+                    <p class="product-description">
+                        Estetoscopio cardiológico con amplificación x40, cancelación de ruido y conectividad Bluetooth para grabación.
+                    </p>
+                    <div class="product-actions">
+                        <a href="#" class="btn btn-primary view-details" data-product="2">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Producto 3: Stock Bajo -->
+            <div class="product-card" data-category="lab" data-name="Microscopio Binocular">
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Microscopio Binocular">
+                    <div class="status-badge badge-low-stock">Stock Bajo</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Laboratorio</div>
+                    <h3 class="product-title">Microscopio Binocular HD</h3>
+                    <p class="product-description">
+                        Microscopio profesional con objetivos Plan-Acromáticos, iluminación LED y cámara digital integrada de 5MP.
+                    </p>
+                    <div class="product-actions">
+                        <a href="#" class="btn btn-primary view-details" data-product="3">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Producto 4: Disponible -->
+            <div class="product-card" data-category="surgical" data-name="Kit Instrumental Quirúrgico">
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Kit Instrumental Quirúrgico">
+                    <div class="status-badge badge-available">Disponible</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Instrumental Quirúrgico</div>
+                    <h3 class="product-title">Set Instrumental Titanio</h3>
+                    <p class="product-description">
+                        Kit completo de 45 piezas en titanio grado médico. Incluye pinzas, tijeras, porta-agujas y separadores.
+                    </p>
+                    <div class="product-actions">
+                        <a href="#" class="btn btn-primary view-details" data-product="4">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Producto 5: Destacado -->
+            <div class="product-card" data-category="medical" data-name="Equipo Rayos X">
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1582719471384-894fbb16e074?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Equipo Rayos X">
+                    <div class="status-badge badge-available">Disponible</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Radiología</div>
+                    <h3 class="product-title">Sistema Rayos X Digital</h3>
+                    <p class="product-description">
+                        Equipo de radiología digital portátil con panel detector plano y software de procesamiento avanzado.
+                    </p>
+                    <div class="product-actions">
+                        <a href="#" class="btn btn-primary view-details" data-product="5">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Producto 6: Sin Stock -->
+            <div class="product-card" data-category="surgical" data-name="Material Sutura">
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1551601651-2a8555f1a136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Material Sutura">
+                    <div class="status-badge badge-out-of-stock">Sin Stock</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Consumibles</div>
+                    <h3 class="product-title">Sutura Biodegradable Premium</h3>
+                    <p class="product-description">
+                        Hilos de sutura absorbibles multifilamento con aguja atraumática. Diversos calibres disponibles.
+                    </p>
+                    <div class="product-actions">
+                        <a href="#" class="btn btn-primary view-details" data-product="6">Notificar Disponibilidad</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Productos adicionales -->
+            <div class="product-card" data-category="dental" data-name="Turbina Dental">
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Turbina Dental">
+                    <div class="status-badge badge-available">Disponible</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Equipos Dentales</div>
+                    <h3 class="product-title">Turbina Alta Velocidad</h3>
+                    <p class="product-description">
+                        Turbina dental de alta precisión con rodamientos cerámicos y sistema de refrigeración dual.
+                    </p>
+                    <div class="product-actions">
+                        <a href="#" class="btn btn-primary view-details" data-product="7">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card" data-category="lab" data-name="Centrífuga Laboratorio">
+                <div class="product-image">
+                    <img src="https://images.unsplash.com/photo-1582719471384-894fbb16e074?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Centrífuga Laboratorio">
+                    <div class="status-badge badge-available">Disponible</div>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">Laboratorio</div>
+                    <h3 class="product-title">Centrífuga de Mesa</h3>
+                    <p class="product-description">
+                        Centrífuga digital con rotor basculante, velocidad variable hasta 4000 rpm y timer programable.
+                    </p>
+                    <div class="product-actions">
+                        <a href="#" class="btn btn-primary view-details" data-product="8">Ver Detalles</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensaje sin resultados -->
+        <div class="no-results" id="noResults" style="display: none;">
+            <h3>No se encontraron productos</h3>
+            <p>Intenta ajustar los filtros de búsqueda o usa términos diferentes.</p>
+        </div>
+    </div>
+
+    <!-- Modal para detalles del producto -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img id="modalImage" src="" alt="Producto">
+            </div>
+            <div class="modal-body">
+                <div class="modal-category" id="modalCategory"></div>
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <p class="modal-description" id="modalDescription"></p>
+                
+                <div class="modal-details">
+                    <div class="detail-item">
+                        <h4>Especificaciones Técnicas</h4>
+                        <p id="modalSpecs"></p>
+                    </div>
+                    <div class="detail-item">
+                        <h4>Características Principales</h4>
+                        <p id="modalFeatures"></p>
+                    </div>
+                    <div class="detail-item">
+                        <h4>Dimensiones y Peso</h4>
+                        <p id="modalDimensions"></p>
+                    </div>
+                    <div class="detail-item">
+                        <h4>Garantía y Soporte</h4>
+                        <p id="modalWarranty"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const categoryFilter = document.getElementById('categoryFilter');
+            const sortSelect = document.getElementById('sortSelect');
+            const productsGrid = document.getElementById('productsGrid');
+            const resultCount = document.getElementById('resultCount');
+            const noResults = document.getElementById('noResults');
+            const viewButtons = document.querySelectorAll('.view-btn');
+            const modal = document.getElementById('productModal');
+            const closeModal = document.querySelector('.close-modal');
+            const viewDetailsButtons = document.querySelectorAll('.view-details');
+            
+            let currentView = 'grid';
+            let allProducts = Array.from(document.querySelectorAll('.product-card'));
+
+            // Datos de productos para el modal
+            const productDetails = {
+                1: {
+                    image: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+                    category: "Equipos Dentales",
+                    title: "Unidad Dental Premium Elite",
+                    description: "Sistema dental completo con tecnología alemana, aspiración dual, luz LED de 50,000 lux y bandeja instrumental motorizada.",
+                    specs: "Voltaje: 220V, Potencia: 1500W, Dimensiones: 150x80x120 cm",
+                    features: "Tecnología alemana, Aspiración dual, Luz LED de 50,000 lux, Bandeja instrumental motorizada",
+                    dimensions: "150x80x120 cm, Peso: 250 kg",
+                    warranty: "2 años de garantía, Soporte técnico 24/7"
+                },
+                2: {
+                    image: "https://images.unsplash.com/photo-1550572017-edd951b55104?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+                    category: "Equipos Médicos",
+                    title: "Estetoscopio Digital Avanzado",
+                    description: "Estetoscopio cardiológico con amplificación x40, cancelación de ruido y conectividad Bluetooth para grabación.",
+                    specs: "Amplificación: x40, Conectividad: Bluetooth 5.0, Batería: 8 horas",
+                    features: "Amplificación x40, Cancelación de ruido, Conectividad Bluetooth, Grabación de audio",
+                    dimensions: "30 cm de largo, Peso: 200 g",
+                    warranty: "1 año de garantía, Soporte técnico especializado"
+                },
+                3: {
+                    image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+                    category: "Laboratorio",
+                    title: "Microscopio Binocular HD",
+                    description: "Microscopio profesional con objetivos Plan-Acromáticos, iluminación LED y cámara digital integrada de 5MP.",
+                    specs: "Aumentos: 40x-1000x, Cámara: 5MP, Iluminación: LED",
+                    features: "Objetivos Plan-Acromáticos, Iluminación LED, Cámara digital integrada 5MP",
+                    dimensions: "30x20x40 cm, Peso: 5 kg",
+                    warranty: "3 años de garantía, Mantenimiento incluido"
+                },
+                4: {
+                    image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+                    category: "Instrumental Quirúrgico",
+                    title: "Set Instrumental Titanio",
+                    description: "Kit completo de 45 piezas en titanio grado médico. Incluye pinzas, tijeras, porta-agujas y separadores.",
+                    specs: "Material: Titanio grado médico, Piezas: 45, Esterilización: Autoclavable",
+                    features: "Titanio grado médico, 45 piezas, Autoclavable, Diseño ergonómico",
+                    dimensions: "Estuche: 40x30x10 cm, Peso: 3 kg",
+                    warranty: "Garantía de por vida, Reemplazo de piezas"
+                },
+                5: {
+                    image: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+                    category: "Radiología",
+                    title: "Sistema Rayos X Digital",
+                    description: "Equipo de radiología digital portátil con panel detector plano y software de procesamiento avanzado.",
+                    specs: "Resolución: 5MP, Portátil: Sí, Software: Incluido",
+                    features: "Panel detector plano, Software avanzado, Portátil, Alta resolución",
+                    dimensions: "60x40x80 cm, Peso: 25 kg",
+                    warranty: "2 años de garantía, Actualizaciones de software"
+                },
+                6: {
+                    image: "https://images.unsplash.com/photo-1551601651-2a8555f1a136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+                    category: "Consumibles",
+                    title: "Sutura Biodegradable Premium",
+                    description: "Hilos de sutura absorbibles multifilamento con aguja atraumática. Diversos calibres disponibles.",
+                    specs: "Material: Poliglactina, Absorción: 60-90 días, Calibres: 2-0 a 5-0",
+                    features: "Biodegradable, Multifilamento, Aguja atraumática, Diversos calibres",
+                    dimensions: "Paquete individual estéril",
+                    warranty: "Garantía de esterilidad, Lote trazable"
+                },
+                7: {
+                    image: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+                    category: "Equipos Dentales",
+                    title: "Turbina Alta Velocidad",
+                    description: "Turbina dental de alta precisión con rodamientos cerámicos y sistema de refrigeración dual.",
+                    specs: "Velocidad: 400,000 RPM, Refrigeración: Air/Water, Conexión: Estándar",
+                    features: "Rodamientos cerámicos, Refrigeración dual, Alta precisión, Luz LED",
+                    dimensions: "15 cm de largo, Peso: 80 g",
+                    warranty: "1 año de garantía, Mantenimiento incluido"
+                },
+                8: {
+                    image: "https://images.unsplash.com/photo-1582719471384-894fbb16e074?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+                    category: "Laboratorio",
+                    title: "Centrífuga de Mesa",
+                    description: "Centrífuga digital con rotor basculante, velocidad variable hasta 4000 rpm y timer programable.",
+                    specs: "Velocidad: 0-4000 RPM, Timer: 0-60 min, Capacidad: 6 tubos de 15ml",
+                    features: "Digital, Rotor basculante, Velocidad variable, Timer programable",
+                    dimensions: "30x30x20 cm, Peso: 8 kg",
+                    warranty: "2 años de garantía, Servicio técnico"
+                }
+            };
+
+            // Función de búsqueda
+            function filterProducts() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedCategory = categoryFilter.value;
+                let visibleCount = 0;
+
+                allProducts.forEach(product => {
+                    const name = product.dataset.name.toLowerCase();
+                    const category = product.dataset.category;
+                    
+                    const matchesSearch = name.includes(searchTerm);
+                    const matchesCategory = !selectedCategory || category === selectedCategory;
+                    
+                    if (matchesSearch && matchesCategory) {
+                        product.style.display = 'flex';
+                        visibleCount++;
+                    } else {
+                        product.style.display = 'none';
+                    }
+                });
+
+                resultCount.textContent = visibleCount;
+                
+                if (visibleCount === 0) {
+                    noResults.style.display = 'block';
+                    productsGrid.style.display = 'none';
+                } else {
+                    noResults.style.display = 'none';
+                    productsGrid.style.display = 'grid';
+                    
+                    // Aplicar la vista actual después de filtrar
+                    if (currentView === 'list') {
+                        productsGrid.classList.add('list-view');
+                    } else {
+                        productsGrid.classList.remove('list-view');
+                    }
+                }
+            }
+
+            // Función de ordenamiento
+            function sortProducts() {
+                const sortValue = sortSelect.value;
+                const visibleProducts = allProducts.filter(product => 
+                    product.style.display !== 'none'
+                );
+
+                visibleProducts.sort((a, b) => {
+                    switch(sortValue) {
+                        case 'name':
+                            return a.dataset.name.localeCompare(b.dataset.name);
+                        case 'name-desc':
+                            return b.dataset.name.localeCompare(a.dataset.name);
+                        case 'category':
+                            return a.dataset.category.localeCompare(b.dataset.category);
+                        default:
+                            return 0;
+                    }
+                });
+
+                // Reordenar en el DOM
+                visibleProducts.forEach(product => {
+                    productsGrid.appendChild(product);
+                });
+            }
+
+            // Cambio de vista - CORREGIDO
+            function toggleView(viewType) {
+                currentView = viewType;
+                
+                viewButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.view === viewType) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                if (viewType === 'list') {
+                    productsGrid.classList.add('list-view');
+                } else {
+                    productsGrid.classList.remove('list-view');
+                }
+            }
+
+            // Abrir modal con detalles del producto
+            function openProductModal(productId) {
+                const product = productDetails[productId];
+                if (product) {
+                    document.getElementById('modalImage').src = product.image;
+                    document.getElementById('modalCategory').textContent = product.category;
+                    document.getElementById('modalTitle').textContent = product.title;
+                    document.getElementById('modalDescription').textContent = product.description;
+                    document.getElementById('modalSpecs').textContent = product.specs;
+                    document.getElementById('modalFeatures').textContent = product.features;
+                    document.getElementById('modalDimensions').textContent = product.dimensions;
+                    document.getElementById('modalWarranty').textContent = product.warranty;
+                    
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            // Cerrar modal
+            function closeProductModal() {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+
+            // Event listeners
+            searchInput.addEventListener('input', filterProducts);
+            categoryFilter.addEventListener('change', filterProducts);
+            sortSelect.addEventListener('change', sortProducts);
+            
+            viewButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    toggleView(btn.dataset.view);
+                });
+            });
+
+            viewDetailsButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const productId = this.getAttribute('data-product');
+                    openProductModal(productId);
+                });
+            });
+
+            closeModal.addEventListener('click', closeProductModal);
+
+            // Cerrar modal al hacer clic fuera del contenido
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeProductModal();
+                }
+            });
+
+            // Efectos de animación al cargar
+            function animateCardsOnLoad() {
+                allProducts.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px)';
+                    card.style.transition = 'all 0.6s ease-out';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }
+
+            // Efectos de hover mejorados
+            allProducts.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-15px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Efecto de búsqueda en tiempo real con debounce
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    filterProducts();
+                    
+                    // Efecto visual de búsqueda
+                    this.style.borderColor = 'var(--color-gold)';
+                    this.style.boxShadow = '0 5px 25px var(--shadow-gold)';
+                    
+                    setTimeout(() => {
+                        this.style.borderColor = 'transparent';
+                        this.style.boxShadow = '0 5px 15px var(--shadow-gold)';
+                    }, 300);
+                }, 300);
+            });
+
+            // Animación inicial
+            animateCardsOnLoad();
+
+            // Scroll suave para navegación
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Inicializar contador
+            resultCount.textContent = document.querySelectorAll('.product-card').length;
+        });
+    </script>
+</body>
+</html>
