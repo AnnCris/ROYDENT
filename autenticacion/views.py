@@ -380,3 +380,18 @@ class RefreshTokenAPIView(APIView):
                 'error': 'Token de refresh inválido',
                 'detalles': str(e)
             }, status=status.HTTP_401_UNAUTHORIZED)
+        
+
+# ============ VISTA PARA COMPONENTE SIDEBAR ============
+from django.views.generic import TemplateView
+
+class SidebarView(TemplateView):
+    """Vista para servir el componente del sidebar"""
+    template_name = 'components/sidebar.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            context['usuario'] = self.request.user
+            context['roles'] = self.request.user.usuario_roles.filter(estado='ACTIVO')
+        return context

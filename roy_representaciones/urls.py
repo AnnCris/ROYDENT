@@ -23,6 +23,8 @@ urlpatterns = [
     path('panel-mundomedico/', TemplateView.as_view(template_name='panel-mundomedico.html'), name='panel-mundomedico'),
     path('panel-roydent/', TemplateView.as_view(template_name='panel-roydent.html'), name='panel-roydent'),
     path('catalogo/', TemplateView.as_view(template_name='catalogo.html'), name='catalogo'),
+
+    path('components/sidebar/', TemplateView.as_view(template_name='components/sidebar.html'), name='sidebar-component'),
 ]
 
 # Servir archivos media y static en desarrollo

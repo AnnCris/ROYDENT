@@ -5,6 +5,7 @@ from django.urls import path
 from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import TokenRefreshView
 from . import views
+from autenticacion.views import SidebarView
 
 app_name = 'autenticacion'
 
@@ -32,4 +33,6 @@ urlpatterns = [
     # Utilidades
     path('api/roles/', views.RolesUsuarioAPIView.as_view(), name='api_roles'),
     path('api/estadisticas/', views.EstadisticasAPIView.as_view(), name='api_estadisticas'),
+
+    path('components/sidebar/', SidebarView.as_view(), name='sidebar-component'),
 ]
