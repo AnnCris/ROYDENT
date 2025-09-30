@@ -108,17 +108,24 @@ class UsuarioManager(BaseUserManager):
     """
     Manager personalizado para el modelo Usuario
     """
-    def create_user(self, nombre_usuario, password=None, **extra_fields):
+    def create_user(self, nombre_usuario, password=None, persona=None, **extra_fields):
         """Crear usuario normal"""
         if not nombre_usuario:
             raise ValueError('El nombre de usuario es obligatorio')
         
-        usuario = self.model(nombre_usuario=nombre_usuario, **extra_fields)
+        if not persona:
+            raise ValueError('La persona es obligatoria para crear un usuario')
+        
+        usuario = self.model(
+            nombre_usuario=nombre_usuario, 
+            persona=persona,
+            **extra_fields
+        )
         usuario.set_password(password)
         usuario.save(using=self._db)
         return usuario
 
-    def create_superuser(self, nombre_usuario, password=None, **extra_fields):
+    def create_superuser(self, nombre_usuario, password=None, persona=None, **extra_fields):
         """Crear superusuario"""
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -129,8 +136,8 @@ class UsuarioManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser debe tener is_superuser=True.')
 
-        return self.create_user(nombre_usuario, password, **extra_fields)
-
+        return self.create_user(nombre_usuario, password, persona=persona, **extra_fields)
+    
 class Usuario(AbstractBaseUser):
     """
     Modelo de Usuario personalizado para Roy Representaciones

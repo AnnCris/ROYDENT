@@ -206,7 +206,7 @@
             <div class="text-center">
                 <!-- Imagen integrada desde código -->
                 <!-- IMPORTANTE: Cambia la ruta de la imagen según donde esté ubicada -->
-                <img src="assets/images/Roydent.png" alt="Logo de Mundo Medico y RoyDent" class="custom-image mb-4" id="customLogo" onerror="handleImageError()">
+                <img src='static/img/LOGO-1.PNG' alt="Logo de Mundo Medico y RoyDent" class="custom-image mb-4" id="customLogo" onerror="handleImageError()">
                 
                 <!-- Logo por defecto (oculto inicialmente) -->
                 <div class="logo-default" id="defaultLogo" style="display: none;">
@@ -322,22 +322,22 @@
                             
                             switch (primerRol) {
                                 case 'ADMINISTRADOR':
-                                    window.location.href = '/admin/';
+                                    window.location.href = '/panel-admin/';
                                     break;
                                 case 'VENDEDOR_ROYDENT':
-                                    window.location.href = '/dashboard/roydent/';
+                                    window.location.href = '/panel-roydent/';
                                     break;
                                 case 'VENDEDOR_MUNDO_MEDICO':
-                                    window.location.href = '/dashboard/mundo-medico/';
+                                    window.location.href = '/panel-mundomedico/';
                                     break;
                                 case 'CLIENTE':
                                     window.location.href = '/catalogo/';
                                     break;
                                 default:
-                                    window.location.href = '/dashboard/';
+                                    window.location.href = '/panel-admin/';
                             }
                         } else {
-                            window.location.href = '/dashboard/';
+                            window.location.href = '/panel-admin/';
                         }
                         
                     } else {

@@ -19,6 +19,10 @@ urlpatterns = [
 
     path('login/', TemplateView.as_view(template_name='login.html'), name='login'),
     path('registro/', TemplateView.as_view(template_name='registro.html'), name='registro'),
+    path('panel-admin/', TemplateView.as_view(template_name='panel-admin.html'), name='panel-admin'),
+    path('panel-mundomedico/', TemplateView.as_view(template_name='panel-mundomedico.html'), name='panel-mundomedico'),
+    path('panel-roydent/', TemplateView.as_view(template_name='panel-roydent.html'), name='panel-roydent'),
+    path('catalogo/', TemplateView.as_view(template_name='catalogo.html'), name='catalogo'),
 ]
 
 # Servir archivos media y static en desarrollo
