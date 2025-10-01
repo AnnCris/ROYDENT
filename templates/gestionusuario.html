@@ -1402,37 +1402,55 @@
             </form>
         </div>
     </div>
-
     <script>
+        // ============ VARIABLES GLOBALES ============
+        let usuarios = [];
+        let usuarioEditando = null;
+
+        // ============ OBTENER TOKEN JWT ============
+        function getAuthToken() {
+            return localStorage.getItem('access_token');
+        }
+
+        // ============ HEADERS CON JWT ============
+        function getHeaders() {
+            const token = getAuthToken();
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+        }
+
+        function getHeaders() {
+            return {
+                'Content-Type': 'application/json'
+            };
+        }
+
         // ============ CARGAR SIDEBAR ============
         document.addEventListener('DOMContentLoaded', function() {
-            // Cargar el sidebar
+            // Verificar autenticación PRIMERO (sin alertas)
+            if (!verificarAutenticacion()) return;
+
             fetch('/components/sidebar/')
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error al cargar sidebar');
-                    }
+                    if (!response.ok) throw new Error('Error al cargar sidebar');
                     return response.text();
                 })
                 .then(data => {
                     document.getElementById('sidebar-container').innerHTML = data;
-                    
-                    // Marcar la página activa
                     const usersLink = document.querySelector('[data-page="users"]');
-                    if (usersLink) {
-                        usersLink.classList.add('active');
-                    }
+                    if (usersLink) usersLink.classList.add('active');
                 })
-                .catch(error => {
-                    console.error('Error al cargar sidebar:', error);
-                });
+                .catch(error => console.error('Error al cargar sidebar:', error));
 
-            // Animaciones de entrada
+            cargarUsuarios();
+            cargarEstadisticas();
+
             const cards = document.querySelectorAll('.card, .stat-card');
             cards.forEach((card, index) => {
                 card.style.opacity = '0';
                 card.style.transform = 'translateY(20px)';
-                
                 setTimeout(() => {
                     card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
                     card.style.opacity = '1';
@@ -1441,16 +1459,134 @@
             });
         });
 
-        // ============ FUNCIONES DE MODAL ============
+        // ============ CARGAR USUARIOS ============
+        async function cargarUsuarios(filtros = {}) {
+            try {
+                const params = new URLSearchParams();
+                if (filtros.busqueda) params.append('busqueda', filtros.busqueda);
+                if (filtros.rol && filtros.rol !== 'todos') params.append('rol', filtros.rol);
+                if (filtros.estado && filtros.estado !== 'todos') params.append('estado', filtros.estado);
+
+                const response = await fetch(`/auth/api/usuarios/?${params}`, {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+
+                if (response.status === 401) {
+                    // Token expirado - redirigir sin mostrar nada
+                    localStorage.removeItem('access_token');
+                    localStorage.removeItem('refresh_token');
+                    window.location.href = '/login/';
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    usuarios = data.usuarios || [];
+                    renderizarUsuarios();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al cargar usuarios', 'danger');
+            }
+        }
+
+        // ============ RENDERIZAR USUARIOS ============
+        function renderizarUsuarios() {
+            const tbody = document.getElementById('usuarios-table');
+            tbody.innerHTML = '';
+
+            if (usuarios.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                            No se encontraron usuarios
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            usuarios.forEach(usuario => {
+                const rol = usuario.roles[0] || { nombre: 'Sin rol', sucursal: '-' };
+                const iniciales = obtenerIniciales(usuario.nombre_completo);
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div style="display: flex; align-items: center; gap: var(--space-md);">
+                            <div class="user-avatar">${iniciales}</div>
+                            <div>
+                                <div style="font-weight: 600;">${usuario.nombre_completo}</div>
+                                <div style="font-size: 0.875rem; color: var(--text-gray);">@${usuario.nombre_usuario}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${usuario.email || '-'}</td>
+                    <td><span class="badge badge-${getBadgeClass(rol.nombre)}">${formatRol(rol.nombre)}</span></td>
+                    <td>${rol.sucursal || '-'}</td>
+                    <td>${formatFecha(usuario.ultimo_login) || 'Nunca'}</td>
+                    <td><span class="badge badge-${usuario.is_active ? 'activo' : 'inactivo'}">${usuario.is_active ? 'Activo' : 'Inactivo'}</span></td>
+                    <td>
+                        ${usuario.is_active ? `
+                            <button class="btn btn-secondary btn-sm" onclick="editarUsuario(${usuario.id})">Editar</button>
+                            <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(${usuario.id})">Desactivar</button>
+                        ` : `
+                            <button class="btn btn-warning btn-sm" onclick="activarUsuario(${usuario.id})">Activar</button>
+                        `}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ============ CARGAR ESTADÍSTICAS ============
+        async function cargarEstadisticas() {
+            try {
+                const response = await fetch('/auth/api/usuarios/estadisticas/', {
+                    method: 'GET',
+                    headers: getHeaders()
+                });
+
+                if (!response.ok) return;
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const stats = data.estadisticas;
+                    const statCards = document.querySelectorAll('.stat-card .stat-number');
+                    if (statCards[0]) statCards[0].textContent = stats.total || 0;
+                    if (statCards[1]) statCards[1].textContent = stats.activos || 0;
+                    if (statCards[2]) statCards[2].textContent = stats.administradores || 0;
+                    if (statCards[3]) statCards[3].textContent = stats.vendedores || 0;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // ============ MODAL ============
         function abrirModalUsuario(userId = null) {
             const modal = document.getElementById('modalUsuario');
             const titulo = document.getElementById('tituloModal');
+            const form = document.getElementById('formUsuario');
             
+            form.reset();
+            usuarioEditando = userId;
+
             if (userId) {
                 titulo.textContent = 'Editar Usuario';
+                cargarDatosUsuario(userId);
+                document.getElementById('modal-password').required = false;
             } else {
                 titulo.textContent = 'Nuevo Usuario';
-                document.getElementById('formUsuario').reset();
+                document.getElementById('modal-password').required = true;
+                document.getElementById('modal-usuario').disabled = false;
             }
             
             modal.style.display = 'block';
@@ -1458,47 +1594,254 @@
 
         function cerrarModalUsuario() {
             document.getElementById('modalUsuario').style.display = 'none';
+            usuarioEditando = null;
         }
 
-        // ============ FUNCIONES DE GESTIÓN ============
+        // ============ CARGAR DATOS USUARIO ============
+        async function cargarDatosUsuario(userId) {
+            try {
+                const response = await fetch(`/auth/api/usuarios/${userId}/`, {
+                    headers: getHeaders()
+                });
+
+                if (!response.ok) throw new Error('Error al cargar usuario');
+
+                const data = await response.json();
+                const usuario = data.usuario;
+
+                document.getElementById('modal-nombre').value = usuario.nombre || '';
+                document.getElementById('modal-apellido-paterno').value = usuario.apellido_paterno || '';
+                document.getElementById('modal-apellido-materno').value = usuario.apellido_materno || '';
+                document.getElementById('modal-email').value = usuario.correo || '';
+                document.getElementById('modal-celular').value = usuario.numero_celular || '';
+                document.getElementById('modal-usuario').value = usuario.nombre_usuario || '';
+                document.getElementById('modal-usuario').disabled = true;
+                document.getElementById('modal-cedula').value = usuario.cedula_identidad || '';
+                
+                if (usuario.roles && usuario.roles.length > 0) {
+                    document.getElementById('modal-rol').value = usuario.roles[0].nombre;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al cargar datos del usuario', 'danger');
+            }
+        }
+
+        // ============ GUARDAR USUARIO ============
+        document.getElementById('formUsuario').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                nombre: document.getElementById('modal-nombre').value,
+                apellido_paterno: document.getElementById('modal-apellido-paterno').value,
+                apellido_materno: document.getElementById('modal-apellido-materno').value,
+                correo: document.getElementById('modal-email').value,
+                numero_celular: document.getElementById('modal-celular').value,
+                rol: document.getElementById('modal-rol').value
+            };
+
+            if (usuarioEditando) {
+                const password = document.getElementById('modal-password').value;
+                if (password) formData.password = password;
+                await actualizarUsuario(usuarioEditando, formData);
+            } else {
+                formData.nombre_usuario = document.getElementById('modal-usuario').value;
+                formData.password = document.getElementById('modal-password').value;
+                formData.confirmar_password = formData.password;
+                formData.cedula_identidad = document.getElementById('modal-cedula').value;
+                await crearUsuario(formData);
+            }
+        });
+
+        // ============ CREAR USUARIO ============
+        async function crearUsuario(formData) {
+            try {
+                const response = await fetch('/auth/api/usuarios/crear/', {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    mostrarAlerta('Usuario creado exitosamente', 'success');
+                    cerrarModalUsuario();
+                    cargarUsuarios();
+                    cargarEstadisticas();
+                } else {
+                    mostrarAlerta(data.error || 'Error al crear usuario', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error de conexión', 'danger');
+            }
+        }
+
+        // ============ ACTUALIZAR USUARIO ============
+        async function actualizarUsuario(userId, formData) {
+            try {
+                const response = await fetch(`/auth/api/usuarios/${userId}/actualizar/`, {
+                    method: 'PUT',
+                    headers: getHeaders(),
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    mostrarAlerta('Usuario actualizado exitosamente', 'success');
+                    cerrarModalUsuario();
+                    cargarUsuarios();
+                } else {
+                    mostrarAlerta(data.error || 'Error al actualizar usuario', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error de conexión', 'danger');
+            }
+        }
+
+        // ============ EDITAR/ELIMINAR/ACTIVAR ============
         function editarUsuario(userId) {
-            mostrarAlerta('Cargando datos del usuario...', 'info');
-            setTimeout(() => abrirModalUsuario(userId), 500);
+            abrirModalUsuario(userId);
         }
 
-        function verPermisos(userId) {
-            mostrarAlerta('Mostrando permisos del usuario...', 'info');
-        }
+        async function eliminarUsuario(userId) {
+            if (!confirm('¿Desactivar este usuario?')) return;
 
-        function activarUsuario(userId) {
-            if (confirm('¿Activar este usuario?')) {
-                mostrarAlerta('Usuario activado exitosamente', 'success');
+            try {
+                const response = await fetch(`/auth/api/usuarios/${userId}/eliminar/`, {
+                    method: 'DELETE',
+                    headers: getHeaders()
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    mostrarAlerta('Usuario desactivado exitosamente', 'success');
+                    cargarUsuarios();
+                    cargarEstadisticas();
+                } else {
+                    mostrarAlerta(data.error || 'Error', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error de conexión', 'danger');
             }
         }
 
-        function eliminarUsuario(userId) {
-            if (confirm('¿Eliminar este usuario? Esta acción no se puede deshacer.')) {
-                mostrarAlerta('Usuario eliminado del sistema', 'warning');
+        async function activarUsuario(userId) {
+            if (!confirm('¿Activar este usuario?')) return;
+
+            try {
+                const response = await fetch(`/auth/api/usuarios/${userId}/activar/`, {
+                    method: 'POST',
+                    headers: getHeaders()
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    mostrarAlerta('Usuario activado exitosamente', 'success');
+                    cargarUsuarios();
+                    cargarEstadisticas();
+                } else {
+                    mostrarAlerta(data.error || 'Error', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error de conexión', 'danger');
             }
         }
 
-        // ============ ALERTAS ============
+        // ============ BÚSQUEDA Y FILTROS ============
+        const busquedaInput = document.getElementById('busqueda');
+        if (busquedaInput) {
+            busquedaInput.addEventListener('input', debounce(aplicarFiltros, 500));
+        }
+
+        ['filtro-rol', 'filtro-estado', 'filtro-sucursal'].forEach(filtroId => {
+            const elemento = document.getElementById(filtroId);
+            if (elemento) elemento.addEventListener('change', aplicarFiltros);
+        });
+
+        function aplicarFiltros() {
+            const filtros = {
+                busqueda: document.getElementById('busqueda').value,
+                rol: document.getElementById('filtro-rol').value,
+                estado: document.getElementById('filtro-estado').value,
+                sucursal: document.getElementById('filtro-sucursal').value
+            };
+            cargarUsuarios(filtros);
+        }
+
+        // ============ UTILIDADES ============
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func(...args), wait);
+            };
+        }
+
+        function obtenerIniciales(nombreCompleto) {
+            const partes = nombreCompleto.trim().split(' ');
+            if (partes.length >= 2) {
+                return (partes[0][0] + partes[1][0]).toUpperCase();
+            }
+            return nombreCompleto.substring(0, 2).toUpperCase();
+        }
+
+        function getBadgeClass(rol) {
+            const map = {
+                'ADMINISTRADOR': 'admin',
+                'VENDEDOR_ROYDENT': 'vendedor',
+                'VENDEDOR_MUNDO_MEDICO': 'vendedor',
+                'CLIENTE': 'readonly'
+            };
+            return map[rol] || 'readonly';
+        }
+
+        function formatRol(rol) {
+            const map = {
+                'ADMINISTRADOR': 'Administrador',
+                'VENDEDOR_ROYDENT': 'Vendedor RoyDent',
+                'VENDEDOR_MUNDO_MEDICO': 'Vendedor Mundo Médico',
+                'CLIENTE': 'Cliente'
+            };
+            return map[rol] || rol;
+        }
+
+        function formatFecha(fecha) {
+            if (!fecha) return null;
+            const date = new Date(fecha);
+            const ahora = new Date();
+            const diff = ahora - date;
+            const minutos = Math.floor(diff / 60000);
+            const horas = Math.floor(minutos / 60);
+            const dias = Math.floor(horas / 24);
+
+            if (minutos < 60) return `Hace ${minutos} min`;
+            if (horas < 24) return `Hace ${horas}h`;
+            if (dias < 7) return `Hace ${dias}d`;
+            return date.toLocaleDateString('es-ES');
+        }
+
         function mostrarAlerta(mensaje, tipo) {
             const alerta = document.createElement('div');
-            const tipoTexto = tipo === 'success' ? 'Éxito' : tipo === 'warning' ? 'Advertencia' : tipo === 'danger' ? 'Crítico' : 'Info';
+            const tipoTexto = tipo === 'success' ? 'Éxito' : tipo === 'warning' ? 'Advertencia' : tipo === 'danger' ? 'Error' : 'Info';
+            const color = tipo === 'success' ? '#00C851' : tipo === 'warning' ? '#FFD700' : tipo === 'danger' ? '#EF4444' : '#00C851';
+            
             alerta.innerHTML = `<strong>${tipoTexto}:</strong> ${mensaje}`;
             alerta.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 10000;
-                min-width: 300px;
-                padding: var(--space-lg);
+                position: fixed; top: 20px; right: 20px; z-index: 10000;
+                min-width: 300px; padding: 1rem 1.5rem;
                 border-radius: var(--radius-lg);
                 background: rgba(255, 255, 255, 0.95);
                 backdrop-filter: blur(10px);
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-                border-left: 4px solid ${tipo === 'success' ? '#00C851' : tipo === 'warning' ? '#FFD700' : tipo === 'danger' ? '#EF4444' : '#00C851'};
+                border-left: 4px solid ${color};
             `;
             
             document.body.appendChild(alerta);
@@ -1510,69 +1853,9 @@
             }, 3000);
         }
 
-        // ============ FORMULARIO ============
-        document.getElementById('formUsuario').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const nombre = document.getElementById('modal-nombre').value;
-            const usuario = document.getElementById('modal-usuario').value;
-            const rol = document.getElementById('modal-rol').value;
-            
-            if (nombre && usuario && rol) {
-                mostrarAlerta(`Usuario "${nombre}" creado con rol ${rol}`, 'success');
-                cerrarModalUsuario();
-            } else {
-                mostrarAlerta('Completa todos los campos requeridos', 'warning');
-            }
-        });
-
-        // ============ CERRAR MODAL ============
         window.onclick = function(event) {
             const modal = document.getElementById('modalUsuario');
-            if (event.target === modal) {
-                cerrarModalUsuario();
-            }
-        }
-
-        // ============ BÚSQUEDA ============
-        document.getElementById('busqueda').addEventListener('input', function(e) {
-            const busqueda = e.target.value.toLowerCase();
-            const filas = document.querySelectorAll('#usuarios-table tr');
-            
-            filas.forEach(fila => {
-                const texto = fila.textContent.toLowerCase();
-                fila.style.display = texto.includes(busqueda) ? '' : 'none';
-            });
-        });
-
-        // ============ FILTROS ============
-        ['filtro-rol', 'filtro-estado', 'filtro-sucursal'].forEach(filtroId => {
-            document.getElementById(filtroId).addEventListener('change', aplicarFiltros);
-        });
-
-        function aplicarFiltros() {
-            const filtroRol = document.getElementById('filtro-rol').value;
-            const filtroEstado = document.getElementById('filtro-estado').value;
-            const filtroSucursal = document.getElementById('filtro-sucursal').value;
-            const filas = document.querySelectorAll('#usuarios-table tr');
-            
-            filas.forEach(fila => {
-                let mostrar = true;
-                const texto = fila.textContent.toLowerCase();
-                
-                if (filtroRol !== 'todos' && !texto.includes(filtroRol)) mostrar = false;
-                if (filtroEstado !== 'todos' && !texto.includes(filtroEstado)) mostrar = false;
-                if (filtroSucursal !== 'todas') {
-                    const sucursales = {
-                        'roydent': 'roydent',
-                        'mundo_medico': 'mundo médico',
-                        'deposito': 'depósito'
-                    };
-                    if (!texto.includes(sucursales[filtroSucursal] || filtroSucursal)) mostrar = false;
-                }
-                
-                fila.style.display = mostrar ? '' : 'none';
-            });
+            if (event.target === modal) cerrarModalUsuario();
         }
 
         console.log('Sistema de Gestión de Usuarios cargado');

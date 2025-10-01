@@ -253,154 +253,149 @@
         </div>
     </div>
    <script>
-        function handleImageError() {
-            document.getElementById('customLogo').style.display = 'none';
-            document.getElementById('defaultLogo').style.display = 'flex';
-        }
+function handleImageError() {
+    document.getElementById('customLogo').style.display = 'none';
+    document.getElementById('defaultLogo').style.display = 'flex';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const customImage = document.getElementById('customLogo');
+    
+    if (customImage && (customImage.complete && customImage.naturalHeight === 0)) {
+        handleImageError();
+    }
+    
+    // Funcionalidad para mostrar/ocultar contraseña
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
+    
+    togglePassword.addEventListener('click', function() {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+
+    // Manejar el envío del formulario
+    const loginForm = document.getElementById('loginForm');
+    
+    loginForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        document.addEventListener('DOMContentLoaded', function() {
-            const customImage = document.getElementById('customLogo');
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        
+        if (!username || !password) {
+            mostrarError('Por favor completa todos los campos');
+            return;
+        }
+
+        try {
+            mostrarCargando(true);
+            ocultarMensajes();
             
-            if (customImage && (customImage.complete && customImage.naturalHeight === 0)) {
-                handleImageError();
-            }
+            console.log('Intentando login con:', username);
             
-            setTimeout(function() {
-                if (customImage && (customImage.complete && customImage.naturalHeight === 0)) {
-                    handleImageError();
-                }
-            }, 1000);
-            
-            // Funcionalidad para mostrar/ocultar contraseña
-            const togglePassword = document.getElementById('togglePassword');
-            const password = document.getElementById('password');
-            
-            togglePassword.addEventListener('click', function() {
-                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-                password.setAttribute('type', type);
-                this.classList.toggle('fa-eye');
-                this.classList.toggle('fa-eye-slash');
+            const response = await fetch('/auth/api/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nombre_usuario: username,
+                    password: password
+                })
             });
 
-            // Manejar el envío del formulario
-            const loginForm = document.getElementById('loginForm');
-            
-            loginForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
+            const data = await response.json();
+            console.log('Respuesta del servidor:', data);
+
+            if (response.ok && data.access && data.refresh) {
+                // Guardar tokens y datos de usuario
+                localStorage.setItem('access_token', data.access);
+                localStorage.setItem('refresh_token', data.refresh);
+                localStorage.setItem('usuario_info', JSON.stringify(data.usuario));
                 
-                const username = document.getElementById('username').value.trim();
-                const password = document.getElementById('password').value;
+                // Verificar que se guardaron correctamente
+                console.log('✓ Token guardado:', localStorage.getItem('access_token') ? 'SÍ' : 'NO');
+                console.log('✓ Usuario guardado:', localStorage.getItem('usuario_info') ? 'SÍ' : 'NO');
                 
-                if (!username || !password) {
-                    mostrarError('Por favor completa todos los campos');
-                    return;
-                }
-
-                try {
-                    mostrarCargando(true);
-                    ocultarMensajes();
+                mostrarExito('✓ Login exitoso. Redirigiendo en 2 segundos...');
+                
+                // Esperar 2 segundos para que se vea el mensaje
+                setTimeout(() => {
+                    const roles = data.usuario.roles;
+                    let destino = '/panel-admin/'; // Default
                     
-                    console.log('Intentando login con:', username);
-                    
-                    const response = await fetch('/auth/api/login/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            nombre_usuario: username,
-                            password: password
-                        })
-                    });
-
-                    const data = await response.json();
-                    console.log('Respuesta del servidor:', data);
-
-                    if (response.ok && data.access && data.refresh) {
-                        // Guardar tokens y datos de usuario
-                        localStorage.setItem('access_token', data.access);
-                        localStorage.setItem('refresh_token', data.refresh);
-                        localStorage.setItem('usuario_info', JSON.stringify(data.usuario));
+                    if (roles && roles.length > 0) {
+                        const primerRol = roles[0].nombre;
+                        console.log('Rol del usuario:', primerRol);
                         
-                        console.log('Token guardado:', localStorage.getItem('access_token'));
-                        console.log('Usuario guardado:', localStorage.getItem('usuario_info'));
-                        
-                        mostrarExito('Login exitoso. Redirigiendo...');
-                        
-                        // Esperar un momento para mostrar el mensaje
-                        setTimeout(() => {
-                            const roles = data.usuario.roles;
-                            if (roles && roles.length > 0) {
-                                const primerRol = roles[0].nombre;
-                                
-                                console.log('Rol del usuario:', primerRol);
-                                
-                                switch (primerRol) {
-                                    case 'ADMINISTRADOR':
-                                        window.location.href = '/panel-admin/';
-                                        break;
-                                    case 'VENDEDOR_ROYDENT':
-                                        window.location.href = '/panel-roydent/';
-                                        break;
-                                    case 'VENDEDOR_MUNDO_MEDICO':
-                                        window.location.href = '/panel-mundomedico/';
-                                        break;
-                                    case 'CLIENTE':
-                                        window.location.href = '/catalogo/';
-                                        break;
-                                    default:
-                                        window.location.href = '/panel-admin/';
-                                }
-                            } else {
-                                window.location.href = '/panel-admin/';
-                            }
-                        }, 1000);
-                        
-                    } else {
-                        const errorMsg = data.error || data.detalles || 'Credenciales inválidas';
-                        mostrarError(errorMsg);
-                        console.error('Error de login:', data);
+                        switch (primerRol) {
+                            case 'ADMINISTRADOR':
+                                destino = '/panel-admin/';
+                                break;
+                            case 'VENDEDOR_ROYDENT':
+                                destino = '/panel-roydent/';
+                                break;
+                            case 'VENDEDOR_MUNDO_MEDICO':
+                                destino = '/panel-mundomedico/';
+                                break;
+                            case 'CLIENTE':
+                                destino = '/catalogo/';
+                                break;
+                        }
                     }
-                } catch (error) {
-                    mostrarError('Error de conexión. Verifica tu internet e inténtalo de nuevo.');
-                    console.error('Error:', error);
-                } finally {
-                    mostrarCargando(false);
-                }
-            });
-        });
-
-        function mostrarCargando(mostrar) {
-            const submitBtn = document.getElementById('submitBtn');
-            if (mostrar) {
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Ingresando...';
+                    
+                    console.log('Redirigiendo a:', destino);
+                    window.location.href = destino;
+                }, 2000); // 2 segundos de espera
+                
             } else {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Ingresar';
+                const errorMsg = data.error || data.detalles || 'Credenciales inválidas';
+                mostrarError(errorMsg);
+                console.error('Error de login:', data);
             }
+        } catch (error) {
+            mostrarError('Error de conexión. Verifica tu internet.');
+            console.error('Error:', error);
+        } finally {
+            mostrarCargando(false);
         }
+    });
+});
 
-        function mostrarError(mensaje) {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = mensaje;
-            errorDiv.style.display = 'block';
-            
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
-        }
+function mostrarCargando(mostrar) {
+    const submitBtn = document.getElementById('submitBtn');
+    if (mostrar) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ingresando...';
+    } else {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Ingresar';
+    }
+}
 
-        function mostrarExito(mensaje) {
-            const successDiv = document.getElementById('successMessage');
-            successDiv.textContent = mensaje;
-            successDiv.style.display = 'block';
-        }
-        
-        function ocultarMensajes() {
-            document.getElementById('errorMessage').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'none';
-        }
-    </script>
+function mostrarError(mensaje) {
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + mensaje;
+    errorDiv.style.display = 'block';
+    
+    setTimeout(() => {
+        errorDiv.style.display = 'none';
+    }, 5000);
+}
+
+function mostrarExito(mensaje) {
+    const successDiv = document.getElementById('successMessage');
+    successDiv.innerHTML = '<i class="fas fa-check-circle"></i> ' + mensaje;
+    successDiv.style.display = 'block';
+}
+
+function ocultarMensajes() {
+    document.getElementById('errorMessage').style.display = 'none';
+    document.getElementById('successMessage').style.display = 'none';
+}
+</script>
 </body>
 </html>

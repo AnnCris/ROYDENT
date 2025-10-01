@@ -399,37 +399,20 @@ class SidebarView(TemplateView):
         return context
     
 
-# AGREGAR AL FINAL DE autenticacion/views.py
+# ============ CRUD DE USUARIOS - SIN AUTENTICACIÓN ============
 
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.decorators import api_view
 from django.db.models import Q
 
-# ============ CRUD DE USUARIOS - API ============
-
-class UsuarioPagination(PageNumberPagination):
-    """Paginación para lista de usuarios"""
-    page_size = 10
-    page_size_query_param = 'page_size'
-    max_page_size = 100
-
 @api_view(['GET'])
-@login_required
 def listar_usuarios(request):
-    """
-    API para listar todos los usuarios con filtros y búsqueda
-    """
-    # Filtros desde query params
+    """API para listar usuarios - SIN AUTENTICACIÓN"""
     busqueda = request.GET.get('busqueda', '')
     rol = request.GET.get('rol', '')
     estado = request.GET.get('estado', '')
-    sucursal = request.GET.get('sucursal', '')
     
-    # Query base
     usuarios = Usuario.objects.select_related('persona').prefetch_related('usuario_roles__rol')
     
-    # Aplicar búsqueda
     if busqueda:
         usuarios = usuarios.filter(
             Q(nombre_usuario__icontains=busqueda) |
@@ -438,23 +421,18 @@ def listar_usuarios(request):
             Q(persona__correo__icontains=busqueda)
         )
     
-    # Filtrar por estado
     if estado == 'activo':
         usuarios = usuarios.filter(is_active=True)
     elif estado == 'inactivo':
         usuarios = usuarios.filter(is_active=False)
     
-    # Filtrar por rol
     if rol and rol != 'todos':
         usuarios = usuarios.filter(usuario_roles__rol__nombre_rol=rol.upper(), usuario_roles__estado='ACTIVO')
     
-    # Ordenar
     usuarios = usuarios.order_by('-fecha_creacion')
     
-    # Serializar datos
     usuarios_data = []
     for usuario in usuarios:
-        # Obtener roles activos
         roles = usuario.usuario_roles.filter(estado='ACTIVO')
         roles_info = [
             {
@@ -486,15 +464,11 @@ def listar_usuarios(request):
     })
 
 @api_view(['GET'])
-@login_required
 def obtener_usuario(request, usuario_id):
-    """
-    API para obtener detalles de un usuario específico
-    """
+    """API para obtener usuario - SIN AUTENTICACIÓN"""
     try:
         usuario = Usuario.objects.select_related('persona').get(id=usuario_id)
         
-        # Obtener roles
         roles = usuario.usuario_roles.filter(estado='ACTIVO')
         roles_info = [
             {
@@ -516,8 +490,6 @@ def obtener_usuario(request, usuario_id):
             'correo': usuario.persona.correo,
             'roles': roles_info,
             'is_active': usuario.is_active,
-            'is_staff': usuario.is_staff,
-            'is_superuser': usuario.is_superuser,
         }
         
         return Response({
@@ -532,21 +504,8 @@ def obtener_usuario(request, usuario_id):
         }, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
-@login_required  
 def crear_usuario(request):
-    """
-    API para crear un nuevo usuario
-    Requiere permisos de administrador
-    """
-    # Verificar que el usuario tenga permisos
-    if not request.user.is_staff and not request.user.usuario_roles.filter(
-        rol__nombre_rol='ADMINISTRADOR', estado='ACTIVO'
-    ).exists():
-        return Response({
-            'success': False,
-            'error': 'No tienes permisos para crear usuarios'
-        }, status=status.HTTP_403_FORBIDDEN)
-    
+    """API para crear usuario - SIN AUTENTICACIÓN"""
     serializer = RegistroSerializer(data=request.data)
     
     if serializer.is_valid():
@@ -576,25 +535,12 @@ def crear_usuario(request):
     }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
-@login_required
 def actualizar_usuario(request, usuario_id):
-    """
-    API para actualizar un usuario existente
-    """
-    # Verificar permisos
-    if not request.user.is_staff and not request.user.usuario_roles.filter(
-        rol__nombre_rol='ADMINISTRADOR', estado='ACTIVO'
-    ).exists():
-        return Response({
-            'success': False,
-            'error': 'No tienes permisos para editar usuarios'
-        }, status=status.HTTP_403_FORBIDDEN)
-    
+    """API para actualizar usuario - SIN AUTENTICACIÓN"""
     try:
         usuario = Usuario.objects.get(id=usuario_id)
         persona = usuario.persona
         
-        # Actualizar datos de persona
         if 'nombre' in request.data:
             persona.nombre = request.data['nombre']
         if 'apellido_paterno' in request.data:
@@ -608,22 +554,17 @@ def actualizar_usuario(request, usuario_id):
         
         persona.save()
         
-        # Actualizar datos de usuario
         if 'is_active' in request.data:
             usuario.is_active = request.data['is_active']
         
-        # Actualizar contraseña si se proporciona
         if 'password' in request.data and request.data['password']:
             usuario.set_password(request.data['password'])
         
-        # Actualizar rol si se proporciona
         if 'rol' in request.data:
             rol_nombre = request.data['rol']
             try:
                 rol = Rol.objects.get(nombre_rol=rol_nombre)
-                # Desactivar roles anteriores
                 UsuarioRol.objects.filter(usuario=usuario).update(estado='INACTIVO')
-                # Crear o activar el nuevo rol
                 UsuarioRol.objects.update_or_create(
                     usuario=usuario,
                     rol=rol,
@@ -636,11 +577,7 @@ def actualizar_usuario(request, usuario_id):
         
         return Response({
             'success': True,
-            'message': 'Usuario actualizado exitosamente',
-            'usuario': {
-                'id': usuario.id,
-                'nombre_completo': usuario.get_nombre_completo(),
-            }
+            'message': 'Usuario actualizado exitosamente'
         })
         
     except Usuario.DoesNotExist:
@@ -648,42 +585,15 @@ def actualizar_usuario(request, usuario_id):
             'success': False,
             'error': 'Usuario no encontrado'
         }, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        return Response({
-            'success': False,
-            'error': f'Error al actualizar usuario: {str(e)}'
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['DELETE'])
-@login_required
 def eliminar_usuario(request, usuario_id):
-    """
-    API para eliminar (desactivar) un usuario
-    """
-    # Verificar permisos
-    if not request.user.is_staff and not request.user.usuario_roles.filter(
-        rol__nombre_rol='ADMINISTRADOR', estado='ACTIVO'
-    ).exists():
-        return Response({
-            'success': False,
-            'error': 'No tienes permisos para eliminar usuarios'
-        }, status=status.HTTP_403_FORBIDDEN)
-    
+    """API para eliminar usuario - SIN AUTENTICACIÓN"""
     try:
         usuario = Usuario.objects.get(id=usuario_id)
-        
-        # No permitir eliminar el propio usuario
-        if usuario.id == request.user.id:
-            return Response({
-                'success': False,
-                'error': 'No puedes eliminar tu propio usuario'
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Desactivar en lugar de eliminar
         usuario.is_active = False
         usuario.save()
         
-        # Desactivar roles
         UsuarioRol.objects.filter(usuario=usuario).update(estado='INACTIVO')
         
         return Response({
@@ -698,20 +608,8 @@ def eliminar_usuario(request, usuario_id):
         }, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
-@login_required
 def activar_usuario(request, usuario_id):
-    """
-    API para activar un usuario desactivado
-    """
-    # Verificar permisos
-    if not request.user.is_staff and not request.user.usuario_roles.filter(
-        rol__nombre_rol='ADMINISTRADOR', estado='ACTIVO'
-    ).exists():
-        return Response({
-            'success': False,
-            'error': 'No tienes permisos para activar usuarios'
-        }, status=status.HTTP_403_FORBIDDEN)
-    
+    """API para activar usuario - SIN AUTENTICACIÓN"""
     try:
         usuario = Usuario.objects.get(id=usuario_id)
         usuario.is_active = True
@@ -729,11 +627,8 @@ def activar_usuario(request, usuario_id):
         }, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
-@login_required
 def estadisticas_usuarios(request):
-    """
-    API para obtener estadísticas de usuarios
-    """
+    """API para estadísticas - SIN AUTENTICACIÓN"""
     stats = {
         'total': Usuario.objects.count(),
         'activos': Usuario.objects.filter(is_active=True).count(),

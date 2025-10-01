@@ -37,7 +37,7 @@ urlpatterns = [
     path('catalogo/', ProtectedTemplateView.as_view(template_name='catalogo.html'), name='catalogo'),
     
     # Gestión de usuarios - PROTEGIDO
-    path('gestionusuario/', ProtectedTemplateView.as_view(template_name='gestionusuario.html'), name='gestionusuario'),
+    path('gestionusuario/', TemplateView.as_view(template_name='gestionusuario.html'), name='gestionusuario'),
     
     # ============ COMPONENTE SIDEBAR ============
     path('components/sidebar/', TemplateView.as_view(template_name='components/sidebar.html'), name='sidebar-component'),
