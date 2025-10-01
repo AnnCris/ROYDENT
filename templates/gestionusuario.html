@@ -1140,6 +1140,25 @@
                 font-size: 1rem;
             }
         }
+
+        /* Modal con scroll */
+        .modal-content {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Botones de acción más pequeños y compactos */
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.7rem;
+            margin: 0.2rem;
+        }
+
+        /* Animación de carga */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -1204,10 +1223,10 @@
                                 <label class="text-label">Rol</label>
                                 <select class="form-input form-select" id="filtro-rol">
                                     <option value="todos">Todos los roles</option>
-                                    <option value="admin">Administrador</option>
-                                    <option value="vendedor">Vendedor</option>
-                                    <option value="inventario">Inventario</option>
-                                    <option value="readonly">Solo Lectura</option>
+                                    <option value="ADMINISTRADOR">Administrador</option>
+                                    <option value="VENDEDOR_ROYDENT">Vendedor RoyDent</option>
+                                    <option value="VENDEDOR_MUNDO_MEDICO">Vendedor Mundo Médico</option>
+                                    <option value="CLIENTE">Cliente</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -1256,12 +1275,11 @@
                                     </tr>
                                 </thead>
                                 <tbody id="usuarios-table">
-                                    <!-- Los usuarios se cargarán dinámicamente desde la base de datos -->
                                     <tr id="loading-row">
                                         <td colspan="7" style="text-align: center; padding: 2rem;">
                                             <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
                                                 <div style="width: 20px; height: 20px; border: 3px solid var(--color-gold); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                                                <span>Cargando usuarios desde la base de datos...</span>
+                                                <span>Cargando usuarios...</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -1271,7 +1289,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Roles y Permisos -->
             <div class="section">
                 <div class="card">
@@ -1387,7 +1404,6 @@
                         <label class="text-label">Sucursal</label>
                         <select class="form-input form-select" id="modal-sucursal">
                             <option value="">Seleccionar sucursal</option>
-                            <option value="central">Oficina Central</option>
                             <option value="roydent">RoyDent</option>
                             <option value="mundo_medico">Mundo Médico</option>
                             <option value="deposito">Depósito</option>
@@ -1407,20 +1423,7 @@
         let usuarios = [];
         let usuarioEditando = null;
 
-        // ============ OBTENER TOKEN JWT ============
-        function getAuthToken() {
-            return localStorage.getItem('access_token');
-        }
-
-        // ============ HEADERS CON JWT ============
-        function getHeaders() {
-            const token = getAuthToken();
-            return {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            };
-        }
-
+        // ============ HEADERS ============
         function getHeaders() {
             return {
                 'Content-Type': 'application/json'
@@ -1429,20 +1432,14 @@
 
         // ============ CARGAR SIDEBAR ============
         document.addEventListener('DOMContentLoaded', function() {
-            // Verificar autenticación PRIMERO (sin alertas)
-            if (!verificarAutenticacion()) return;
-
             fetch('/components/sidebar/')
-                .then(response => {
-                    if (!response.ok) throw new Error('Error al cargar sidebar');
-                    return response.text();
-                })
+                .then(response => response.text())
                 .then(data => {
                     document.getElementById('sidebar-container').innerHTML = data;
                     const usersLink = document.querySelector('[data-page="users"]');
                     if (usersLink) usersLink.classList.add('active');
                 })
-                .catch(error => console.error('Error al cargar sidebar:', error));
+                .catch(error => console.error('Error:', error));
 
             cargarUsuarios();
             cargarEstadisticas();
@@ -1472,19 +1469,8 @@
                     headers: getHeaders()
                 });
 
-                if (response.status === 401) {
-                    // Token expirado - redirigir sin mostrar nada
-                    localStorage.removeItem('access_token');
-                    localStorage.removeItem('refresh_token');
-                    window.location.href = '/login/';
-                    return;
-                }
-
-                if (!response.ok) {
-                    throw new Error(`Error ${response.status}`);
-                }
-
                 const data = await response.json();
+                console.log('Usuarios cargados:', data);
                 
                 if (data.success) {
                     usuarios = data.usuarios || [];
@@ -1496,7 +1482,7 @@
             }
         }
 
-        // ============ RENDERIZAR USUARIOS ============
+        // ============ RENDERIZAR TABLA ============
         function renderizarUsuarios() {
             const tbody = document.getElementById('usuarios-table');
             tbody.innerHTML = '';
@@ -1519,41 +1505,164 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
-                        <div style="display: flex; align-items: center; gap: var(--space-md);">
-                            <div class="user-avatar">${iniciales}</div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="user-avatar" style="width: 40px; height: 40px; font-size: 1rem;">${iniciales}</div>
                             <div>
-                                <div style="font-weight: 600;">${usuario.nombre_completo}</div>
-                                <div style="font-size: 0.875rem; color: var(--text-gray);">@${usuario.nombre_usuario}</div>
+                                <div style="font-weight: 600; font-size: 0.9rem;">${usuario.nombre_completo}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-gray);">@${usuario.nombre_usuario}</div>
                             </div>
                         </div>
                     </td>
-                    <td>${usuario.email || '-'}</td>
+                    <td style="font-size: 0.85rem;">${usuario.email || '-'}</td>
                     <td><span class="badge badge-${getBadgeClass(rol.nombre)}">${formatRol(rol.nombre)}</span></td>
-                    <td>${rol.sucursal || '-'}</td>
-                    <td>${formatFecha(usuario.ultimo_login) || 'Nunca'}</td>
+                    <td style="font-size: 0.85rem;">${rol.sucursal || '-'}</td>
+                    <td style="font-size: 0.85rem;">${formatFecha(usuario.ultimo_login) || 'Nunca'}</td>
                     <td><span class="badge badge-${usuario.is_active ? 'activo' : 'inactivo'}">${usuario.is_active ? 'Activo' : 'Inactivo'}</span></td>
                     <td>
-                        ${usuario.is_active ? `
-                            <button class="btn btn-secondary btn-sm" onclick="editarUsuario(${usuario.id})">Editar</button>
-                            <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(${usuario.id})">Desactivar</button>
-                        ` : `
-                            <button class="btn btn-warning btn-sm" onclick="activarUsuario(${usuario.id})">Activar</button>
-                        `}
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
+                            <button class="btn btn-info btn-sm" onclick="verUsuario(${usuario.id})" title="Ver detalles">
+                                👁️ Ver
+                            </button>
+                            ${usuario.is_active ? `
+                                <button class="btn btn-secondary btn-sm" onclick="editarUsuario(${usuario.id})" title="Editar">
+                                    ✏️ Editar
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="desactivarUsuario(${usuario.id})" title="Desactivar">
+                                    ❌ Desactivar
+                                </button>
+                            ` : `
+                                <button class="btn btn-warning btn-sm" onclick="activarUsuario(${usuario.id})" title="Activar">
+                                    ✅ Activar
+                                </button>
+                            `}
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // ============ CARGAR ESTADÍSTICAS ============
-        async function cargarEstadisticas() {
+        // ============ VER USUARIO ============
+        async function verUsuario(userId) {
             try {
-                const response = await fetch('/auth/api/usuarios/estadisticas/', {
-                    method: 'GET',
+                const response = await fetch(`/auth/api/usuarios/${userId}/`, {
                     headers: getHeaders()
                 });
 
-                if (!response.ok) return;
+                const data = await response.json();
+                
+                if (data.success) {
+                    const usuario = data.usuario;
+                    const roles = usuario.roles ? usuario.roles.map(r => formatRol(r.nombre)).join(', ') : 'Sin rol';
+                    
+                    const detalles = `
+                        <div style="line-height: 2; padding: 1rem;">
+                            <p><strong>👤 Nombre completo:</strong> ${usuario.nombre} ${usuario.apellido_paterno} ${usuario.apellido_materno || ''}</p>
+                            <p><strong>🔑 Usuario:</strong> @${usuario.nombre_usuario}</p>
+                            <p><strong>📧 Email:</strong> ${usuario.correo}</p>
+                            <p><strong>🆔 Cédula:</strong> ${usuario.cedula_identidad}</p>
+                            <p><strong>📱 Celular:</strong> ${usuario.numero_celular}</p>
+                            <p><strong>👔 Roles:</strong> ${roles}</p>
+                            <p><strong>📊 Estado:</strong> <span class="badge badge-${usuario.is_active ? 'activo' : 'inactivo'}">${usuario.is_active ? 'Activo' : 'Inactivo'}</span></p>
+                        </div>
+                    `;
+                    
+                    mostrarModalDetalles('Detalles del Usuario', detalles);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al cargar detalles', 'danger');
+            }
+        }
+
+        // ============ MODAL DE DETALLES ============
+        function mostrarModalDetalles(titulo, contenido) {
+            const existente = document.getElementById('modalDetallesUsuario');
+            if (existente) existente.remove();
+            
+            const modal = document.createElement('div');
+            modal.id = 'modalDetallesUsuario';
+            modal.style.cssText = 'display: block; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);';
+            
+            modal.innerHTML = `
+                <div style="background: white; margin: 5% auto; padding: 2rem; border-radius: 20px; width: 90%; max-width: 600px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="color: var(--color-green-dark); margin: 0;">${titulo}</h2>
+                        <span onclick="document.getElementById('modalDetallesUsuario').remove()" style="cursor: pointer; font-size: 28px; color: #999;">&times;</span>
+                    </div>
+                    ${contenido}
+                    <button onclick="document.getElementById('modalDetallesUsuario').remove()" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Cerrar</button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            modal.onclick = function(e) {
+                if (e.target === modal) modal.remove();
+            };
+        }
+
+        // ============ EDITAR USUARIO ============
+        function editarUsuario(userId) {
+            abrirModalUsuario(userId);
+        }
+
+        // ============ DESACTIVAR USUARIO ============
+        async function desactivarUsuario(userId) {
+            if (!confirm('¿Desactivar este usuario? No podrá acceder al sistema.')) return;
+
+            try {
+                const response = await fetch(`/auth/api/usuarios/${userId}/eliminar/`, {
+                    method: 'DELETE',
+                    headers: getHeaders()
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    mostrarAlerta('Usuario desactivado exitosamente', 'success');
+                    cargarUsuarios();
+                    cargarEstadisticas();
+                } else {
+                    mostrarAlerta(data.error || 'Error al desactivar', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error de conexión', 'danger');
+            }
+        }
+
+        // ============ ACTIVAR USUARIO ============
+        async function activarUsuario(userId) {
+            if (!confirm('¿Activar este usuario?')) return;
+
+            try {
+                const response = await fetch(`/auth/api/usuarios/${userId}/activar/`, {
+                    method: 'POST',
+                    headers: getHeaders()
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    mostrarAlerta('Usuario activado exitosamente', 'success');
+                    cargarUsuarios();
+                    cargarEstadisticas();
+                } else {
+                    mostrarAlerta(data.error || 'Error', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error de conexión', 'danger');
+            }
+        }
+
+        // ============ ESTADÍSTICAS ============
+        async function cargarEstadisticas() {
+            try {
+                const response = await fetch('/auth/api/usuarios/estadisticas/', {
+                    headers: getHeaders()
+                });
 
                 const data = await response.json();
                 
@@ -1570,7 +1679,7 @@
             }
         }
 
-        // ============ MODAL ============
+        // ============ MODAL CREAR/EDITAR ============
         function abrirModalUsuario(userId = null) {
             const modal = document.getElementById('modalUsuario');
             const titulo = document.getElementById('tituloModal');
@@ -1597,14 +1706,12 @@
             usuarioEditando = null;
         }
 
-        // ============ CARGAR DATOS USUARIO ============
+        // ============ CARGAR DATOS PARA EDITAR ============
         async function cargarDatosUsuario(userId) {
             try {
                 const response = await fetch(`/auth/api/usuarios/${userId}/`, {
                     headers: getHeaders()
                 });
-
-                if (!response.ok) throw new Error('Error al cargar usuario');
 
                 const data = await response.json();
                 const usuario = data.usuario;
@@ -1623,7 +1730,7 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                mostrarAlerta('Error al cargar datos del usuario', 'danger');
+                mostrarAlerta('Error al cargar datos', 'danger');
             }
         }
 
@@ -1670,7 +1777,7 @@
                     cargarUsuarios();
                     cargarEstadisticas();
                 } else {
-                    mostrarAlerta(data.error || 'Error al crear usuario', 'danger');
+                    mostrarAlerta(data.error || 'Error al crear', 'danger');
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -1694,35 +1801,6 @@
                     cerrarModalUsuario();
                     cargarUsuarios();
                 } else {
-                    mostrarAlerta(data.error || 'Error al actualizar usuario', 'danger');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                mostrarAlerta('Error de conexión', 'danger');
-            }
-        }
-
-        // ============ EDITAR/ELIMINAR/ACTIVAR ============
-        function editarUsuario(userId) {
-            abrirModalUsuario(userId);
-        }
-
-        async function eliminarUsuario(userId) {
-            if (!confirm('¿Desactivar este usuario?')) return;
-
-            try {
-                const response = await fetch(`/auth/api/usuarios/${userId}/eliminar/`, {
-                    method: 'DELETE',
-                    headers: getHeaders()
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    mostrarAlerta('Usuario desactivado exitosamente', 'success');
-                    cargarUsuarios();
-                    cargarEstadisticas();
-                } else {
                     mostrarAlerta(data.error || 'Error', 'danger');
                 }
             } catch (error) {
@@ -1731,31 +1809,7 @@
             }
         }
 
-        async function activarUsuario(userId) {
-            if (!confirm('¿Activar este usuario?')) return;
-
-            try {
-                const response = await fetch(`/auth/api/usuarios/${userId}/activar/`, {
-                    method: 'POST',
-                    headers: getHeaders()
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    mostrarAlerta('Usuario activado exitosamente', 'success');
-                    cargarUsuarios();
-                    cargarEstadisticas();
-                } else {
-                    mostrarAlerta(data.error || 'Error', 'danger');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                mostrarAlerta('Error de conexión', 'danger');
-            }
-        }
-
-        // ============ BÚSQUEDA Y FILTROS ============
+        // ============ FILTROS Y BÚSQUEDA ============
         const busquedaInput = document.getElementById('busqueda');
         if (busquedaInput) {
             busquedaInput.addEventListener('input', debounce(aplicarFiltros, 500));
@@ -1767,12 +1821,16 @@
         });
 
         function aplicarFiltros() {
+            const rolValue = document.getElementById('filtro-rol').value;
+            const estadoValue = document.getElementById('filtro-estado').value;
+            
             const filtros = {
                 busqueda: document.getElementById('busqueda').value,
-                rol: document.getElementById('filtro-rol').value,
-                estado: document.getElementById('filtro-estado').value,
-                sucursal: document.getElementById('filtro-sucursal').value
+                rol: (rolValue && rolValue !== 'todos') ? rolValue : '',
+                estado: (estadoValue && estadoValue !== 'todos') ? estadoValue : ''
             };
+            
+            console.log('Filtros aplicados:', filtros);
             cargarUsuarios(filtros);
         }
 
@@ -1822,22 +1880,21 @@
             const horas = Math.floor(minutos / 60);
             const dias = Math.floor(horas / 24);
 
-            if (minutos < 60) return `Hace ${minutos} min`;
-            if (horas < 24) return `Hace ${horas}h`;
-            if (dias < 7) return `Hace ${dias}d`;
+            if (minutos < 60) return `${minutos}min`;
+            if (horas < 24) return `${horas}h`;
+            if (dias < 7) return `${dias}d`;
             return date.toLocaleDateString('es-ES');
         }
 
         function mostrarAlerta(mensaje, tipo) {
             const alerta = document.createElement('div');
-            const tipoTexto = tipo === 'success' ? 'Éxito' : tipo === 'warning' ? 'Advertencia' : tipo === 'danger' ? 'Error' : 'Info';
             const color = tipo === 'success' ? '#00C851' : tipo === 'warning' ? '#FFD700' : tipo === 'danger' ? '#EF4444' : '#00C851';
             
-            alerta.innerHTML = `<strong>${tipoTexto}:</strong> ${mensaje}`;
+            alerta.innerHTML = `<strong>${tipo === 'success' ? '✓' : '⚠️'}</strong> ${mensaje}`;
             alerta.style.cssText = `
                 position: fixed; top: 20px; right: 20px; z-index: 10000;
                 min-width: 300px; padding: 1rem 1.5rem;
-                border-radius: var(--radius-lg);
+                border-radius: 10px;
                 background: rgba(255, 255, 255, 0.95);
                 backdrop-filter: blur(10px);
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -1849,6 +1906,7 @@
             setTimeout(() => {
                 alerta.style.opacity = '0';
                 alerta.style.transform = 'translateX(100%)';
+                alerta.style.transition = 'all 0.3s';
                 setTimeout(() => alerta.remove(), 300);
             }, 3000);
         }
@@ -1858,7 +1916,7 @@
             if (event.target === modal) cerrarModalUsuario();
         }
 
-        console.log('Sistema de Gestión de Usuarios cargado');
+        console.log('Sistema cargado');
     </script>
 </body>
 </html>

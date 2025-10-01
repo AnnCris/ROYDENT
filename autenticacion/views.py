@@ -505,66 +505,140 @@ def obtener_usuario(request, usuario_id):
 
 @api_view(['POST'])
 def crear_usuario(request):
-    """API para crear usuario - SIN AUTENTICACIÓN"""
-    serializer = RegistroSerializer(data=request.data)
-    
-    if serializer.is_valid():
-        try:
-            usuario = serializer.save()
-            
-            return Response({
-                'success': True,
-                'message': 'Usuario creado exitosamente',
-                'usuario': {
-                    'id': usuario.id,
-                    'nombre_usuario': usuario.nombre_usuario,
-                    'nombre_completo': usuario.get_nombre_completo(),
-                }
-            }, status=status.HTTP_201_CREATED)
-            
-        except Exception as e:
+    """API para crear un nuevo usuario"""
+    try:
+        data = request.data
+        print("Datos recibidos:", data)  # Debug
+        
+        # Validar campos requeridos
+        campos_requeridos = ['nombre', 'apellido_paterno', 'cedula_identidad', 
+                            'correo', 'nombre_usuario', 'password', 'rol']
+        for campo in campos_requeridos:
+            if not data.get(campo):
+                return Response({
+                    'success': False,
+                    'error': f'El campo {campo} es requerido'
+                }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Verificar si el usuario ya existe
+        if Usuario.objects.filter(nombre_usuario=data['nombre_usuario']).exists():
             return Response({
                 'success': False,
-                'error': f'Error al crear usuario: {str(e)}'
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                'error': 'El nombre de usuario ya existe'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Verificar si la cédula ya existe
+        if Persona.objects.filter(cedula_identidad=data['cedula_identidad']).exists():
+            return Response({
+                'success': False,
+                'error': 'La cédula de identidad ya está registrada'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Verificar si el correo ya existe
+        if Persona.objects.filter(correo=data['correo']).exists():
+            return Response({
+                'success': False,
+                'error': 'El correo electrónico ya está registrado'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Buscar el rol
+        try:
+            rol = Rol.objects.get(nombre_rol=data['rol'])
+        except Rol.DoesNotExist:
+            return Response({
+                'success': False,
+                'error': f'El rol {data["rol"]} no existe'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Crear la persona
+        persona = Persona.objects.create(
+            nombre=data['nombre'],
+            apellido_paterno=data['apellido_paterno'],
+            apellido_materno=data.get('apellido_materno', ''),
+            cedula_identidad=data['cedula_identidad'],
+            numero_celular=data.get('numero_celular', ''),
+            correo=data['correo']
+        )
+        
+        # Crear el usuario
+        usuario = Usuario.objects.create(
+            nombre_usuario=data['nombre_usuario'],
+            persona=persona,
+            is_active=True
+        )
+        usuario.set_password(data['password'])
+        usuario.save()
+        
+        # Asignar el rol
+        UsuarioRol.objects.create(
+            usuario=usuario,
+            rol=rol,
+            estado='ACTIVO'
+        )
+        
+        print(f"Usuario creado exitosamente: {usuario.nombre_usuario}")  # Debug
+        
+        return Response({
+            'success': True,
+            'message': 'Usuario creado exitosamente',
+            'usuario': {
+                'id': usuario.id,
+                'nombre_usuario': usuario.nombre_usuario,
+                'nombre_completo': usuario.get_nombre_completo()
+            }
+        }, status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        print(f"Error al crear usuario: {str(e)}")  # Debug
+        import traceback
+        traceback.print_exc()
+        return Response({
+            'success': False,
+            'error': f'Error al crear usuario: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    return Response({
-        'success': False,
-        'error': 'Datos inválidos',
-        'detalles': serializer.errors
-    }, status=status.HTTP_400_BAD_REQUEST)
-
 @api_view(['PUT'])
 def actualizar_usuario(request, usuario_id):
-    """API para actualizar usuario - SIN AUTENTICACIÓN"""
+    """API para actualizar un usuario"""
     try:
         usuario = Usuario.objects.get(id=usuario_id)
         persona = usuario.persona
+        data = request.data
         
-        if 'nombre' in request.data:
-            persona.nombre = request.data['nombre']
-        if 'apellido_paterno' in request.data:
-            persona.apellido_paterno = request.data['apellido_paterno']
-        if 'apellido_materno' in request.data:
-            persona.apellido_materno = request.data['apellido_materno']
-        if 'numero_celular' in request.data:
-            persona.numero_celular = request.data['numero_celular']
-        if 'correo' in request.data:
-            persona.correo = request.data['correo']
+        print(f"Actualizando usuario {usuario_id} con datos:", data)  # Debug
+        
+        # Actualizar datos de persona
+        if 'nombre' in data:
+            persona.nombre = data['nombre']
+        if 'apellido_paterno' in data:
+            persona.apellido_paterno = data['apellido_paterno']
+        if 'apellido_materno' in data:
+            persona.apellido_materno = data['apellido_materno']
+        if 'numero_celular' in data:
+            persona.numero_celular = data['numero_celular']
+        if 'correo' in data:
+            # Verificar que el correo no esté en uso por otra persona
+            if Persona.objects.filter(correo=data['correo']).exclude(id=persona.id).exists():
+                return Response({
+                    'success': False,
+                    'error': 'El correo ya está en uso por otro usuario'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            persona.correo = data['correo']
         
         persona.save()
         
-        if 'is_active' in request.data:
-            usuario.is_active = request.data['is_active']
+        # Actualizar contraseña si se proporciona
+        if 'password' in data and data['password']:
+            usuario.set_password(data['password'])
+            usuario.save()
         
-        if 'password' in request.data and request.data['password']:
-            usuario.set_password(request.data['password'])
-        
-        if 'rol' in request.data:
-            rol_nombre = request.data['rol']
+        # Actualizar rol si se proporciona
+        if 'rol' in data:
             try:
-                rol = Rol.objects.get(nombre_rol=rol_nombre)
+                rol = Rol.objects.get(nombre_rol=data['rol'])
+                # Desactivar roles anteriores
                 UsuarioRol.objects.filter(usuario=usuario).update(estado='INACTIVO')
+                # Crear o actualizar el nuevo rol
                 UsuarioRol.objects.update_or_create(
                     usuario=usuario,
                     rol=rol,
@@ -573,7 +647,7 @@ def actualizar_usuario(request, usuario_id):
             except Rol.DoesNotExist:
                 pass
         
-        usuario.save()
+        print(f"Usuario {usuario_id} actualizado exitosamente")  # Debug
         
         return Response({
             'success': True,
@@ -585,7 +659,15 @@ def actualizar_usuario(request, usuario_id):
             'success': False,
             'error': 'Usuario no encontrado'
         }, status=status.HTTP_404_NOT_FOUND)
-
+    except Exception as e:
+        print(f"Error al actualizar usuario: {str(e)}")  # Debug
+        import traceback
+        traceback.print_exc()
+        return Response({
+            'success': False,
+            'error': f'Error: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 @api_view(['DELETE'])
 def eliminar_usuario(request, usuario_id):
     """API para eliminar usuario - SIN AUTENTICACIÓN"""
