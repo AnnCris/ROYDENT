@@ -406,31 +406,62 @@ from django.db.models import Q
 
 @api_view(['GET'])
 def listar_usuarios(request):
-    """API para listar usuarios - SIN AUTENTICACIÓN"""
-    busqueda = request.GET.get('busqueda', '')
-    rol = request.GET.get('rol', '')
-    estado = request.GET.get('estado', '')
-    
+    """API para listar usuarios con filtros mejorados"""
+    busqueda = request.GET.get('busqueda', '').strip()
+    rol = request.GET.get('rol', '').strip()
+    estado = request.GET.get('estado', '').strip()
+    sucursal = request.GET.get('sucursal', '').strip()
+
+    # Iniciar con todos los usuarios
     usuarios = Usuario.objects.select_related('persona').prefetch_related('usuario_roles__rol')
     
+    # Filtro por búsqueda de texto (nombre, usuario, email)
     if busqueda:
         usuarios = usuarios.filter(
             Q(nombre_usuario__icontains=busqueda) |
             Q(persona__nombre__icontains=busqueda) |
             Q(persona__apellido_paterno__icontains=busqueda) |
+            Q(persona__apellido_materno__icontains=busqueda) |
             Q(persona__correo__icontains=busqueda)
         )
     
-    if estado == 'activo':
-        usuarios = usuarios.filter(is_active=True)
-    elif estado == 'inactivo':
-        usuarios = usuarios.filter(is_active=False)
+    # Filtro por estado (activo/inactivo)
+    if estado and estado != 'todos':
+        if estado == 'activo':
+            usuarios = usuarios.filter(is_active=True)
+        elif estado == 'inactivo':
+            usuarios = usuarios.filter(is_active=False)
     
+    # Filtro por rol
     if rol and rol != 'todos':
-        usuarios = usuarios.filter(usuario_roles__rol__nombre_rol=rol.upper(), usuario_roles__estado='ACTIVO')
+        usuarios = usuarios.filter(
+            usuario_roles__rol__nombre_rol=rol,
+            usuario_roles__estado='ACTIVO'
+        ).distinct()
     
+    # Filtro por sucursal
+    if sucursal and sucursal != 'todas':
+        # Mapeo de sucursales a roles
+        if sucursal == 'roydent':
+            usuarios = usuarios.filter(
+                usuario_roles__rol__nombre_rol='VENDEDOR_ROYDENT',
+                usuario_roles__estado='ACTIVO'
+            ).distinct()
+        elif sucursal == 'mundo_medico':
+            usuarios = usuarios.filter(
+                usuario_roles__rol__nombre_rol='VENDEDOR_MUNDO_MEDICO',
+                usuario_roles__estado='ACTIVO'
+            ).distinct()
+        elif sucursal == 'deposito':
+            usuarios = usuarios.filter(
+                usuario_roles__rol__nombre_rol='ADMINISTRADOR',
+                usuario_roles__estado='ACTIVO'
+            ).distinct()
+    
+    # Ordenar por fecha de creación descendente
     usuarios = usuarios.order_by('-fecha_creacion')
     
+    # Construir respuesta
     usuarios_data = []
     for usuario in usuarios:
         roles = usuario.usuario_roles.filter(estado='ACTIVO')
@@ -456,7 +487,7 @@ def listar_usuarios(request):
             'fecha_creacion': usuario.fecha_creacion,
             'ultimo_login': usuario.ultimo_login,
         })
-    
+
     return Response({
         'success': True,
         'count': len(usuarios_data),
@@ -508,8 +539,7 @@ def crear_usuario(request):
     """API para crear un nuevo usuario"""
     try:
         data = request.data
-        print("Datos recibidos:", data)  # Debug
-        
+
         # Validar campos requeridos
         campos_requeridos = ['nombre', 'apellido_paterno', 'cedula_identidad', 
                             'correo', 'nombre_usuario', 'password', 'rol']
@@ -576,8 +606,6 @@ def crear_usuario(request):
             estado='ACTIVO'
         )
         
-        print(f"Usuario creado exitosamente: {usuario.nombre_usuario}")  # Debug
-        
         return Response({
             'success': True,
             'message': 'Usuario creado exitosamente',
@@ -589,9 +617,6 @@ def crear_usuario(request):
         }, status=status.HTTP_201_CREATED)
         
     except Exception as e:
-        print(f"Error al crear usuario: {str(e)}")  # Debug
-        import traceback
-        traceback.print_exc()
         return Response({
             'success': False,
             'error': f'Error al crear usuario: {str(e)}'
@@ -604,8 +629,6 @@ def actualizar_usuario(request, usuario_id):
         usuario = Usuario.objects.get(id=usuario_id)
         persona = usuario.persona
         data = request.data
-        
-        print(f"Actualizando usuario {usuario_id} con datos:", data)  # Debug
         
         # Actualizar datos de persona
         if 'nombre' in data:
@@ -646,9 +669,7 @@ def actualizar_usuario(request, usuario_id):
                 )
             except Rol.DoesNotExist:
                 pass
-        
-        print(f"Usuario {usuario_id} actualizado exitosamente")  # Debug
-        
+         
         return Response({
             'success': True,
             'message': 'Usuario actualizado exitosamente'
@@ -660,9 +681,6 @@ def actualizar_usuario(request, usuario_id):
             'error': 'Usuario no encontrado'
         }, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
-        print(f"Error al actualizar usuario: {str(e)}")  # Debug
-        import traceback
-        traceback.print_exc()
         return Response({
             'success': False,
             'error': f'Error: {str(e)}'
