@@ -17,6 +17,8 @@ from .serializers import (
     CambiarPasswordSerializer
 )
 import re
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 
 # Vistas web tradicionales
 def logout_view(request):
@@ -395,3 +397,358 @@ class SidebarView(TemplateView):
             context['usuario'] = self.request.user
             context['roles'] = self.request.user.usuario_roles.filter(estado='ACTIVO')
         return context
+    
+
+# AGREGAR AL FINAL DE autenticacion/views.py
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
+from django.db.models import Q
+
+# ============ CRUD DE USUARIOS - API ============
+
+class UsuarioPagination(PageNumberPagination):
+    """Paginación para lista de usuarios"""
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+@api_view(['GET'])
+@login_required
+def listar_usuarios(request):
+    """
+    API para listar todos los usuarios con filtros y búsqueda
+    """
+    # Filtros desde query params
+    busqueda = request.GET.get('busqueda', '')
+    rol = request.GET.get('rol', '')
+    estado = request.GET.get('estado', '')
+    sucursal = request.GET.get('sucursal', '')
+    
+    # Query base
+    usuarios = Usuario.objects.select_related('persona').prefetch_related('usuario_roles__rol')
+    
+    # Aplicar búsqueda
+    if busqueda:
+        usuarios = usuarios.filter(
+            Q(nombre_usuario__icontains=busqueda) |
+            Q(persona__nombre__icontains=busqueda) |
+            Q(persona__apellido_paterno__icontains=busqueda) |
+            Q(persona__correo__icontains=busqueda)
+        )
+    
+    # Filtrar por estado
+    if estado == 'activo':
+        usuarios = usuarios.filter(is_active=True)
+    elif estado == 'inactivo':
+        usuarios = usuarios.filter(is_active=False)
+    
+    # Filtrar por rol
+    if rol and rol != 'todos':
+        usuarios = usuarios.filter(usuario_roles__rol__nombre_rol=rol.upper(), usuario_roles__estado='ACTIVO')
+    
+    # Ordenar
+    usuarios = usuarios.order_by('-fecha_creacion')
+    
+    # Serializar datos
+    usuarios_data = []
+    for usuario in usuarios:
+        # Obtener roles activos
+        roles = usuario.usuario_roles.filter(estado='ACTIVO')
+        roles_info = [
+            {
+                'id': ur.rol.id,
+                'nombre': ur.rol.nombre_rol,
+                'descripcion': ur.rol.descripcion,
+                'sucursal': ur.get_sucursal_asignada()
+            }
+            for ur in roles
+        ]
+        
+        usuarios_data.append({
+            'id': usuario.id,
+            'nombre_usuario': usuario.nombre_usuario,
+            'nombre_completo': usuario.get_nombre_completo(),
+            'email': usuario.persona.correo,
+            'cedula': usuario.persona.cedula_identidad,
+            'celular': usuario.persona.numero_celular,
+            'roles': roles_info,
+            'is_active': usuario.is_active,
+            'fecha_creacion': usuario.fecha_creacion,
+            'ultimo_login': usuario.ultimo_login,
+        })
+    
+    return Response({
+        'success': True,
+        'count': len(usuarios_data),
+        'usuarios': usuarios_data
+    })
+
+@api_view(['GET'])
+@login_required
+def obtener_usuario(request, usuario_id):
+    """
+    API para obtener detalles de un usuario específico
+    """
+    try:
+        usuario = Usuario.objects.select_related('persona').get(id=usuario_id)
+        
+        # Obtener roles
+        roles = usuario.usuario_roles.filter(estado='ACTIVO')
+        roles_info = [
+            {
+                'id': ur.rol.id,
+                'nombre': ur.rol.nombre_rol,
+                'sucursal': ur.get_sucursal_asignada()
+            }
+            for ur in roles
+        ]
+        
+        data = {
+            'id': usuario.id,
+            'nombre_usuario': usuario.nombre_usuario,
+            'nombre': usuario.persona.nombre,
+            'apellido_paterno': usuario.persona.apellido_paterno,
+            'apellido_materno': usuario.persona.apellido_materno,
+            'cedula_identidad': usuario.persona.cedula_identidad,
+            'numero_celular': usuario.persona.numero_celular,
+            'correo': usuario.persona.correo,
+            'roles': roles_info,
+            'is_active': usuario.is_active,
+            'is_staff': usuario.is_staff,
+            'is_superuser': usuario.is_superuser,
+        }
+        
+        return Response({
+            'success': True,
+            'usuario': data
+        })
+        
+    except Usuario.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Usuario no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+@login_required  
+def crear_usuario(request):
+    """
+    API para crear un nuevo usuario
+    Requiere permisos de administrador
+    """
+    # Verificar que el usuario tenga permisos
+    if not request.user.is_staff and not request.user.usuario_roles.filter(
+        rol__nombre_rol='ADMINISTRADOR', estado='ACTIVO'
+    ).exists():
+        return Response({
+            'success': False,
+            'error': 'No tienes permisos para crear usuarios'
+        }, status=status.HTTP_403_FORBIDDEN)
+    
+    serializer = RegistroSerializer(data=request.data)
+    
+    if serializer.is_valid():
+        try:
+            usuario = serializer.save()
+            
+            return Response({
+                'success': True,
+                'message': 'Usuario creado exitosamente',
+                'usuario': {
+                    'id': usuario.id,
+                    'nombre_usuario': usuario.nombre_usuario,
+                    'nombre_completo': usuario.get_nombre_completo(),
+                }
+            }, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': f'Error al crear usuario: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    return Response({
+        'success': False,
+        'error': 'Datos inválidos',
+        'detalles': serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@login_required
+def actualizar_usuario(request, usuario_id):
+    """
+    API para actualizar un usuario existente
+    """
+    # Verificar permisos
+    if not request.user.is_staff and not request.user.usuario_roles.filter(
+        rol__nombre_rol='ADMINISTRADOR', estado='ACTIVO'
+    ).exists():
+        return Response({
+            'success': False,
+            'error': 'No tienes permisos para editar usuarios'
+        }, status=status.HTTP_403_FORBIDDEN)
+    
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        persona = usuario.persona
+        
+        # Actualizar datos de persona
+        if 'nombre' in request.data:
+            persona.nombre = request.data['nombre']
+        if 'apellido_paterno' in request.data:
+            persona.apellido_paterno = request.data['apellido_paterno']
+        if 'apellido_materno' in request.data:
+            persona.apellido_materno = request.data['apellido_materno']
+        if 'numero_celular' in request.data:
+            persona.numero_celular = request.data['numero_celular']
+        if 'correo' in request.data:
+            persona.correo = request.data['correo']
+        
+        persona.save()
+        
+        # Actualizar datos de usuario
+        if 'is_active' in request.data:
+            usuario.is_active = request.data['is_active']
+        
+        # Actualizar contraseña si se proporciona
+        if 'password' in request.data and request.data['password']:
+            usuario.set_password(request.data['password'])
+        
+        # Actualizar rol si se proporciona
+        if 'rol' in request.data:
+            rol_nombre = request.data['rol']
+            try:
+                rol = Rol.objects.get(nombre_rol=rol_nombre)
+                # Desactivar roles anteriores
+                UsuarioRol.objects.filter(usuario=usuario).update(estado='INACTIVO')
+                # Crear o activar el nuevo rol
+                UsuarioRol.objects.update_or_create(
+                    usuario=usuario,
+                    rol=rol,
+                    defaults={'estado': 'ACTIVO'}
+                )
+            except Rol.DoesNotExist:
+                pass
+        
+        usuario.save()
+        
+        return Response({
+            'success': True,
+            'message': 'Usuario actualizado exitosamente',
+            'usuario': {
+                'id': usuario.id,
+                'nombre_completo': usuario.get_nombre_completo(),
+            }
+        })
+        
+    except Usuario.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Usuario no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': f'Error al actualizar usuario: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['DELETE'])
+@login_required
+def eliminar_usuario(request, usuario_id):
+    """
+    API para eliminar (desactivar) un usuario
+    """
+    # Verificar permisos
+    if not request.user.is_staff and not request.user.usuario_roles.filter(
+        rol__nombre_rol='ADMINISTRADOR', estado='ACTIVO'
+    ).exists():
+        return Response({
+            'success': False,
+            'error': 'No tienes permisos para eliminar usuarios'
+        }, status=status.HTTP_403_FORBIDDEN)
+    
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        
+        # No permitir eliminar el propio usuario
+        if usuario.id == request.user.id:
+            return Response({
+                'success': False,
+                'error': 'No puedes eliminar tu propio usuario'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Desactivar en lugar de eliminar
+        usuario.is_active = False
+        usuario.save()
+        
+        # Desactivar roles
+        UsuarioRol.objects.filter(usuario=usuario).update(estado='INACTIVO')
+        
+        return Response({
+            'success': True,
+            'message': 'Usuario desactivado exitosamente'
+        })
+        
+    except Usuario.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Usuario no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+@login_required
+def activar_usuario(request, usuario_id):
+    """
+    API para activar un usuario desactivado
+    """
+    # Verificar permisos
+    if not request.user.is_staff and not request.user.usuario_roles.filter(
+        rol__nombre_rol='ADMINISTRADOR', estado='ACTIVO'
+    ).exists():
+        return Response({
+            'success': False,
+            'error': 'No tienes permisos para activar usuarios'
+        }, status=status.HTTP_403_FORBIDDEN)
+    
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        usuario.is_active = True
+        usuario.save()
+        
+        return Response({
+            'success': True,
+            'message': 'Usuario activado exitosamente'
+        })
+        
+    except Usuario.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Usuario no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+@login_required
+def estadisticas_usuarios(request):
+    """
+    API para obtener estadísticas de usuarios
+    """
+    stats = {
+        'total': Usuario.objects.count(),
+        'activos': Usuario.objects.filter(is_active=True).count(),
+        'inactivos': Usuario.objects.filter(is_active=False).count(),
+        'administradores': UsuarioRol.objects.filter(
+            rol__nombre_rol='ADMINISTRADOR',
+            estado='ACTIVO'
+        ).count(),
+        'vendedores': UsuarioRol.objects.filter(
+            rol__nombre_rol__in=['VENDEDOR_ROYDENT', 'VENDEDOR_MUNDO_MEDICO'],
+            estado='ACTIVO'
+        ).count(),
+    }
+    
+    return Response({
+        'success': True,
+        'estadisticas': stats
+    })

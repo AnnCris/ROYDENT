@@ -1,11 +1,10 @@
 """
-URLs para la aplicación de autenticación - Sistema completo Roy Representaciones
+URLs para la aplicación de autenticación - Con CRUD de usuarios
 """
 from django.urls import path
 from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import TokenRefreshView
 from . import views
-from autenticacion.views import SidebarView
 
 app_name = 'autenticacion'
 
@@ -30,9 +29,16 @@ urlpatterns = [
     path('api/refresh/', TokenRefreshView.as_view(), name='api_token_refresh'),
     path('api/verificar-token/', views.VerificarTokenAPIView.as_view(), name='api_verificar_token'),
     
+    # ============ CRUD DE USUARIOS ============
+    path('api/usuarios/', views.listar_usuarios, name='api_listar_usuarios'),
+    path('api/usuarios/<int:usuario_id>/', views.obtener_usuario, name='api_obtener_usuario'),
+    path('api/usuarios/crear/', views.crear_usuario, name='api_crear_usuario'),
+    path('api/usuarios/<int:usuario_id>/actualizar/', views.actualizar_usuario, name='api_actualizar_usuario'),
+    path('api/usuarios/<int:usuario_id>/eliminar/', views.eliminar_usuario, name='api_eliminar_usuario'),
+    path('api/usuarios/<int:usuario_id>/activar/', views.activar_usuario, name='api_activar_usuario'),
+    path('api/usuarios/estadisticas/', views.estadisticas_usuarios, name='api_estadisticas_usuarios'),
+    
     # Utilidades
     path('api/roles/', views.RolesUsuarioAPIView.as_view(), name='api_roles'),
     path('api/estadisticas/', views.EstadisticasAPIView.as_view(), name='api_estadisticas'),
-
-    path('components/sidebar/', SidebarView.as_view(), name='sidebar-component'),
 ]
