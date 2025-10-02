@@ -762,6 +762,91 @@
         .btn-sm i {
             font-size: 0.875rem;
         }
+
+        /* ============ ESTILOS PARA PERMISOS ============ */
+        .permiso-modulo {
+            background: var(--bg-secondary);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .permiso-modulo h3 {
+            color: var(--color-gold-dark);
+            margin-bottom: var(--space-md);
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .permiso-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-sm);
+            margin-bottom: var(--space-xs);
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+
+        .permiso-item:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateX(4px);
+        }
+
+        .permiso-label {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 0.875rem;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        .permiso-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--color-green);
+        }
+
+        .permiso-icon {
+            font-size: 1rem;
+            color: var(--color-gold);
+        }
+
+        .select-all-container {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md);
+            background: rgba(46, 139, 87, 0.1);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            cursor: pointer;
+        }
+
+        .select-all-container:hover {
+            background: rgba(46, 139, 87, 0.2);
+        }
+
+        .select-all-checkbox {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: var(--color-green);
+        }
+
+        .matriz-permiso-activo {
+            color: var(--color-green);
+            font-weight: 700;
+        }
+
+        .matriz-permiso-inactivo {
+            color: #9CA3AF;
+        }
     </style>
 </head>
 <body>
@@ -892,59 +977,66 @@
                     </div>
                 </div>
             </div>
-            <!-- Roles y Permisos -->
+            <!-- Gestión de Permisos por Usuario -->
             <div class="section">
                 <div class="card">
                     <div class="card-content">
-                        <h2 class="text-h2">Configuración de Roles</h2>
-                        <div class="grid grid-2">
-                            <div style="background: var(--bg-secondary); padding: var(--space-lg); border-radius: var(--radius-lg);">
-                                <h3 style="color: var(--color-gold); margin-bottom: var(--space-md);">Administrador</h3>
-                                <ul style="color: var(--text-gray); line-height: 1.8;">
-                                    <li>Acceso completo al sistema</li>
-                                    <li>Gestión de usuarios y roles</li>
-                                    <li>Configuración del sistema</li>
-                                    <li>Backup y restauración</li>
-                                    <li>Reportes avanzados</li>
-                                </ul>
-                                <button class="btn btn-secondary btn-sm" style="margin-top: var(--space-md);">Editar Permisos</button>
+                        <h2 class="text-h2">Gestión de Permisos por Usuario</h2>
+                        <p class="text-body">Asigna permisos específicos a cada usuario según su rol</p>
+                        
+                        <div class="form-group">
+                            <label class="text-label">Seleccionar Usuario</label>
+                            <select class="form-input form-select" id="usuario-permisos-select" onchange="cargarPermisosUsuario()">
+                                <option value="">Selecciona un usuario...</option>
+                            </select>
+                        </div>
+
+                        <div id="permisos-container" style="display: none;">
+                            <div class="alert alert-info" style="margin-bottom: var(--space-xl);">
+                                <strong>Usuario seleccionado:</strong> <span id="usuario-seleccionado-nombre"></span><br>
+                                <strong>Rol actual:</strong> <span id="usuario-seleccionado-rol"></span>
                             </div>
-                            
-                            <div style="background: var(--bg-secondary); padding: var(--space-lg); border-radius: var(--radius-lg);">
-                                <h3 style="color: var(--color-green); margin-bottom: var(--space-md);">Vendedor</h3>
-                                <ul style="color: var(--text-gray); line-height: 1.8;">
-                                    <li>Gestión de ventas</li>
-                                    <li>Consulta de productos</li>
-                                    <li>Gestión de clientes</li>
-                                    <li>Reportes de ventas</li>
-                                    <li>Consulta de inventario</li>
-                                </ul>
-                                <button class="btn btn-secondary btn-sm" style="margin-top: var(--space-md);">Editar Permisos</button>
+
+                            <!-- Permisos por Módulo -->
+                            <div class="grid grid-2" id="permisos-grid">
+                                <!-- Se llenará dinámicamente -->
                             </div>
-                            
-                            <div style="background: var(--bg-secondary); padding: var(--space-lg); border-radius: var(--radius-lg);">
-                                <h3 style="color: var(--color-green); margin-bottom: var(--space-md);">Inventario</h3>
-                                <ul style="color: var(--text-gray); line-height: 1.8;">
-                                    <li>Gestión completa de inventario</li>
-                                    <li>Control de stock</li>
-                                    <li>Gestión de proveedores</li>
-                                    <li>Reportes de inventario</li>
-                                    <li>Alertas de vencimiento</li>
-                                </ul>
-                                <button class="btn btn-secondary btn-sm" style="margin-top: var(--space-md);">Editar Permisos</button>
+
+                            <div style="text-align: center; margin-top: var(--space-xl);">
+                                <button class="btn btn-primary" onclick="guardarPermisosUsuario()">
+                                    <i class="fas fa-save"></i> Guardar Permisos
+                                </button>
+                                <button class="btn btn-secondary" onclick="cancelarEdicionPermisos()">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
                             </div>
-                            
-                            <div style="background: var(--bg-secondary); padding: var(--space-lg); border-radius: var(--radius-lg);">
-                                <h3 style="color: var(--text-gray); margin-bottom: var(--space-md);">Solo Lectura</h3>
-                                <ul style="color: var(--text-gray); line-height: 1.8;">
-                                    <li>Consulta de productos</li>
-                                    <li>Ver reportes básicos</li>
-                                    <li>Consulta de inventario</li>
-                                    <li>Sin permisos de modificación</li>
-                                    <li>Acceso limitado</li>
-                                </ul>
-                                <button class="btn btn-secondary btn-sm" style="margin-top: var(--space-md);">Editar Permisos</button>
-                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Matriz de Permisos por Rol -->
+            <div class="section">
+                <div class="card">
+                    <div class="card-content">
+                        <h2 class="text-h2">Matriz de Permisos por Rol</h2>
+                        <p class="text-body">Vista general de permisos asignados a cada rol del sistema</p>
+                        
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="min-width: 200px;">Módulo / Permiso</th>
+                                        <th>Administrador</th>
+                                        <th>Vendedor RoyDent</th>
+                                        <th>Vendedor Mundo Médico</th>
+                                        <th>Cliente</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="matriz-permisos-body">
+                                    <!-- Se llenará dinámicamente -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -1637,5 +1729,8 @@
         };
     }
     </script>
+
+    <!-- Script de Permisos --> 
+    <script src="/static/js/permisos.js"></script>
 </body>
 </html>

@@ -38,6 +38,12 @@ urlpatterns = [
     path('api/usuarios/<int:usuario_id>/activar/', views.activar_usuario, name='api_activar_usuario'),
     path('api/usuarios/estadisticas/', views.estadisticas_usuarios, name='api_estadisticas_usuarios'),
     
+    # ============ PERMISOS ============
+    path('api/permisos/', views.listar_permisos, name='api_listar_permisos'),
+    path('api/usuarios/<int:usuario_id>/permisos/', views.obtener_permisos_usuario, name='api_permisos_usuario'),
+    path('api/usuarios/<int:usuario_id>/permisos/actualizar/', views.actualizar_permisos_usuario, name='api_actualizar_permisos_usuario'),
+    path('api/roles/permisos/', views.matriz_permisos_roles, name='api_matriz_permisos'),
+    
     # Utilidades
     path('api/roles/', views.RolesUsuarioAPIView.as_view(), name='api_roles'),
     path('api/estadisticas/', views.EstadisticasAPIView.as_view(), name='api_estadisticas'),

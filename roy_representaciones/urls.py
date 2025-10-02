@@ -8,6 +8,8 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 
+from autenticacion import views
+
 class ProtectedTemplateView(TemplateView):
     """Vista que requiere autenticación"""
     @classmethod
@@ -41,6 +43,12 @@ urlpatterns = [
     
     # ============ COMPONENTE SIDEBAR ============
     path('components/sidebar/', TemplateView.as_view(template_name='components/sidebar.html'), name='sidebar-component'),
+
+    # APIs de Permisos
+    path('api/permisos/', views.listar_permisos, name='api_listar_permisos'),
+    path('api/usuarios/<int:usuario_id>/permisos/', views.obtener_permisos_usuario, name='api_permisos_usuario'),
+    path('api/usuarios/<int:usuario_id>/permisos/actualizar/', views.actualizar_permisos_usuario, name='api_actualizar_permisos_usuario'),
+    path('api/roles/permisos/', views.matriz_permisos_roles, name='api_matriz_permisos'),
 ]
 
 # Servir archivos media y static en desarrollo

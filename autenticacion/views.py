@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Usuario, Persona, Rol, UsuarioRol
+from .models import Permiso, RolPermiso, Usuario, Persona, Rol, UsuarioRol
 from .serializers import (
     LoginSerializer, RegistroSerializer, UsuarioSerializer,
     CambiarPasswordSerializer
@@ -19,6 +19,8 @@ from .serializers import (
 import re
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view
+from django.db.models import Q
 
 # Vistas web tradicionales
 def logout_view(request):
@@ -747,3 +749,149 @@ def estadisticas_usuarios(request):
         'success': True,
         'estadisticas': stats
     })
+
+# ============ API DE PERMISOS ============
+
+from .models import Permiso, RolPermiso
+
+@api_view(['GET'])
+def listar_permisos(request):
+    """Listar todos los permisos del sistema"""
+    try:
+        permisos = Permiso.objects.all().order_by('modulo', 'tipo_permiso')
+        
+        permisos_data = [
+            {
+                'id': p.id,
+                'nombre_permiso': p.nombre_permiso,
+                'codigo_permiso': p.codigo_permiso,
+                'modulo': p.modulo,
+                'tipo_permiso': p.tipo_permiso,
+                'descripcion': p.descripcion
+            }
+            for p in permisos
+        ]
+        
+        return Response({
+            'success': True,
+            'count': len(permisos_data),
+            'permisos': permisos_data
+        })
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def obtener_permisos_usuario(request, usuario_id):
+    """Obtener permisos de un usuario específico"""
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        
+        # Obtener roles del usuario
+        roles_usuario = usuario.usuario_roles.filter(estado='ACTIVO')
+        
+        # Obtener todos los permisos de esos roles
+        permisos_ids = set()
+        for ur in roles_usuario:
+            rol_permisos = RolPermiso.objects.filter(rol=ur.rol).values_list('permiso_id', flat=True)
+            permisos_ids.update(rol_permisos)
+        
+        permisos = Permiso.objects.filter(id__in=permisos_ids)
+        
+        permisos_data = [
+            {
+                'id': p.id,
+                'nombre_permiso': p.nombre_permiso,
+                'codigo_permiso': p.codigo_permiso,
+                'modulo': p.modulo,
+                'tipo_permiso': p.tipo_permiso
+            }
+            for p in permisos
+        ]
+        
+        return Response({
+            'success': True,
+            'permisos': permisos_data
+        })
+    except Usuario.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Usuario no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+def actualizar_permisos_usuario(request, usuario_id):
+    """Actualizar permisos de un usuario"""
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+        permisos_ids = request.data.get('permisos', [])
+        
+        # Obtener el rol principal del usuario
+        rol_usuario = usuario.usuario_roles.filter(estado='ACTIVO').first()
+        
+        if not rol_usuario:
+            return Response({
+                'success': False,
+                'error': 'Usuario sin rol asignado'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Eliminar permisos actuales del rol
+        RolPermiso.objects.filter(rol=rol_usuario.rol).delete()
+        
+        # Agregar nuevos permisos
+        contador = 0
+        for permiso_id in permisos_ids:
+            try:
+                permiso = Permiso.objects.get(id=permiso_id)
+                RolPermiso.objects.create(
+                    rol=rol_usuario.rol,
+                    permiso=permiso,
+                    asignado_por=request.user if request.user.is_authenticated else None
+                )
+                contador += 1
+            except Permiso.DoesNotExist:
+                continue
+        
+        return Response({
+            'success': True,
+            'message': f'Permisos actualizados: {contador} permisos asignados'
+        })
+        
+    except Usuario.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Usuario no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def matriz_permisos_roles(request):
+    """Obtener matriz de permisos por rol"""
+    try:
+        roles = Rol.objects.all()
+        roles_permisos = {}
+        
+        for rol in roles:
+            permisos_ids = RolPermiso.objects.filter(rol=rol).values_list('permiso_id', flat=True)
+            roles_permisos[rol.nombre_rol] = list(permisos_ids)
+        
+        return Response({
+            'success': True,
+            'roles_permisos': roles_permisos
+        })
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
