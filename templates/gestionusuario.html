@@ -1031,7 +1031,27 @@
             </div>
         </div>
     </div>
-    
+    <!-- JavaScript del Sidebar -->
+    <script src="/static/js/sidebar.js"></script>
+
+    <!-- Script para cargar el sidebar -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/components/sidebar/')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+                    
+                    // Inicializar sidebar después de insertar el HTML
+                    setTimeout(function() {
+                        if (window.initSidebar) {
+                            window.initSidebar();
+                        }
+                    }, 100);
+                })
+                .catch(error => console.error('Error al cargar sidebar:', error));
+        });
+    </script>
     <script>
         // ============ VARIABLES GLOBALES ============
         let usuarios = [];
@@ -1617,6 +1637,5 @@
         };
     }
     </script>
-    
 </body>
 </html>

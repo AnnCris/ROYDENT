@@ -863,5 +863,25 @@
         console.log('Dashboard Sistema Roy Representaciones iniciado');
         console.log('Funciones disponibles: sidebar responsivo, estadísticas en tiempo real, navegación rápida');
     </script>
+
+    <!-- Script para cargar el sidebar -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar el sidebar
+            fetch('/components/sidebar/')
+                .then(response => {
+                    if (!response.ok) throw new Error('Error al cargar sidebar');
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+                    
+                    // Opcional: Marcar página activa específica
+                    const activeLink = document.querySelector('[data-page="TU_PAGINA"]');
+                    if (activeLink) activeLink.classList.add('active');
+                })
+                .catch(error => console.error('Error al cargar sidebar:', error));
+        });
+    </script>
 </body>
 </html>

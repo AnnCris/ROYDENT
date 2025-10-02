@@ -1,14 +1,14 @@
 <!-- templates/components/sidebar.html -->
-<!-- Sidebar Reutilizable para todo el sistema -->
 <aside class="sidebar" id="sidebar">
+    <!-- Botón Toggle para Desktop -->
+    <button class="sidebar-toggle-desktop" id="sidebarToggleDesktop" title="Colapsar/Expandir">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+
     <div class="sidebar-header">
         <a href="/" class="sidebar-brand">
-            <!-- Logo desde la carpeta static -->
-            <img src="/static/img/LOGO-1.PNG" alt="Logo de RoyDent" class="sidebar-logo-img" id="sidebarLogo" onerror="handleLogoError()">
-            <!-- Logo por defecto (oculto inicialmente) -->
-            <div class="logo-default" id="defaultLogo" style="display: none;">
-                ROY
-            </div>
+            <img src="/static/img/LOGO-1.PNG" alt="Logo de RoyDent" class="sidebar-logo-img" id="sidebarLogo">
+            <div class="logo-default" id="defaultLogo" style="display: none;">ROY</div>
             <div>
                 <div class="sidebar-title">Sistema RoyDent</div>
                 <div class="sidebar-subtitle">Y Mundo Medico</div>
@@ -20,15 +20,15 @@
         <div class="nav-section">
             <div class="nav-title">Principal</div>
             <div class="nav-item">
-                <a href="/panel-admin/" class="nav-link" data-page="dashboard">
+                <a href="/panel-admin/" class="nav-link" data-page="dashboard" data-tooltip="Dashboard">
                     <div class="nav-icon">🏠</div>
-                    Dashboard
+                    <span>Dashboard</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link" data-page="analytics">
+                <a href="#" class="nav-link" data-page="analytics" data-tooltip="Analíticas">
                     <div class="nav-icon">📊</div>
-                    Analíticas
+                    <span>Analíticas</span>
                 </a>
             </div>
         </div>
@@ -36,27 +36,27 @@
         <div class="nav-section">
             <div class="nav-title">Productos</div>
             <div class="nav-item">
-                <a href="/agregar-producto/" class="nav-link" data-page="add-product">
+                <a href="/agregar-producto/" class="nav-link" data-page="add-product" data-tooltip="Agregar Producto">
                     <div class="nav-icon">➕</div>
-                    Agregar Producto
+                    <span>Agregar Producto</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/productos/" class="nav-link" data-page="products">
+                <a href="/productos/" class="nav-link" data-page="products" data-tooltip="Lista de Productos">
                     <div class="nav-icon">📦</div>
-                    Lista de Productos
+                    <span>Lista de Productos</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/categorias/" class="nav-link" data-page="categories">
+                <a href="/categorias/" class="nav-link" data-page="categories" data-tooltip="Categorías">
                     <div class="nav-icon">🏷️</div>
-                    Categorías
+                    <span>Categorías</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/control-fifo/" class="nav-link" data-page="fifo">
+                <a href="/control-fifo/" class="nav-link" data-page="fifo" data-tooltip="Control FIFO">
                     <div class="nav-icon">🔄</div>
-                    Control FIFO
+                    <span>Control FIFO</span>
                 </a>
             </div>
         </div>
@@ -64,27 +64,27 @@
         <div class="nav-section">
             <div class="nav-title">Inventario</div>
             <div class="nav-item">
-                <a href="/inventario/" class="nav-link" data-page="inventory">
+                <a href="/inventario/" class="nav-link" data-page="inventory" data-tooltip="Inventario General">
                     <div class="nav-icon">📋</div>
-                    Inventario General
+                    <span>Inventario General</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/stock-bajo/" class="nav-link" data-page="low-stock">
+                <a href="/stock-bajo/" class="nav-link" data-page="low-stock" data-tooltip="Stock Bajo">
                     <div class="nav-icon">⚠️</div>
-                    Stock Bajo
+                    <span>Stock Bajo</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/ubicaciones/" class="nav-link" data-page="locations">
+                <a href="/ubicaciones/" class="nav-link" data-page="locations" data-tooltip="Ubicaciones">
                     <div class="nav-icon">📍</div>
-                    Ubicaciones
+                    <span>Ubicaciones</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/proveedores/" class="nav-link" data-page="suppliers">
+                <a href="/proveedores/" class="nav-link" data-page="suppliers" data-tooltip="Proveedores">
                     <div class="nav-icon">👨‍💼</div>
-                    Proveedores
+                    <span>Proveedores</span>
                 </a>
             </div>
         </div>
@@ -92,21 +92,21 @@
         <div class="nav-section">
             <div class="nav-title">Ventas</div>
             <div class="nav-item">
-                <a href="/nueva-venta/" class="nav-link" data-page="new-sale">
+                <a href="/nueva-venta/" class="nav-link" data-page="new-sale" data-tooltip="Nueva Venta">
                     <div class="nav-icon">🛒</div>
-                    Nueva Venta
+                    <span>Nueva Venta</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/historial-ventas/" class="nav-link" data-page="sales-history">
+                <a href="/historial-ventas/" class="nav-link" data-page="sales-history" data-tooltip="Historial Ventas">
                     <div class="nav-icon">💰</div>
-                    Historial Ventas
+                    <span>Historial Ventas</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/clientes/" class="nav-link" data-page="clients">
+                <a href="/clientes/" class="nav-link" data-page="clients" data-tooltip="Clientes">
                     <div class="nav-icon">👥</div>
-                    Clientes
+                    <span>Clientes</span>
                 </a>
             </div>
         </div>
@@ -114,21 +114,21 @@
         <div class="nav-section">
             <div class="nav-title">Reportes</div>
             <div class="nav-item">
-                <a href="/reportes-ventas/" class="nav-link" data-page="sales-reports">
+                <a href="/reportes-ventas/" class="nav-link" data-page="sales-reports" data-tooltip="Reportes de Ventas">
                     <div class="nav-icon">📈</div>
-                    Reportes de Ventas
+                    <span>Reportes de Ventas</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/analisis-inventario/" class="nav-link" data-page="inventory-analysis">
+                <a href="/analisis-inventario/" class="nav-link" data-page="inventory-analysis" data-tooltip="Análisis de Inventario">
                     <div class="nav-icon">📉</div>
-                    Análisis de Inventario
+                    <span>Análisis de Inventario</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/reportes-financieros/" class="nav-link" data-page="financial-reports">
+                <a href="/reportes-financieros/" class="nav-link" data-page="financial-reports" data-tooltip="Reportes Financieros">
                     <div class="nav-icon">💼</div>
-                    Reportes Financieros
+                    <span>Reportes Financieros</span>
                 </a>
             </div>
         </div>
@@ -136,36 +136,36 @@
         <div class="nav-section">
             <div class="nav-title">Configuración</div>
             <div class="nav-item">
-                <a href="/configuracion/" class="nav-link" data-page="settings">
+                <a href="/configuracion/" class="nav-link" data-page="settings" data-tooltip="Configuración">
                     <div class="nav-icon">⚙️</div>
-                    Configuración
+                    <span>Configuración</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/perfil/" class="nav-link" data-page="profile">
+                <a href="/perfil/" class="nav-link" data-page="profile" data-tooltip="Perfil">
                     <div class="nav-icon">👤</div>
-                    Perfil
+                    <span>Perfil</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/gestionusuario/" class="nav-link" data-page="users">
+                <a href="/gestionusuario/" class="nav-link" data-page="users" data-tooltip="Usuarios">
                     <div class="nav-icon">👥</div>
-                    Usuarios
+                    <span>Usuarios</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="/backups/" class="nav-link" data-page="backups">
+                <a href="/backups/" class="nav-link" data-page="backups" data-tooltip="Backup">
                     <div class="nav-icon">💾</div>
-                    Backup
+                    <span>Backup</span>
                 </a>
             </div>
         </div>
 
         <div class="nav-section">
             <div class="nav-item">
-                <a href="/auth/logout/" class="nav-link" data-page="logout">
+                <a href="/auth/logout/" class="nav-link" data-page="logout" data-tooltip="Cerrar Sesión">
                     <div class="nav-icon">🚪</div>
-                    Cerrar Sesión
+                    <span>Cerrar Sesión</span>
                 </a>
             </div>
         </div>
@@ -174,81 +174,9 @@
 
 <!-- Mobile Header -->
 <header class="mobile-header" id="mobile-header">
-    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
-    <img src="/static/img/LOGO-1.PNG" alt="Logo de RoyDent" class="mobile-logo" id="mobileLogo" onerror="handleMobileLogoError()">
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+    <img src="/static/img/LOGO-1.PNG" alt="Logo de RoyDent" class="mobile-logo" id="mobileLogo">
 </header>
 
 <!-- Sidebar Overlay -->
-<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-<script>
-// ============ MANEJO DE LOGOS ============
-function handleLogoError() {
-    const sidebarLogo = document.getElementById('sidebarLogo');
-    const defaultLogo = document.getElementById('defaultLogo');
-    if (sidebarLogo) sidebarLogo.style.display = 'none';
-    if (defaultLogo) defaultLogo.style.display = 'flex';
-}
-
-function handleMobileLogoError() {
-    const mobileLogo = document.getElementById('mobileLogo');
-    if (mobileLogo) {
-        mobileLogo.src = '';
-        mobileLogo.alt = 'Sistema Roy';
-        mobileLogo.style.fontFamily = 'Inter, sans-serif';
-        mobileLogo.style.fontWeight = '700';
-        mobileLogo.style.fontSize = '1.2rem';
-        mobileLogo.style.color = 'var(--color-green-dark)';
-    }
-}
-
-// ============ FUNCIONES DEL SIDEBAR ============
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-    
-    if (sidebar) sidebar.classList.toggle('active');
-    if (overlay) overlay.classList.toggle('active');
-}
-
-// ============ MARCAR PÁGINA ACTIVA ============
-function marcarPaginaActiva() {
-    const currentPath = window.location.pathname;
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        const href = link.getAttribute('href');
-        
-        if (href === currentPath || currentPath.includes(href)) {
-            link.classList.add('active');
-        }
-    });
-}
-
-// Ejecutar al cargar la página
-document.addEventListener('DOMContentLoaded', function() {
-    marcarPaginaActiva();
-    
-    // Verificar logos
-    const sidebarLogo = document.getElementById('sidebarLogo');
-    const mobileLogo = document.getElementById('mobileLogo');
-    
-    if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
-        handleLogoError();
-    }
-    
-    if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
-        handleMobileLogoError();
-    }
-    
-    setTimeout(function() {
-        if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
-            handleLogoError();
-        }
-        if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
-            handleMobileLogoError();
-        }
-    }, 1000);
-});
-</script>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
