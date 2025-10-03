@@ -11,9 +11,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Permiso, RolPermiso, Usuario, Persona, Rol, UsuarioRol
+from .models import Cliente, Permiso, Proveedor, RolPermiso, TipoCliente, Usuario, Persona, Rol, UsuarioRol
 from .serializers import (
-    LoginSerializer, RegistroSerializer, UsuarioSerializer,
+    ClienteCreateSerializer, ClienteSerializer, LoginSerializer, ProveedorCreateSerializer, ProveedorSerializer, RegistroSerializer, TipoClienteSerializer, UsuarioSerializer,
     CambiarPasswordSerializer
 )
 import re
@@ -31,9 +31,10 @@ def logout_view(request):
     messages.success(request, 'Has cerrado sesión exitosamente')
     return redirect('index')
 
-# Vistas API REST con JWT
+from django.contrib.auth import login as django_login
+
 class LoginAPIView(APIView):
-    """API para login de usuarios con JWT"""
+    """API para login de usuarios con JWT Y sesión Django"""
     permission_classes = [AllowAny]
     
     def post(self, request):
@@ -41,6 +42,9 @@ class LoginAPIView(APIView):
         
         if serializer.is_valid():
             usuario = serializer.validated_data['usuario']
+            
+            # *** CRÍTICO: Crear sesión de Django ***
+            django_login(request, usuario)
             
             # Actualizar último login
             usuario.ultimo_login = timezone.now()
@@ -81,7 +85,7 @@ class LoginAPIView(APIView):
             'error': 'Credenciales inválidas',
             'detalles': serializer.errors
         }, status=status.HTTP_401_UNAUTHORIZED)
-
+    
 class RegistroAPIView(APIView):
     """API para registro de nuevos usuarios"""
     permission_classes = [AllowAny]
@@ -929,19 +933,6 @@ def matriz_permisos_roles(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
-# autenticacion/views.py - AGREGAR AL FINAL DEL ARCHIVO EXISTENTE
-
-"""
-Views para Clientes y Proveedores
-"""
-from autenticacion.models import Cliente, Proveedor, TipoCliente
-from autenticacion.serializers import (
-    ClienteSerializer,
-    ClienteCreateSerializer,
-    ProveedorSerializer,
-    TipoClienteSerializer
-)
-
 # ============ TIPOS DE CLIENTE ============
 
 @api_view(['GET'])
@@ -956,7 +947,6 @@ def listar_tipos_cliente(request):
         'tipos': serializer.data
     })
 
-
 # ============ CLIENTES - CRUD ============
 
 @api_view(['GET'])
@@ -964,8 +954,6 @@ def listar_clientes(request):
     """API para listar clientes con filtros"""
     tipo_cliente = request.GET.get('tipo_cliente', '').strip()
     estado = request.GET.get('estado', '').strip()
-    ciudad = request.GET.get('ciudad', '').strip()
-    es_vip = request.GET.get('es_vip', '').strip()
     busqueda = request.GET.get('busqueda', '').strip()
     
     # Base query
@@ -981,12 +969,6 @@ def listar_clientes(request):
     if estado and estado != 'todos':
         clientes = clientes.filter(estado=estado.upper())
     
-    if ciudad and ciudad != 'todas':
-        clientes = clientes.filter(ciudad__icontains=ciudad)
-    
-    if es_vip == 'true':
-        clientes = clientes.filter(es_vip=True)
-    
     # Búsqueda por texto
     if busqueda:
         clientes = clientes.filter(
@@ -999,7 +981,7 @@ def listar_clientes(request):
             Q(nit__icontains=busqueda)
         )
     
-    # Ordenar por fecha de registro descendente
+    # Ordenar
     clientes = clientes.order_by('-fecha_registro')
     
     serializer = ClienteSerializer(clientes, many=True)
@@ -1009,6 +991,7 @@ def listar_clientes(request):
         'count': len(serializer.data),
         'clientes': serializer.data
     })
+
 
 
 @api_view(['GET'])
@@ -1042,8 +1025,6 @@ def crear_cliente(request):
     if serializer.is_valid():
         try:
             cliente = serializer.save()
-            
-            # Serializar el cliente creado
             cliente_serializer = ClienteSerializer(cliente)
             
             return Response({
@@ -1071,18 +1052,15 @@ def actualizar_cliente(request, cliente_id):
     try:
         cliente = Cliente.objects.get(id=cliente_id)
         
-        # Actualizar solo campos de Cliente
-        campos_permitidos = [
-            'razon_social', 'nit', 'ciudad', 'direccion',
-            'especialidad', 'estado', 'es_vip',
-            'limite_credito', 'descuento_especial', 'observaciones'
-        ]
+        # Actualizar campos de Cliente
+        if 'razon_social' in request.data:
+            cliente.razon_social = request.data['razon_social']
+        if 'nit' in request.data:
+            cliente.nit = request.data['nit']
+        if 'estado' in request.data:
+            cliente.estado = request.data['estado']
         
-        for campo in campos_permitidos:
-            if campo in request.data:
-                setattr(cliente, campo, request.data[campo])
-        
-        # Actualizar tipo_cliente si se proporciona
+        # Actualizar tipo_cliente
         if 'tipo_cliente_id' in request.data:
             try:
                 tipo_cliente = TipoCliente.objects.get(id=request.data['tipo_cliente_id'])
@@ -1121,7 +1099,6 @@ def eliminar_cliente(request, cliente_id):
     try:
         cliente = Cliente.objects.get(id=cliente_id)
         
-        # Desactivar cliente y usuario asociado
         cliente.estado = 'INACTIVO'
         cliente.save()
         
@@ -1146,7 +1123,6 @@ def activar_cliente(request, cliente_id):
     try:
         cliente = Cliente.objects.get(id=cliente_id)
         
-        # Activar cliente y usuario asociado
         cliente.estado = 'ACTIVO'
         cliente.save()
         
@@ -1172,11 +1148,10 @@ def estadisticas_clientes(request):
         'total': Cliente.objects.count(),
         'activos': Cliente.objects.filter(estado='ACTIVO').count(),
         'inactivos': Cliente.objects.filter(estado='INACTIVO').count(),
-        'vip': Cliente.objects.filter(es_vip=True).count(),
         'por_tipo': {}
     }
     
-    # Estadísticas por tipo de cliente
+    # Estadísticas por tipo
     for tipo in TipoCliente.objects.all():
         count = Cliente.objects.filter(tipo_cliente=tipo).count()
         stats['por_tipo'][tipo.nombre_tipo] = count
@@ -1194,12 +1169,10 @@ def listar_proveedores(request):
     """API para listar proveedores con filtros"""
     tipo_proveedor = request.GET.get('tipo', '').strip()
     estado = request.GET.get('estado', '').strip()
-    pais = request.GET.get('pais', '').strip()
-    es_premium = request.GET.get('es_premium', '').strip()
     busqueda = request.GET.get('busqueda', '').strip()
     
     # Base query
-    proveedores = Proveedor.objects.all()
+    proveedores = Proveedor.objects.select_related('persona').all()
     
     # Aplicar filtros
     if tipo_proveedor and tipo_proveedor != 'todos':
@@ -1208,24 +1181,20 @@ def listar_proveedores(request):
     if estado and estado != 'todos':
         proveedores = proveedores.filter(estado=estado.upper())
     
-    if pais and pais != 'todos':
-        proveedores = proveedores.filter(pais__icontains=pais)
-    
-    if es_premium == 'true':
-        proveedores = proveedores.filter(es_premium=True)
-    
     # Búsqueda por texto
     if busqueda:
         proveedores = proveedores.filter(
-            Q(nombre__icontains=busqueda) |
-            Q(nit__icontains=busqueda) |
-            Q(email__icontains=busqueda) |
-            Q(telefono__icontains=busqueda) |
-            Q(persona_contacto__icontains=busqueda)
+            Q(persona__nombre__icontains=busqueda) |
+            Q(persona__apellido_paterno__icontains=busqueda) |
+            Q(persona__apellido_materno__icontains=busqueda) |
+            Q(persona__cedula_identidad__icontains=busqueda) |
+            Q(persona__correo__icontains=busqueda) |
+            Q(razon_social__icontains=busqueda) |
+            Q(nit__icontains=busqueda)
         )
     
-    # Ordenar por nombre
-    proveedores = proveedores.order_by('nombre')
+    # Ordenar
+    proveedores = proveedores.order_by('persona__nombre')
     
     serializer = ProveedorSerializer(proveedores, many=True)
     
@@ -1240,7 +1209,7 @@ def listar_proveedores(request):
 def obtener_proveedor(request, proveedor_id):
     """API para obtener un proveedor específico"""
     try:
-        proveedor = Proveedor.objects.get(id=proveedor_id)
+        proveedor = Proveedor.objects.select_related('persona').get(id=proveedor_id)
         serializer = ProveedorSerializer(proveedor)
         
         return Response({
@@ -1258,7 +1227,7 @@ def obtener_proveedor(request, proveedor_id):
 @api_view(['POST'])
 def crear_proveedor(request):
     """API para crear un nuevo proveedor"""
-    serializer = ProveedorSerializer(data=request.data)
+    serializer = ProveedorCreateSerializer(data=request.data)
     
     if serializer.is_valid():
         try:
@@ -1288,22 +1257,24 @@ def actualizar_proveedor(request, proveedor_id):
     """API para actualizar un proveedor"""
     try:
         proveedor = Proveedor.objects.get(id=proveedor_id)
-        serializer = ProveedorSerializer(proveedor, data=request.data, partial=True)
         
-        if serializer.is_valid():
-            serializer.save()
-            
-            return Response({
-                'success': True,
-                'message': 'Proveedor actualizado exitosamente',
-                'proveedor': serializer.data
-            })
+        # Actualizar campos
+        if 'tipo_proveedor' in request.data:
+            proveedor.tipo_proveedor = request.data['tipo_proveedor']
+        if 'nit' in request.data:
+            proveedor.nit = request.data['nit']
+        if 'razon_social' in request.data:
+            proveedor.razon_social = request.data['razon_social']
+        if 'estado' in request.data:
+            proveedor.estado = request.data['estado']
+        
+        proveedor.save()
         
         return Response({
-            'success': False,
-            'error': 'Datos inválidos',
-            'detalles': serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+            'success': True,
+            'message': 'Proveedor actualizado exitosamente',
+            'proveedor': ProveedorSerializer(proveedor).data
+        })
         
     except Proveedor.DoesNotExist:
         return Response({
@@ -1359,23 +1330,13 @@ def estadisticas_proveedores(request):
         'total': Proveedor.objects.count(),
         'activos': Proveedor.objects.filter(estado='ACTIVO').count(),
         'inactivos': Proveedor.objects.filter(estado='INACTIVO').count(),
-        'premium': Proveedor.objects.filter(es_premium=True).count(),
-        'por_tipo': {},
-        'por_pais': {}
+        'por_tipo': {}
     }
     
     # Estadísticas por tipo
     for tipo_code, tipo_name in Proveedor.TIPO_PROVEEDOR:
         count = Proveedor.objects.filter(tipo_proveedor=tipo_code).count()
         stats['por_tipo'][tipo_name] = count
-    
-    # Estadísticas por país (top 5)
-    paises = Proveedor.objects.values('pais').annotate(
-        count=models.Count('id')
-    ).order_by('-count')[:5]
-    
-    for pais in paises:
-        stats['por_pais'][pais['pais']] = pais['count']
     
     return Response({
         'success': True,

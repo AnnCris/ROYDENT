@@ -369,14 +369,12 @@ class TipoCliente(models.Model):
 
 class Cliente(models.Model):
     """
-    Cliente del sistema - Extiende el modelo Usuario con rol CLIENTE
-    Los clientes tienen acceso limitado al catálogo de productos
+    Cliente del sistema - Solo datos específicos de negocio
+    Los datos personales están en Usuario->Persona
     """
     ESTADO_CHOICES = [
         ('ACTIVO', 'Activo'),
         ('INACTIVO', 'Inactivo'),
-        ('VIP', 'VIP'),
-        ('SUSPENDIDO', 'Suspendido'),
     ]
     
     # Relación uno a uno con Usuario (que ya tiene Persona)
@@ -412,57 +410,11 @@ class Cliente(models.Model):
         help_text="Para facturación"
     )
     
-    ciudad = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name="Ciudad"
-    )
-    
-    direccion = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name="Dirección"
-    )
-    
-    especialidad = models.CharField(
-        max_length=200,
-        blank=True,
-        null=True,
-        verbose_name="Especialidad"
-    )
-    
     estado = models.CharField(
         max_length=20,
         choices=ESTADO_CHOICES,
         default='ACTIVO',
         verbose_name="Estado"
-    )
-    
-    es_vip = models.BooleanField(
-        default=False,
-        verbose_name="Cliente VIP"
-    )
-    
-    limite_credito = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0.00,
-        verbose_name="Límite de Crédito (Bs.)"
-    )
-    
-    descuento_especial = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        default=0.00,
-        verbose_name="Descuento Especial (%)",
-        help_text="Porcentaje de descuento adicional"
-    )
-    
-    observaciones = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name="Observaciones"
     )
     
     fecha_registro = models.DateTimeField(
@@ -497,47 +449,30 @@ class Cliente(models.Model):
         if self.nit:
             return f"NIT: {self.nit}"
         return f"CI: {self.usuario.persona.cedula_identidad}"
-    
-    def total_compras(self):
-        """Calcula el total de compras del cliente"""
-        # Placeholder - implementar cuando tengamos el módulo de ventas
-        return 0.00
-    
-    def puede_comprar(self):
-        """Verifica si el cliente puede realizar compras"""
-        return self.estado in ['ACTIVO', 'VIP'] and self.usuario.is_active
 
 
 class Proveedor(models.Model):
     """
-    Proveedor de productos médicos y odontológicos
-    Los proveedores NO tienen acceso al sistema
+    Proveedor de productos - Vinculado a Persona
     """
     TIPO_PROVEEDOR = [
         ('DISTRIBUIDOR', 'Distribuidor'),
         ('FABRICANTE', 'Fabricante'),
         ('IMPORTADOR', 'Importador'),
-        ('MAYORISTA', 'Mayorista'),
-        ('MINORISTA', 'Minorista'),
     ]
     
     ESTADO_CHOICES = [
         ('ACTIVO', 'Activo'),
         ('INACTIVO', 'Inactivo'),
-        ('PREMIUM', 'Premium'),
-        ('SUSPENDIDO', 'Suspendido'),
     ]
     
-    # Información básica
-    nombre = models.CharField(
-        max_length=200,
-        verbose_name="Nombre / Razón Social"
-    )
-    
-    nit = models.CharField(
-        max_length=20,
-        unique=True,
-        verbose_name="NIT"
+    # Relación con Persona
+    persona = models.OneToOneField(
+        Persona,
+        on_delete=models.CASCADE,
+        related_name='proveedor',
+        verbose_name="Persona"
+        # Ya no lleva null=True ni blank=True
     )
     
     tipo_proveedor = models.CharField(
@@ -547,87 +482,24 @@ class Proveedor(models.Model):
         verbose_name="Tipo de Proveedor"
     )
     
-    # Contacto
-    telefono = models.CharField(
+    nit = models.CharField(
         max_length=20,
-        verbose_name="Teléfono"
+        unique=True,
+        verbose_name="NIT"
     )
     
-    email = models.EmailField(
-        verbose_name="Email"
-    )
-    
-    pais = models.CharField(
-        max_length=100,
-        default='Bolivia',
-        verbose_name="País"
-    )
-    
-    ciudad = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name="Ciudad"
-    )
-    
-    direccion = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name="Dirección"
-    )
-    
-    # Persona de contacto
-    persona_contacto = models.CharField(
+    razon_social = models.CharField(
         max_length=200,
         blank=True,
         null=True,
-        verbose_name="Persona de Contacto"
+        verbose_name="Razón Social"
     )
     
-    cargo_contacto = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        verbose_name="Cargo"
-    )
-    
-    # Condiciones comerciales
-    condiciones_pago = models.CharField(
-        max_length=100,
-        default='Contado',
-        verbose_name="Condiciones de Pago"
-    )
-    
-    dias_credito = models.IntegerField(
-        default=0,
-        verbose_name="Días de Crédito"
-    )
-    
-    calificacion = models.DecimalField(
-        max_digits=3,
-        decimal_places=1,
-        default=0.0,
-        verbose_name="Calificación (0-5)",
-        help_text="Calificación del proveedor"
-    )
-    
-    # Estado y control
     estado = models.CharField(
         max_length=20,
         choices=ESTADO_CHOICES,
         default='ACTIVO',
         verbose_name="Estado"
-    )
-    
-    es_premium = models.BooleanField(
-        default=False,
-        verbose_name="Proveedor Premium"
-    )
-    
-    observaciones = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name="Observaciones"
     )
     
     fecha_registro = models.DateTimeField(
@@ -644,22 +516,18 @@ class Proveedor(models.Model):
         verbose_name = "Proveedor"
         verbose_name_plural = "Proveedores"
         db_table = "proveedor"
-        ordering = ['nombre']
+        ordering = ['razon_social']
     
     def __str__(self):
-        return f"{self.nombre} - {self.nit}"
+        if self.razon_social:
+            return self.razon_social
+        if self.persona:
+            return self.persona.get_nombre_completo()
+        return f"Proveedor {self.nit}"
     
-    def total_compras(self):
-        """Calcula el total de compras realizadas a este proveedor"""
-        # Placeholder - implementar cuando tengamos el módulo de compras
-        return 0.00
-    
-    def promedio_tiempo_entrega(self):
-        """Calcula el promedio de días de entrega"""
-        # Placeholder - implementar cuando tengamos el módulo de compras
-        return 0
-    
-    def productos_suministrados(self):
-        """Cantidad de productos que suministra este proveedor"""
-        # Placeholder - implementar cuando tengamos el módulo de productos
-        return 0
+    def get_nombre_completo(self):
+        if self.razon_social:
+            return self.razon_social
+        if self.persona:
+            return self.persona.get_nombre_completo()
+        return self.nit

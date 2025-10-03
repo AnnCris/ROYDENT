@@ -325,6 +325,37 @@
             document.getElementById('defaultLogo').style.display = 'flex';
         }
         
+        // ============ CARGAR TIPOS DE CLIENTE AL INICIAR ============
+        async function cargarTiposClienteRegistro() {
+            try {
+                const response = await fetch('/auth/api/tipos-cliente/');
+                
+                if (!response.ok) {
+                    console.error('Error al cargar tipos de cliente');
+                    return;
+                }
+
+                const data = await response.json();
+                
+                if (data.success && data.tipos) {
+                    const select = document.getElementById('client-type');
+                    select.innerHTML = '<option value="" disabled selected>Selecciona una opción</option>';
+                    
+                    data.tipos.forEach(tipo => {
+                        const option = document.createElement('option');
+                        option.value = tipo.id;
+                        option.textContent = tipo.nombre_tipo;
+                        select.appendChild(option);
+                    });
+
+                    console.log('✅ Tipos de cliente cargados en registro:', data.tipos.length);
+                }
+            } catch (error) {
+                console.error('❌ Error al cargar tipos:', error);
+                mostrarError('Error al cargar tipos de cliente');
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             const customImage = document.getElementById('customLogo');
             
@@ -337,6 +368,9 @@
                     handleImageError();
                 }
             }, 1000);
+            
+            // *** CARGAR TIPOS DE CLIENTE PRIMERO ***
+            cargarTiposClienteRegistro();
             
             // Funcionalidad para el ojito de contraseña
             const togglePassword = document.getElementById('togglePassword');
@@ -371,6 +405,13 @@
                     return;
                 }
                 
+                // Validar que se seleccionó tipo de cliente
+                const tipoCliente = document.getElementById('client-type').value;
+                if (!tipoCliente) {
+                    mostrarError('Por favor selecciona un tipo de cliente');
+                    return;
+                }
+                
                 const formData = {
                     nombre_usuario: document.getElementById('username').value.trim(),
                     password: document.getElementById('password').value,
@@ -382,8 +423,10 @@
                     numero_celular: document.getElementById('phone-number').value.trim(),
                     correo: document.getElementById('email').value.trim().toLowerCase(),
                     rol: 'CLIENTE',
-                    tipo_cliente_id: parseInt(document.getElementById('client-type').value) // AGREGAR ESTO
+                    tipo_cliente_id: parseInt(tipoCliente) // *** IMPORTANTE: Enviar como número ***
                 };
+
+                console.log('📤 Enviando datos:', formData);
 
                 try {
                     mostrarCargando(true);
@@ -391,20 +434,27 @@
                     const response = await fetch('/auth/api/registro/', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
                         },
+                        credentials: 'include',
                         body: JSON.stringify(formData)
                     });
 
                     const data = await response.json();
+                    console.log('📥 Respuesta del servidor:', data);
 
-                    if (response.ok) {
-                        mostrarExito('¡Registro exitoso! Redirigiendo al login...');
+                    if (response.ok && data.refresh && data.access) {
+                        // Guardar tokens
+                        localStorage.setItem('access_token', data.access);
+                        localStorage.setItem('refresh_token', data.refresh);
+                        localStorage.setItem('user_data', JSON.stringify(data.usuario));
+
+                        mostrarExito('¡Registro exitoso! Redirigiendo...');
                         
                         setTimeout(() => {
-                            window.location.href = '/login/';
-                        }, 2000);
-                        
+                            window.location.href = '/catalogo/';
+                        }, 1500);
                     } else {
                         let errorMessage = 'Error en el registro';
                         
@@ -426,7 +476,7 @@
                     }
                 } catch (error) {
                     mostrarError('Error de conexión. Verifica tu internet e inténtalo de nuevo.');
-                    console.error('Error:', error);
+                    console.error('❌ Error:', error);
                 } finally {
                     mostrarCargando(false);
                 }
@@ -434,9 +484,8 @@
         });
 
         function setupValidacionesEstrictas() {
-            // Validación ESTRICTA para nombre de usuario - SOLO permitir caracteres válidos
+            // Validación ESTRICTA para nombre de usuario
             document.getElementById('username').addEventListener('input', function(e) {
-                // Permitir solo letras, números, puntos, guiones y guiones bajos
                 this.value = this.value.replace(/[^a-zA-Z0-9._-]/g, '');
                 if (this.value.length > 20) {
                     this.value = this.value.substring(0, 20);
@@ -447,7 +496,7 @@
                 validarNombreUsuario(this.value);
             });
 
-            // Validación ESTRICTA para nombres - SOLO letras y espacios
+            // Validación ESTRICTA para nombres
             document.getElementById('first-name').addEventListener('input', function(e) {
                 this.value = this.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
                 if (this.value.length > 50) {
@@ -459,7 +508,7 @@
                 validarNombre(this.value, 'nombre');
             });
 
-            // Validación ESTRICTA para apellido paterno - SOLO letras y espacios
+            // Validación ESTRICTA para apellido paterno
             document.getElementById('last-name-p').addEventListener('input', function(e) {
                 this.value = this.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
                 if (this.value.length > 50) {
@@ -471,7 +520,7 @@
                 validarNombre(this.value, 'apellido paterno');
             });
 
-            // Validación ESTRICTA para apellido materno - SOLO letras y espacios
+            // Validación ESTRICTA para apellido materno
             document.getElementById('last-name-m').addEventListener('input', function(e) {
                 this.value = this.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
                 if (this.value.length > 50) {
@@ -487,12 +536,10 @@
                 }
             });
 
-            // Validación ESTRICTA para cédula - SOLO números y guión con letras
+            // Validación ESTRICTA para cédula
             document.getElementById('ci').addEventListener('input', function(e) {
-                // Permitir solo números, guión y letras después del guión
                 let valor = this.value.replace(/[^0-9\-A-Z]/g, '');
                 
-                // Controlar formato: máximo 8 números + guión + máximo 3 letras
                 if (valor.includes('-')) {
                     let partes = valor.split('-');
                     if (partes[0].length > 8) {
@@ -513,12 +560,10 @@
                 validarCedula(this.value);
             });
 
-            // Validación ESTRICTA para celular - SOLO números, máximo 8
+            // Validación ESTRICTA para celular
             document.getElementById('phone-number').addEventListener('input', function(e) {
-                // Permitir solo números
                 this.value = this.value.replace(/[^0-9]/g, '');
                 
-                // Máximo 8 dígitos
                 if (this.value.length > 8) {
                     this.value = this.value.substring(0, 8);
                 }
@@ -597,7 +642,7 @@
             }
             
             if (!/[!@#$%^&*(),.?":{}|<>]/.test(valor)) {
-                mostrarErrorCampo(campo, 'Debe contener al menos un carácter especial (!@#$%^&*(),.?":{}|<>)');
+                mostrarErrorCampo(campo, 'Debe contener al menos un carácter especial');
                 return false;
             }
             
@@ -606,7 +651,6 @@
         }
 
         function validarNombre(valor, tipoCampo) {
-            // CORRECCIÓN: Faltaba definir campoId correctamente
             const campoId = tipoCampo === 'nombre' ? 'first-name' : 
                         tipoCampo === 'apellido paterno' ? 'last-name-p' : 'last-name-m';
             
@@ -621,17 +665,17 @@
             }
             
             if (valor.trim().length < 2) {
-                mostrarErrorCampo(campoId, `El ${tipoCampo} debe tener al menos 2 caracteres`);
+                mostrarErrorCampo(campoId, `Debe tener al menos 2 caracteres`);
                 return false;
             }
             
             if (valor.trim().length > 50) {
-                mostrarErrorCampo(campoId, `El ${tipoCampo} no puede tener más de 50 caracteres`);
+                mostrarErrorCampo(campoId, `No puede tener más de 50 caracteres`);
                 return false;
             }
             
             if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(valor.trim())) {
-                mostrarErrorCampo(campoId, `El ${tipoCampo} solo puede contener letras y espacios`);
+                mostrarErrorCampo(campoId, `Solo puede contener letras y espacios`);
                 return false;
             }
             
@@ -644,14 +688,14 @@
             limpiarError(campo);
             
             if (!valor || !valor.trim()) {
-                mostrarErrorCampo(campo, 'La cédula de identidad es obligatoria');
+                mostrarErrorCampo(campo, 'La cédula es obligatoria');
                 return false;
             }
             
             const cedulaClean = valor.trim().toUpperCase();
             
             if (!/^\d{7,8}(-[A-Z]{1,3})?$/.test(cedulaClean)) {
-                mostrarErrorCampo(campo, 'Formato inválido. Ejemplos: 1234567, 1234567-LP, 12345678-SC');
+                mostrarErrorCampo(campo, 'Formato inválido. Ej: 1234567-LP');
                 return false;
             }
             
@@ -664,14 +708,14 @@
             limpiarError(campo);
             
             if (!valor || !valor.trim()) {
-                mostrarErrorCampo(campo, 'El número de celular es obligatorio');
+                mostrarErrorCampo(campo, 'El celular es obligatorio');
                 return false;
             }
             
             const celularClean = valor.replace(/[^\d]/g, '');
             
             if (celularClean.length !== 8) {
-                mostrarErrorCampo(campo, 'Debe tener exactamente 8 dígitos');
+                mostrarErrorCampo(campo, 'Debe tener 8 dígitos');
                 return false;
             }
             
@@ -689,13 +733,13 @@
             limpiarError(campo);
             
             if (!valor || !valor.trim()) {
-                mostrarErrorCampo(campo, 'El correo electrónico es obligatorio');
+                mostrarErrorCampo(campo, 'El correo es obligatorio');
                 return false;
             }
             
             const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailPattern.test(valor.trim())) {
-                mostrarErrorCampo(campo, 'Formato de correo electrónico inválido');
+                mostrarErrorCampo(campo, 'Formato de correo inválido');
                 return false;
             }
             

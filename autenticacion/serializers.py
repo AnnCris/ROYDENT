@@ -543,6 +543,39 @@ class ClienteSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'fecha_registro', 'fecha_actualizacion']
 
 
+class ClienteSerializer(serializers.ModelSerializer):
+    """Serializer para clientes"""
+    
+    # Campos anidados de solo lectura desde Usuario->Persona
+    nombre_completo = serializers.CharField(source='get_nombre_completo', read_only=True)
+    documento = serializers.CharField(source='get_documento', read_only=True)
+    tipo_cliente_nombre = serializers.CharField(source='tipo_cliente.nombre_tipo', read_only=True)
+    email = serializers.EmailField(source='usuario.persona.correo', read_only=True)
+    telefono = serializers.CharField(source='usuario.persona.numero_celular', read_only=True)
+    cedula = serializers.CharField(source='usuario.persona.cedula_identidad', read_only=True)
+    
+    class Meta:
+        model = Cliente
+        fields = [
+            'id',
+            'usuario',
+            'tipo_cliente',
+            'tipo_cliente_nombre',
+            'razon_social',
+            'nit',
+            'estado',
+            'fecha_registro',
+            'fecha_actualizacion',
+            # Campos calculados
+            'nombre_completo',
+            'documento',
+            'email',
+            'telefono',
+            'cedula',
+        ]
+        read_only_fields = ['id', 'fecha_registro', 'fecha_actualizacion']
+
+
 class ClienteCreateSerializer(serializers.Serializer):
     """Serializer para crear un cliente nuevo (con usuario y persona)"""
     
@@ -562,37 +595,28 @@ class ClienteCreateSerializer(serializers.Serializer):
     tipo_cliente_id = serializers.IntegerField()
     razon_social = serializers.CharField(max_length=200, required=False, allow_blank=True)
     nit = serializers.CharField(max_length=20, required=False, allow_blank=True)
-    ciudad = serializers.CharField(max_length=100, required=False, allow_blank=True)
-    direccion = serializers.CharField(required=False, allow_blank=True)
-    especialidad = serializers.CharField(max_length=200, required=False, allow_blank=True)
-    observaciones = serializers.CharField(required=False, allow_blank=True)
     
     def validate_nombre_usuario(self, value):
-        """Validar que el usuario no exista"""
         if Usuario.objects.filter(nombre_usuario=value).exists():
             raise serializers.ValidationError("Este nombre de usuario ya existe")
         return value
     
     def validate_cedula_identidad(self, value):
-        """Validar que la cédula no exista"""
         if Persona.objects.filter(cedula_identidad=value).exists():
             raise serializers.ValidationError("Esta cédula ya está registrada")
         return value
     
     def validate_nit(self, value):
-        """Validar que el NIT no exista si se proporciona"""
         if value and Cliente.objects.filter(nit=value).exists():
             raise serializers.ValidationError("Este NIT ya está registrado")
         return value
     
     def validate_tipo_cliente_id(self, value):
-        """Validar que el tipo de cliente exista"""
         if not TipoCliente.objects.filter(id=value).exists():
             raise serializers.ValidationError("Tipo de cliente no válido")
         return value
     
     def create(self, validated_data):
-        """Crear Persona + Usuario + Cliente"""
         from django.db import transaction
         
         with transaction.atomic():
@@ -629,10 +653,6 @@ class ClienteCreateSerializer(serializers.Serializer):
                 tipo_cliente=tipo_cliente,
                 razon_social=validated_data.get('razon_social', ''),
                 nit=validated_data.get('nit', ''),
-                ciudad=validated_data.get('ciudad', ''),
-                direccion=validated_data.get('direccion', ''),
-                especialidad=validated_data.get('especialidad', ''),
-                observaciones=validated_data.get('observaciones', ''),
                 estado='ACTIVO'
             )
             
@@ -642,43 +662,89 @@ class ClienteCreateSerializer(serializers.Serializer):
 class ProveedorSerializer(serializers.ModelSerializer):
     """Serializer para proveedores"""
     
+    # Campos desde Persona
+    nombre_completo = serializers.CharField(source='get_nombre_completo', read_only=True)
+    email = serializers.EmailField(source='persona.correo', read_only=True)
+    telefono = serializers.CharField(source='persona.numero_celular', read_only=True)
+    cedula = serializers.CharField(source='persona.cedula_identidad', read_only=True)
+    
     class Meta:
         model = Proveedor
         fields = [
             'id',
-            'nombre',
-            'nit',
+            'persona',
             'tipo_proveedor',
-            'telefono',
-            'email',
-            'pais',
-            'ciudad',
-            'direccion',
-            'persona_contacto',
-            'cargo_contacto',
-            'condiciones_pago',
-            'dias_credito',
-            'calificacion',
+            'nit',
+            'razon_social',
             'estado',
-            'es_premium',
-            'observaciones',
             'fecha_registro',
             'fecha_actualizacion',
+            # Campos calculados
+            'nombre_completo',
+            'email',
+            'telefono',
+            'cedula',
         ]
         read_only_fields = ['id', 'fecha_registro', 'fecha_actualizacion']
     
     def validate_nit(self, value):
-        """Validar que el NIT sea único (excepto en actualización)"""
-        if self.instance:  # Actualización
+        if self.instance:
             if Proveedor.objects.exclude(id=self.instance.id).filter(nit=value).exists():
                 raise serializers.ValidationError("Este NIT ya está registrado")
-        else:  # Creación
+        else:
             if Proveedor.objects.filter(nit=value).exists():
                 raise serializers.ValidationError("Este NIT ya está registrado")
         return value
+
+
+class ProveedorCreateSerializer(serializers.Serializer):
+    """Serializer para crear proveedor con persona"""
     
-    def validate_calificacion(self, value):
-        """Validar que la calificación esté entre 0 y 5"""
-        if value < 0 or value > 5:
-            raise serializers.ValidationError("La calificación debe estar entre 0 y 5")
+    # Datos de Persona
+    nombre = serializers.CharField(max_length=100)
+    apellido_paterno = serializers.CharField(max_length=100)
+    apellido_materno = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    cedula_identidad = serializers.CharField(max_length=15)
+    numero_celular = serializers.CharField(max_length=8)
+    correo = serializers.EmailField()
+    
+    # Datos de Proveedor
+    tipo_proveedor = serializers.ChoiceField(choices=Proveedor.TIPO_PROVEEDOR)
+    nit = serializers.CharField(max_length=20)
+    razon_social = serializers.CharField(max_length=200, required=False, allow_blank=True)
+    
+    def validate_cedula_identidad(self, value):
+        if Persona.objects.filter(cedula_identidad=value).exists():
+            raise serializers.ValidationError("Esta cédula ya está registrada")
         return value
+    
+    def validate_nit(self, value):
+        if Proveedor.objects.filter(nit=value).exists():
+            raise serializers.ValidationError("Este NIT ya está registrado")
+        return value
+    
+    def create(self, validated_data):
+        from django.db import transaction
+        
+        with transaction.atomic():
+            # 1. Crear Persona
+            persona = Persona.objects.create(
+                nombre=validated_data['nombre'],
+                apellido_paterno=validated_data['apellido_paterno'],
+                apellido_materno=validated_data.get('apellido_materno', ''),
+                cedula_identidad=validated_data['cedula_identidad'],
+                numero_celular=validated_data['numero_celular'],
+                correo=validated_data['correo']
+            )
+            
+            # 2. Crear Proveedor
+            proveedor = Proveedor.objects.create(
+                persona=persona,
+                tipo_proveedor=validated_data['tipo_proveedor'],
+                nit=validated_data['nit'],
+                razon_social=validated_data.get('razon_social', ''),
+                estado='ACTIVO'
+            )
+            
+            return proveedor    
+

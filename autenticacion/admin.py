@@ -232,24 +232,20 @@ class ClienteAdmin(admin.ModelAdmin):
     list_display = (
         'get_nombre_completo',
         'tipo_cliente',
-        'ciudad',
+        'nit',
         'estado',
-        'es_vip',
         'fecha_registro'
     )
     
     list_filter = (
         'estado',
-        'es_vip',
         'tipo_cliente',
-        'ciudad',
         'fecha_registro'
     )
     
     search_fields = (
         'usuario__persona__nombre',
         'usuario__persona__apellido_paterno',
-        'usuario__persona__apellido_materno',
         'usuario__persona__cedula_identidad',
         'razon_social',
         'nit',
@@ -257,7 +253,6 @@ class ClienteAdmin(admin.ModelAdmin):
     )
     
     readonly_fields = ('fecha_registro', 'fecha_actualizacion')
-    
     autocomplete_fields = ['usuario', 'tipo_cliente']
     
     fieldsets = (
@@ -265,24 +260,13 @@ class ClienteAdmin(admin.ModelAdmin):
             'fields': ('usuario',)
         }),
         ('Tipo de Cliente', {
-            'fields': ('tipo_cliente', 'especialidad')
+            'fields': ('tipo_cliente',)
         }),
         ('Información Comercial', {
             'fields': ('razon_social', 'nit')
         }),
-        ('Ubicación', {
-            'fields': ('ciudad', 'direccion')
-        }),
-        ('Estado y Beneficios', {
-            'fields': (
-                'estado',
-                'es_vip',
-                'limite_credito',
-                'descuento_especial'
-            )
-        }),
-        ('Observaciones', {
-            'fields': ('observaciones',)
+        ('Estado', {
+            'fields': ('estado',)
         }),
         ('Fechas', {
             'fields': ('fecha_registro', 'fecha_actualizacion'),
@@ -293,75 +277,45 @@ class ClienteAdmin(admin.ModelAdmin):
     def get_nombre_completo(self, obj):
         return obj.get_nombre_completo()
     get_nombre_completo.short_description = 'Cliente'
-    get_nombre_completo.admin_order_field = 'usuario__persona__nombre'
 
-
-# ============= PROVEEDOR =============
 
 @admin.register(Proveedor)
 class ProveedorAdmin(admin.ModelAdmin):
     list_display = (
-        'nombre',
+        'get_nombre_completo',
         'nit',
         'tipo_proveedor',
-        'pais',
-        'ciudad',
-        'telefono',
-        'calificacion',
         'estado',
-        'es_premium',
         'fecha_registro'
     )
     
     list_filter = (
         'estado',
-        'es_premium',
         'tipo_proveedor',
-        'pais',
-        'ciudad',
         'fecha_registro'
     )
     
     search_fields = (
-        'nombre',
+        'persona__nombre',
+        'persona__apellido_paterno',
+        'persona__cedula_identidad',
         'nit',
-        'email',
-        'telefono',
-        'persona_contacto'
+        'razon_social',
+        'persona__correo'
     )
     
     readonly_fields = ('fecha_registro', 'fecha_actualizacion')
-    
-    ordering = ('nombre',)
+    autocomplete_fields = ['persona']
     
     fieldsets = (
-        ('Información Básica', {
-            'fields': ('nombre', 'nit', 'tipo_proveedor')
+        ('Información Personal', {
+            'fields': ('persona',)
         }),
-        ('Contacto', {
-            'fields': (
-                'telefono',
-                'email',
-                'persona_contacto',
-                'cargo_contacto'
-            )
-        }),
-        ('Ubicación', {
-            'fields': ('pais', 'ciudad', 'direccion')
-        }),
-        ('Condiciones Comerciales', {
-            'fields': (
-                'condiciones_pago',
-                'dias_credito',
-                'calificacion'
-            )
+        ('Información Comercial', {
+            'fields': ('tipo_proveedor', 'nit', 'razon_social')
         }),
         ('Estado', {
-            'fields': ('estado', 'es_premium')
-        }),
-        ('Observaciones', {
-            'fields': ('observaciones',),
-            'classes': ('collapse',)
+            'fields': ('estado',)
         }),
         ('Fechas', {
             'fields': ('fecha_registro', 'fecha_actualizacion'),
@@ -369,20 +323,6 @@ class ProveedorAdmin(admin.ModelAdmin):
         }),
     )
     
-    # Acciones personalizadas
-    actions = ['marcar_como_premium', 'marcar_como_activo', 'marcar_como_inactivo']
-    
-    def marcar_como_premium(self, request, queryset):
-        queryset.update(es_premium=True, estado='PREMIUM')
-        self.message_user(request, f"{queryset.count()} proveedores marcados como Premium")
-    marcar_como_premium.short_description = "Marcar como Premium"
-    
-    def marcar_como_activo(self, request, queryset):
-        queryset.update(estado='ACTIVO')
-        self.message_user(request, f"{queryset.count()} proveedores activados")
-    marcar_como_activo.short_description = "Activar proveedores"
-    
-    def marcar_como_inactivo(self, request, queryset):
-        queryset.update(estado='INACTIVO')
-        self.message_user(request, f"{queryset.count()} proveedores desactivados")
-    marcar_como_inactivo.short_description = "Desactivar proveedores"
+    def get_nombre_completo(self, obj):
+        return obj.get_nombre_completo()
+    get_nombre_completo.short_description = 'Proveedor'
