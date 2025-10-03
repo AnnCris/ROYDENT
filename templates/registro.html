@@ -304,13 +304,9 @@
 
                 <div>
                     <label class="form-label" for="client-type">Tipo de cliente</label>
-                    <select class="form-select" id="client-type" name="client-type" required>
+                    <select class="form-select" id="client-type" name="client-type">
                         <option value="" disabled selected>Selecciona una opción</option>
-                        <option value="mayorista">Estudiante</option>
-                        <option value="minorista">Medico</option>
-                        <option value="distribuidor">Dentista</option>
-                        <option value="empresa">Empresa</option>
-                        <option value="particular">Particular</option>
+                        <!-- Estos se cargarán dinámicamente -->
                     </select>
                 </div>
 
@@ -385,7 +381,8 @@
                     cedula_identidad: document.getElementById('ci').value.trim(),
                     numero_celular: document.getElementById('phone-number').value.trim(),
                     correo: document.getElementById('email').value.trim().toLowerCase(),
-                    rol: 'CLIENTE'
+                    rol: 'CLIENTE',
+                    tipo_cliente_id: parseInt(document.getElementById('client-type').value) // AGREGAR ESTO
                 };
 
                 try {
@@ -609,7 +606,9 @@
         }
 
         function validarNombre(valor, tipoCampo) {
-                           tipoCampo === 'apellido paterno' ? 'last-name-p' : 'last-name-m';
+            // CORRECCIÓN: Faltaba definir campoId correctamente
+            const campoId = tipoCampo === 'nombre' ? 'first-name' : 
+                        tipoCampo === 'apellido paterno' ? 'last-name-p' : 'last-name-m';
             
             limpiarError(campoId);
             

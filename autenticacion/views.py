@@ -91,7 +91,33 @@ class RegistroAPIView(APIView):
         
         if serializer.is_valid():
             try:
+                # Crear usuario
                 usuario = serializer.save()
+                
+                # NUEVO: Crear automáticamente el cliente asociado
+                from .models import TipoCliente, Cliente
+                
+                # Obtener tipo de cliente o usar uno por defecto
+                tipo_cliente_id = request.data.get('tipo_cliente_id')
+                
+                if tipo_cliente_id:
+                    tipo_cliente = TipoCliente.objects.get(id=tipo_cliente_id)
+                else:
+                    # Buscar tipo "Particular" o crear uno por defecto
+                    tipo_cliente, _ = TipoCliente.objects.get_or_create(
+                        codigo='PARTICULAR',
+                        defaults={
+                            'nombre_tipo': 'Particular',
+                            'descripcion': 'Cliente particular'
+                        }
+                    )
+                
+                # Crear el cliente
+                Cliente.objects.create(
+                    usuario=usuario,
+                    tipo_cliente=tipo_cliente,
+                    estado='ACTIVO'
+                )
                 
                 # Generar tokens JWT para auto-login
                 refresh = RefreshToken.for_user(usuario)
@@ -108,7 +134,7 @@ class RegistroAPIView(APIView):
                     }
                 
                 return Response({
-                    'message': 'Usuario registrado exitosamente',
+                    'message': 'Usuario y cliente registrados exitosamente',
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),
                     'usuario': {
@@ -121,6 +147,10 @@ class RegistroAPIView(APIView):
                     }
                 }, status=status.HTTP_201_CREATED)
                 
+            except TipoCliente.DoesNotExist:
+                return Response({
+                    'error': 'Tipo de cliente no válido'
+                }, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 return Response({
                     'error': 'Error interno del servidor',
@@ -131,7 +161,7 @@ class RegistroAPIView(APIView):
             'error': 'Datos de registro inválidos',
             'detalles': serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
-
+    
 class PerfilAPIView(APIView):
     """API para obtener y actualizar perfil de usuario"""
     permission_classes = [IsAuthenticated]

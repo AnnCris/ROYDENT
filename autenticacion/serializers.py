@@ -209,6 +209,7 @@ class RegistroSerializer(serializers.Serializer):
     cedula_identidad = serializers.CharField(max_length=15)
     numero_celular = serializers.CharField(max_length=8)
     correo = serializers.EmailField()
+    tipo_cliente_id = serializers.IntegerField(required=False, allow_null=True)
     
     # Datos de usuario
     nombre_usuario = serializers.CharField(max_length=20)

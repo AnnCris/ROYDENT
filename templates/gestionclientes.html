@@ -3,50 +3,15 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Gestión de Clientes - Sistema RoyDent</title>
+    <title>Gestión de Clientes - Sistema Roy Representaciones</title>
     <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Estilos del sidebar reutilizable -->
+    <link rel="stylesheet" href="/static/css/sidebar-styles.css">
+    
     <style>
-        :root {
-            /* Colores principales - Tema Dorado y Verde VIBRANTES (del código base) */
-            --color-gold: #D4AF37;
-            --color-gold-light: #f6e06f;
-            --color-gold-dark: #B8860B;
-            --color-green: #2E8B57;
-            --color-green-light: #98FB98;
-            --color-green-dark: #1A5D34;
-            --text-dark: #2D3748;
-            --text-gray: #718096;
-            --text-light: #A0AEC0;
-            
-            /* Colores de fondo */
-            --bg-primary: rgba(255, 255, 255, 0.85);
-            --bg-secondary: rgba(255, 250, 205, 0.7);
-            --bg-tertiary: rgba(240, 255, 240, 0.5);
-            
-            /* Sombras */
-            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
-            
-            /* Radios */
-            --radius-sm: 0.375rem;
-            --radius-md: 0.5rem;
-            --radius-lg: 0.75rem;
-            --radius-xl: 1rem;
-            --radius-2xl: 1.5rem;
-            
-            /* Espaciado */
-            --space-xs: 0.25rem;
-            --space-sm: 0.5rem;
-            --space-md: 1rem;
-            --space-lg: 1.5rem;
-            --space-xl: 2rem;
-            --space-2xl: 3rem;
-            --space-3xl: 4rem;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -74,7 +39,7 @@
             opacity: 0.25;
             z-index: -1;
         }
-        
+
         .blob-1 {
             width: 400px;
             height: 400px;
@@ -82,7 +47,7 @@
             top: -100px;
             left: -100px;
         }
-        
+
         .blob-2 {
             width: 500px;
             height: 500px;
@@ -90,7 +55,7 @@
             bottom: -150px;
             right: -150px;
         }
-        
+
         .blob-3 {
             width: 300px;
             height: 300px;
@@ -99,219 +64,7 @@
             left: 70%;
         }
 
-        /* ============ SIDEBAR MODERNO ============ */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 280px;
-            height: 100vh;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-right: 2px solid rgba(255, 215, 0, 0.3);
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
-            z-index: 1000;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-y: auto;
-        }
-
-        .sidebar-header {
-            padding: var(--space-xl);
-            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .sidebar-header::before {
-            content: "";
-            position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
-            background-size: 300% 300%;
-            border-radius: 0 0 22px 0;
-            animation: gradientMove 4s ease infinite;
-            z-index: -1;
-        }
-
-        .sidebar-header::after {
-            content: "";
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            right: 2px;
-            bottom: 2px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 0 0 18px 0;
-            z-index: -1;
-        }
-
-        .sidebar-brand {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            margin-bottom: var(--space-md);
-            width: 100%;
-        }
-
-        .sidebar-logo-img {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            margin-bottom: var(--space-md);
-            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
-            border-radius: 50%;
-        }
-
-        .logo-default {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: var(--space-md);
-            color: white;
-            font-weight: 900;
-            font-size: 1.5rem;
-            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
-        }
-
-        .sidebar-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--color-green-dark);
-            letter-spacing: -0.01em;
-        }
-
-        .sidebar-subtitle {
-            font-size: 0.75rem;
-            color: var(--color-gold-dark);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-top: var(--space-xs);
-        }
-
-        .sidebar-nav {
-            padding: var(--space-md);
-        }
-
-        .nav-section {
-            margin-bottom: var(--space-xl);
-        }
-
-        .nav-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--color-gold-dark);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: var(--space-md);
-            padding: 0 var(--space-md);
-        }
-
-        .nav-item {
-            margin-bottom: var(--space-xs);
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: var(--space-md);
-            color: var(--text-gray);
-            text-decoration: none;
-            border-radius: var(--radius-lg);
-            transition: all 0.3s ease;
-            font-weight: 500;
-            font-size: 0.875rem;
-            gap: var(--space-sm);
-            background: rgba(255, 250, 205, 0.5);
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 215, 0, 0.2);
-            color: var(--color-green-dark);
-            transform: translateX(4px);
-        }
-
-        .nav-link.active {
-            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
-            color: white;
-            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
-        }
-
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            color: var(--color-gold);
-        }
-
-        .nav-link.active .nav-icon {
-            color: white;
-        }
-
-        /* ============ MAIN CONTENT ============ */
-        .main-content {
-            margin-left: 280px;
-            min-height: 100vh;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: var(--space-xl);
-        }
-
-        /* ============ NAVEGACIÓN MÓVIL ============ */
-        .mobile-header {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
-            z-index: 1001;
-            padding: var(--space-md);
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .mobile-menu-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--color-green-dark);
-        }
-
-        .mobile-logo {
-            height: 40px;
-            object-fit: contain;
-        }
-
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-
-        /* ============ LAYOUT RESPONSIVO ============ */
+        /* Contenedor principal */
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -338,7 +91,7 @@
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         }
 
-        /* ============ CARDS CON EFECTOS DE LUZ ============ */
+        /* Cards */
         .card {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
@@ -390,15 +143,9 @@
         }
 
         @keyframes gradientMove {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .card-content {
@@ -406,7 +153,7 @@
             z-index: 1;
         }
 
-        /* ============ TIPOGRAFÍA MODERNA ============ */
+        /* Tipografía */
         .text-display {
             font-size: clamp(2rem, 5vw, 3.5rem);
             font-weight: 900;
@@ -417,15 +164,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-        }
-
-        .text-h1 {
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            font-weight: 800;
-            line-height: 1.2;
-            color: var(--color-green-dark);
-            margin-bottom: var(--space-lg);
-            letter-spacing: -0.02em;
+            text-align: center;
         }
 
         .text-h2 {
@@ -437,12 +176,13 @@
             letter-spacing: -0.01em;
         }
 
-        .text-h3 {
-            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
-            font-weight: 600;
-            line-height: 1.4;
-            color: var(--color-gold-dark);
+        .text-body {
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.7;
+            color: var(--text-gray);
             margin-bottom: var(--space-md);
+            text-align: center;
         }
 
         .text-label {
@@ -456,7 +196,119 @@
             display: block;
         }
 
-        /* ============ BOTONES MODERNOS ============ */
+        /* Estadísticas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: "";
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
+            background-size: 300% 300%;
+            border-radius: calc(var(--radius-lg) + 3px);
+            animation: gradientMove 4s ease infinite;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+        }
+
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: calc(var(--radius-lg) - 2px);
+            z-index: -1;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--color-gold-dark);
+            margin-bottom: var(--space-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--color-green-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Formularios */
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-dark);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-green);
+            box-shadow: 0 0 0 4px rgba(46, 139, 87, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            transform: scale(1.01);
+        }
+
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 1rem center;
+            background-repeat: no-repeat;
+            background-size: 1.25rem;
+            padding-right: 3rem;
+            appearance: none;
+        }
+
+        /* Botones */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -472,8 +324,7 @@
             letter-spacing: 0.025em;
             position: relative;
             overflow: hidden;
-            margin: var(--space-sm);
-            min-width: 140px;
+            margin: var(--space-xs);
         }
 
         .btn::before {
@@ -494,6 +345,11 @@
 
         .btn:hover::before {
             opacity: 1;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
         }
 
         .btn-primary {
@@ -546,82 +402,37 @@
             background: var(--color-green);
             color: white;
             transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--color-green), var(--color-green-dark));
-            color: white;
-            box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
-            color: white;
-            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 8px 25px rgba(46, 139, 87, 0.4);
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+            background: linear-gradient(135deg, #EF4444, #DC2626);
             color: white;
             box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
         }
 
         .btn-info {
-            background: linear-gradient(135deg, #3b82f6, #1D4ED8);
+            background: linear-gradient(135deg, #00C851, #1A5D34);
             color: white;
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 200, 81, 0.4);
         }
 
-        .btn-success:hover,
-        .btn-warning:hover,
-        .btn-danger:hover,
-        .btn-info:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+        /* Cliente Avatar */
+        .cliente-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
         }
 
-        .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.75rem;
-            min-width: auto;
-        }
-
-        /* ============ FORMULARIOS MODERNOS ============ */
-        .form-group {
-            margin-bottom: var(--space-lg);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 1rem 1.25rem;
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            border-radius: var(--radius-lg);
-            font-size: 1rem;
-            background: var(--bg-primary);
-            color: var(--text-dark);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-family: inherit;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--color-green);
-            box-shadow: 0 0 0 4px rgba(0, 200, 81, 0.1);
-            background: #fafbff;
-            transform: scale(1.01);
-        }
-
-        .form-select {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 1rem center;
-            background-repeat: no-repeat;
-            background-size: 1.25rem;
-            padding-right: 3rem;
-            appearance: none;
-        }
-
-        /* ============ BADGES MODERNOS ============ */
+        /* Badges */
         .badge {
             display: inline-flex;
             align-items: center;
@@ -632,7 +443,7 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             margin: var(--space-xs);
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
 
@@ -641,109 +452,24 @@
         }
 
         .badge-activo {
-            background: linear-gradient(135deg, var(--color-green), var(--color-green-dark));
+            background: linear-gradient(135deg, #00C851, #1A5D34);
             color: white;
         }
 
         .badge-inactivo {
-            background: linear-gradient(135deg, #6B7280, #4B5563);
+            background: linear-gradient(135deg, #EF4444, #DC2626);
             color: white;
         }
 
         .badge-vip {
             background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
-            color: #8B4513;
+            color: white;
         }
 
-        .badge-credito {
-            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
-            color: #8B4513;
-        }
-
-        /* ============ ESTADÍSTICAS ============ */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-xl);
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            padding: var(--space-lg);
-            border-radius: var(--radius-lg);
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: "";
-            position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
-            background-size: 300% 300%;
-            border-radius: calc(var(--radius-lg) + 3px);
-            animation: gradientMove 4s ease infinite;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .stat-card:hover::before {
-            opacity: 1;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
-        }
-
-        .stat-card::after {
-            content: "";
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            right: 2px;
-            bottom: 2px;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: calc(var(--radius-lg) - 2px);
-            z-index: -1;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--color-gold-dark);
-            margin-bottom: var(--space-sm);
-            position: relative;
-            z-index: 1;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--color-green-dark);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 600;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* ============ TABLA MODERNA ============ */
+        /* Tabla */
         .table-container {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border-radius: var(--radius-xl);
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
@@ -764,7 +490,7 @@
         }
 
         th {
-            background: rgba(255, 215, 0, 0.1);
+            background: rgba(255, 215, 0, 0.2);
             font-weight: 700;
             color: var(--color-gold-dark);
             text-transform: uppercase;
@@ -777,15 +503,14 @@
 
         tr {
             transition: all 0.3s ease;
-            cursor: pointer;
         }
 
         tbody tr:hover {
-            background: rgba(0, 200, 81, 0.05);
-            transform: scale(1.01);
+            background: rgba(255, 215, 0, 0.1);
+            transform: scale(1.002);
         }
 
-        /* ============ BÚSQUEDA ============ */
+        /* Búsqueda */
         .search-container {
             position: relative;
             margin-bottom: var(--space-xl);
@@ -796,7 +521,7 @@
             left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-gray);
+            color: #9CA3AF;
             font-size: 1.2rem;
         }
 
@@ -805,21 +530,7 @@
             font-size: 1.1rem;
         }
 
-        /* ============ CLIENTE AVATAR ============ */
-        .cliente-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--color-gold), var(--color-green));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 1.25rem;
-        }
-
-        /* ============ MODAL ============ */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -830,86 +541,66 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
+            overflow-y: auto;
+            padding: 20px;
         }
 
         .modal-content {
-            background-color: rgba(255, 255, 255, 0.95);
-            margin: 5% auto;
-            padding: var(--space-xl);
-            border-radius: var(--radius-xl);
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+            background: white;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 95%;
+            max-width: 700px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            border: 3px solid;
+            border-image: linear-gradient(45deg, #FFD700, #2E8B57, #F0E68C, #FFD700) 1;
             position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
-        .modal-content::before {
-            content: "";
-            position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            background: linear-gradient(45deg, var(--color-gold), var(--color-green), var(--color-gold-light), var(--color-gold));
-            background-size: 300% 300%;
-            border-radius: calc(var(--radius-xl) + 3px);
-            animation: gradientMove 4s ease infinite;
-            z-index: -1;
-            opacity: 1;
-        }
-
-        .modal-content::after {
-            content: "";
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            right: 2px;
-            bottom: 2px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: calc(var(--radius-xl) - 2px);
-            z-index: -1;
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.2);
         }
 
         .close {
-            color: var(--text-gray);
-            float: right;
-            font-size: 28px;
+            color: #9CA3AF;
+            font-size: 32px;
             font-weight: bold;
             cursor: pointer;
-            position: relative;
-            z-index: 2;
+            transition: all 0.3s ease;
+            line-height: 1;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(200, 200, 200, 0.2);
         }
 
         .close:hover {
-            color: var(--text-dark);
+            color: #333;
+            transform: scale(1.1) rotate(90deg);
+            background: rgba(255, 215, 0, 0.2);
         }
 
-        /* ============ RESPONSIVE ============ */
-        @media (max-width: 1024px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .sidebar-overlay.active {
-                display: block;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding-top: 70px;
-            }
-
-            .mobile-header {
-                display: flex;
-            }
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid rgba(255, 215, 0, 0.2);
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
             .container {
                 padding: 0;
@@ -922,7 +613,7 @@
             .card {
                 padding: var(--space-lg);
             }
-            
+
             table {
                 min-width: 800px;
             }
@@ -931,197 +622,48 @@
                 padding: var(--space-sm);
                 font-size: 0.875rem;
             }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .modal-content {
+                width: 100%;
+                padding: 1.5rem;
+                margin: 1rem auto;
+            }
         }
 
         @media (max-width: 480px) {
-            .main-content {
-                padding-top: 60px;
+            .stat-number {
+                font-size: 1.5rem;
             }
-            
-            .container {
-                padding: var(--space-sm);
+
+            .cliente-avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
             }
+
+            .modal-content {
+                padding: 1rem;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Elementos decorativos de fondo (como en el login) -->
+    <!-- Elementos decorativos de fondo -->
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
     <div class="bg-blob blob-3"></div>
     
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <a href="#" class="sidebar-brand">
-                <!-- Logo desde la carpeta assets -->
-                <img src="assets/images/Roydent.png" alt="Logo de RoyDent" class="sidebar-logo-img" id="sidebarLogo" onerror="handleLogoError()">
-                <!-- Logo por defecto (oculto inicialmente) -->
-                <div class="logo-default" id="defaultLogo" style="display: none;">
-                    RD
-                </div>
-                <div>
-                    <div class="sidebar-title">Sistema RoyDent</div>
-                    <div class="sidebar-subtitle">Y Mundo Medico</div>
-                </div>
-            </a>
-        </div>
-        
-        <nav class="sidebar-nav">
-            <div class="nav-section">
-                <div class="nav-title">Principal</div>
-                <div class="nav-item">
-                    <a href="panel-admin.html" class="nav-link">
-                        <div class="nav-icon">🏠</div>
-                        Dashboard
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link">
-                        <div class="nav-icon">📊</div>
-                        Analíticas
-                    </a>
-                </div>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-title">Productos</div>
-                <div class="nav-item">
-                    <a href="agregarproducto.html" class="nav-link">
-                        <div class="nav-icon">➕</div>
-                        Agregar Producto
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link">
-                        <div class="nav-icon">📦</div>
-                        Lista de Productos
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="gestioncategorias.html" class="nav-link">
-                        <div class="nav-icon">🏷️</div>
-                        Categorías
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link">
-                        <div class="nav-icon">🔄</div>
-                        Control FIFO
-                    </a>
-                </div>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-title">Inventario</div>
-                <div class="nav-item">
-                    <a href="inventario.html" class="nav-link">
-                        <div class="nav-icon">📋</div>
-                        Inventario General
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link">
-                        <div class="nav-icon">⚠️</div>
-                        Stock Bajo
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link">
-                        <div class="nav-icon">📍</div>
-                        Ubicaciones
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="gestionproveedores.html" class="nav-link">
-                        <div class="nav-icon">👨‍💼</div>
-                        Proveedores
-                    </a>
-                </div>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-title">Ventas</div>
-                <div class="nav-item">
-                    <a href="nuevaventa.html" class="nav-link">
-                        <div class="nav-icon">🛒</div>
-                        Nueva Venta
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="historialventa.html" class="nav-link">
-                        <div class="nav-icon">💰</div>
-                        Historial Ventas
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="gestionclientes.html" class="nav-link active">
-                        <div class="nav-icon">👥</div>
-                        Clientes
-                    </a>
-                </div>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-title">Reportes</div>
-                <div class="nav-item">
-                    <a href="reportesventa.html" class="nav-link">
-                        <div class="nav-icon">📈</div>
-                        Reportes de Ventas
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link">
-                        <div class="nav-icon">📉</div>
-                        Análisis de Inventario
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link">
-                        <div class="nav-icon">💼</div>
-                        Reportes Financieros
-                    </a>
-                </div>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-title">Configuración</div>
-                <div class="nav-item">
-                    <a href="configuracion.html" class="nav-link">
-                        <div class="nav-icon">⚙️</div>
-                        Configuración
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="perfilusuario.html" class="nav-link">
-                        <div class="nav-icon">👤</div>
-                        Perfil
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="gestionusuario.html" class="nav-link">
-                        <div class="nav-icon">👥</div>
-                        Usuarios
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="backups.html" class="nav-link">
-                        <div class="nav-icon">💾</div>
-                        Backup
-                    </a>
-                </div>
-            </div>
-        </nav>
-    </aside>
-
-    <!-- Mobile Header -->
-    <header class="mobile-header" id="mobile-header">
-        <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
-        <img src="assets/images/Roydent.png" alt="Logo de RoyDent" class="mobile-logo" id="mobileLogo" onerror="handleMobileLogoError()">
-    </header>
-
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <!-- Incluir Sidebar desde archivo separado -->
+    <div id="sidebar-container"></div>
 
     <!-- Main Content -->
     <main class="main-content">
@@ -1130,8 +672,8 @@
             <div class="section">
                 <div class="card">
                     <div class="card-content">
-                        <h1 class="text-display text-center">Gestión de Clientes</h1>
-                        <p style="text-align: center; color: var(--text-gray);">Administra y mantén relaciones comerciales con tus clientes médicos y odontológicos</p>
+                        <h1 class="text-display">Gestión de Clientes</h1>
+                        <p class="text-body">Administra y mantén relaciones comerciales con tus clientes médicos y odontológicos</p>
                     </div>
                 </div>
             </div>
@@ -1140,24 +682,20 @@
             <div class="section">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-number">156</div>
+                        <div class="stat-number" id="stat-total">0</div>
                         <div class="stat-label">Clientes Totales</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">24</div>
-                        <div class="stat-label">Activos Este Mes</div>
+                        <div class="stat-number" id="stat-activos">0</div>
+                        <div class="stat-label">Activos</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">8</div>
+                        <div class="stat-number" id="stat-vip">0</div>
                         <div class="stat-label">Clientes VIP</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">12</div>
-                        <div class="stat-label">Nuevos Este Mes</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">Bs. 2,450</div>
-                        <div class="stat-label">Compra Promedio</div>
+                        <div class="stat-number" id="stat-inactivos">0</div>
+                        <div class="stat-label">Inactivos</div>
                     </div>
                 </div>
             </div>
@@ -1165,51 +703,54 @@
             <!-- Filtros y Búsqueda -->
             <div class="section">
                 <div class="card">
-                    <h2 class="text-h2">Filtros y Búsqueda</h2>
-                    <div class="grid grid-4">
-                        <div class="form-group">
-                            <label class="text-label">Tipo de Cliente</label>
-                            <select class="form-input form-select" id="tipo-cliente">
-                                <option value="todos">Todos</option>
-                                <option value="persona">Persona Natural</option>
-                                <option value="empresa">Empresa</option>
-                                <option value="clinica">Clínica/Hospital</option>
-                            </select>
+                    <div class="card-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg); flex-wrap: wrap;">
+                            <h2 class="text-h2" style="margin-bottom: 0;">Filtros y Búsqueda</h2>
+                            <div>
+                                <button class="btn btn-secondary" onclick="exportarClientes()">📤 Exportar</button>
+                                <button class="btn btn-primary" onclick="abrirModalCliente()">👥 Nuevo Cliente</button>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="text-label">Estado</label>
-                            <select class="form-input form-select" id="estado">
-                                <option value="todos">Todos</option>
-                                <option value="activo">Activo</option>
-                                <option value="inactivo">Inactivo</option>
-                                <option value="vip">VIP</option>
-                            </select>
+                        
+                        <div class="grid grid-4">
+                            <div class="form-group">
+                                <label class="text-label">Tipo de Cliente</label>
+                                <select class="form-input form-select" id="filtro-tipo">
+                                    <option value="todos">Todos</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-label">Estado</label>
+                                <select class="form-input form-select" id="filtro-estado">
+                                    <option value="todos">Todos</option>
+                                    <option value="ACTIVO">Activo</option>
+                                    <option value="INACTIVO">Inactivo</option>
+                                    <option value="VIP">VIP</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-label">Ciudad</label>
+                                <select class="form-input form-select" id="filtro-ciudad">
+                                    <option value="todas">Todas</option>
+                                    <option value="La Paz">La Paz</option>
+                                    <option value="Cochabamba">Cochabamba</option>
+                                    <option value="Santa Cruz">Santa Cruz</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="text-label">VIP</label>
+                                <select class="form-input form-select" id="filtro-vip">
+                                    <option value="">Todos</option>
+                                    <option value="true">Solo VIP</option>
+                                    <option value="false">No VIP</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="text-label">Ciudad</label>
-                            <select class="form-input form-select" id="ciudad">
-                                <option value="todas">Todas</option>
-                                <option value="la-paz">La Paz</option>
-                                <option value="cochabamba">Cochabamba</option>
-                                <option value="santa-cruz">Santa Cruz</option>
-                                <option value="sucre">Sucre</option>
-                            </select>
+                        
+                        <div class="search-container">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" class="form-input search-input" id="busqueda" placeholder="Buscar por nombre, CI, NIT, teléfono o email...">
                         </div>
-                        <div class="form-group">
-                            <label class="text-label">Especialidad</label>
-                            <select class="form-input form-select" id="especialidad">
-                                <option value="todas">Todas</option>
-                                <option value="odontologia">Odontología</option>
-                                <option value="medicina-general">Medicina General</option>
-                                <option value="cirugia">Cirugía</option>
-                                <option value="pediatria">Pediatría</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="search-container">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" class="form-input search-input" id="busqueda" placeholder="Buscar por nombre, CI, NIT, teléfono o email...">
                     </div>
                 </div>
             </div>
@@ -1217,294 +758,32 @@
             <!-- Lista de Clientes -->
             <div class="section">
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl);">
-                        <h2 class="text-h2" style="margin-bottom: 0;">Lista de Clientes</h2>
-                        <div>
-                            <button class="btn btn-secondary" onclick="exportarClientes()">Exportar</button>
-                            <button class="btn btn-info" onclick="importarClientes()">Importar</button>
-                            <button class="btn btn-primary" onclick="abrirModalCliente()">Nuevo Cliente</button>
-                        </div>
-                    </div>
-                    
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Cliente</th>
-                                    <th>Documento</th>
-                                    <th>Tipo</th>
-                                    <th>Contacto</th>
-                                    <th>Ciudad</th>
-                                    <th>Última Compra</th>
-                                    <th>Total Compras</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="clientes-table">
-                                <tr onclick="verDetalleCliente('cli-001')">
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: var(--space-md);">
-                                            <div class="cliente-avatar">CM</div>
-                                            <div>
-                                                <div style="font-weight: 600;">Dr. Carlos Mendoza</div>
-                                                <div style="font-size: 0.875rem; color: var(--text-gray);">Odontólogo</div>
+                    <div class="card-content">
+                        <h2 class="text-h2">Lista de Clientes</h2>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Tipo</th>
+                                        <th>Documento</th>
+                                        <th>Contacto</th>
+                                        <th>Ciudad</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="clientes-table">
+                                    <tr id="loading-row">
+                                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                                            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
+                                                <div style="width: 20px; height: 20px; border: 3px solid var(--color-gold); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                                                <span>Cargando clientes...</span>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td><strong>CI: 12345678</strong></td>
-                                    <td>Persona Natural</td>
-                                    <td>
-                                        <div>📞 +591 70123456</div>
-                                        <div style="font-size: 0.875rem; color: var(--text-gray);">carlos.mendoza@email.com</div>
-                                    </td>
-                                    <td>La Paz</td>
-                                    <td>08/09/2024</td>
-                                    <td><strong>Bs. 8,450.00</strong></td>
-                                    <td><span class="badge badge-vip">VIP</span></td>
-                                    <td>
-                                        <button class="btn btn-info btn-sm" onclick="verDetalleCliente('cli-001')">Ver</button>
-                                        <button class="btn btn-secondary btn-sm" onclick="editarCliente('cli-001')">Editar</button>
-                                    </td>
-                                </tr>
-                                
-                                <tr onclick="verDetalleCliente('cli-002')">
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: var(--space-md);">
-                                            <div class="cliente-avatar">AG</div>
-                                            <div>
-                                                <div style="font-weight: 600;">Dra. Ana García</div>
-                                                <div style="font-size: 0.875rem; color: var(--text-gray);">Pediatra</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><strong>CI: 87654321</strong></td>
-                                    <td>Persona Natural</td>
-                                    <td>
-                                        <div>📞 +591 77789456</div>
-                                        <div style="font-size: 0.875rem; color: var(--text-gray);">ana.garcia@email.com</div>
-                                    </td>
-                                    <td>La Paz</td>
-                                    <td>07/09/2024</td>
-                                    <td><strong>Bs. 3,280.00</strong></td>
-                                    <td><span class="badge badge-activo">Activo</span></td>
-                                    <td>
-                                        <button class="btn btn-info btn-sm" onclick="verDetalleCliente('cli-002')">Ver</button>
-                                        <button class="btn btn-secondary btn-sm" onclick="editarCliente('cli-002')">Editar</button>
-                                    </td>
-                                </tr>
-                                
-                                <tr onclick="verDetalleCliente('cli-003')">
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: var(--space-md);">
-                                            <div class="cliente-avatar">CN</div>
-                                            <div>
-                                                <div style="font-weight: 600;">Clínica Dental Norte</div>
-                                                <div style="font-size: 0.875rem; color: var(--text-gray);">Clínica Especializada</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><strong>NIT: 123456789</strong></td>
-                                    <td>Empresa</td>
-                                    <td>
-                                        <div>📞 +591 2-2345678</div>
-                                        <div style="font-size: 0.875rem; color: var(--text-gray);">info@clinicadentalnorte.com</div>
-                                    </td>
-                                    <td>La Paz</td>
-                                    <td>06/09/2024</td>
-                                    <td><strong>Bs. 15,720.00</strong></td>
-                                    <td><span class="badge badge-vip">VIP</span></td>
-                                    <td>
-                                        <button class="btn btn-info btn-sm" onclick="verDetalleCliente('cli-003')">Ver</button>
-                                        <button class="btn btn-secondary btn-sm" onclick="editarCliente('cli-003')">Editar</button>
-                                    </td>
-                                </tr>
-                                
-                                <tr onclick="verDetalleCliente('cli-004')">
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: var(--space-md);">
-                                            <div class="cliente-avatar">HS</div>
-                                            <div>
-                                                <div style="font-weight: 600;">Hospital San Juan</div>
-                                                <div style="font-size: 0.875rem; color: var(--text-gray);">Centro Médico</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><strong>NIT: 987654321</strong></td>
-                                    <td>Hospital</td>
-                                    <td>
-                                        <div>📞 +591 2-2876543</div>
-                                        <div style="font-size: 0.875rem; color: var(--text-gray);">compras@hospitalsanjuan.com</div>
-                                    </td>
-                                    <td>La Paz</td>
-                                    <td>05/09/2024</td>
-                                    <td><strong>Bs. 24,890.00</strong></td>
-                                    <td><span class="badge badge-vip">VIP</span></td>
-                                    <td>
-                                        <button class="btn btn-info btn-sm" onclick="verDetalleCliente('cli-004')">Ver</button>
-                                        <button class="btn btn-secondary btn-sm" onclick="editarCliente('cli-004')">Editar</button>
-                                    </td>
-                                </tr>
-                                
-                                <tr onclick="verDetalleCliente('cli-005')">
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: var(--space-md);">
-                                            <div class="cliente-avatar">LM</div>
-                                            <div>
-                                                <div style="font-weight: 600;">Dr. Luis Martínez</div>
-                                                <div style="font-size: 0.875rem; color: var(--text-gray);">Cirujano</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><strong>CI: 45678901</strong></td>
-                                    <td>Persona Natural</td>
-                                    <td>
-                                        <div>📞 +591 76543210</div>
-                                        <div style="font-size: 0.875rem; color: var(--text-gray);">luis.martinez@email.com</div>
-                                    </td>
-                                    <td>Cochabamba</td>
-                                    <td>28/08/2024</td>
-                                    <td><strong>Bs. 1,450.00</strong></td>
-                                    <td><span class="badge badge-activo">Activo</span></td>
-                                    <td>
-                                        <button class="btn btn-info btn-sm" onclick="verDetalleCliente('cli-005')">Ver</button>
-                                        <button class="btn btn-secondary btn-sm" onclick="editarCliente('cli-005')">Editar</button>
-                                    </td>
-                                </tr>
-                                
-                                <tr onclick="verDetalleCliente('cli-006')">
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: var(--space-md);">
-                                            <div class="cliente-avatar">MR</div>
-                                            <div>
-                                                <div style="font-weight: 600;">Dra. María Rodríguez</div>
-                                                <div style="font-size: 0.875rem; color: var(--text-gray);">Ginecóloga</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td><strong>CI: 34567890</strong></td>
-                                    <td>Persona Natural</td>
-                                    <td>
-                                        <div>📞 +591 65432109</div>
-                                        <div style="font-size: 0.875rem; color: var(--text-gray);">maria.rodriguez@email.com</div>
-                                    </td>
-                                    <td>Santa Cruz</td>
-                                    <td>15/08/2024</td>
-                                    <td><strong>Bs. 890.00</strong></td>
-                                    <td><span class="badge badge-inactivo">Inactivo</span></td>
-                                    <td>
-                                        <button class="btn btn-info btn-sm" onclick="verDetalleCliente('cli-006')">Ver</button>
-                                        <button class="btn btn-warning btn-sm" onclick="reactivarCliente('cli-006')">Reactivar</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Análisis de Clientes -->
-            <div class="section">
-                <div class="grid grid-3">
-                    <div class="card">
-                        <h3 class="text-h3">Top Clientes VIP</h3>
-                        <div style="margin-top: var(--space-lg);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); padding: var(--space-md); background: var(--bg-secondary); border-radius: var(--radius-md);">
-                                <div style="display: flex; align-items: center; gap: var(--space-sm);">
-                                    <div class="cliente-avatar" style="width: 35px; height: 35px; font-size: 0.875rem;">HS</div>
-                                    <div>
-                                        <div style="font-weight: 600;">Hospital San Juan</div>
-                                        <div style="font-size: 0.75rem; color: var(--text-gray);">24 compras</div>
-                                    </div>
-                                </div>
-                                <div style="text-align: right;">
-                                    <div style="font-weight: 700; color: var(--success);">Bs. 24,890</div>
-                                    <div style="font-size: 0.75rem; color: var(--text-muted);">2024</div>
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); padding: var(--space-md); background: var(--bg-secondary); border-radius: var(--radius-md);">
-                                <div style="display: flex; align-items: center; gap: var(--space-sm);">
-                                    <div class="cliente-avatar" style="width: 35px; height: 35px; font-size: 0.875rem;">CN</div>
-                                    <div>
-                                        <div style="font-weight: 600;">Clínica Dental Norte</div>
-                                        <div style="font-size: 0.75rem; color: var(--text-gray);">18 compras</div>
-                                    </div>
-                                </div>
-                                <div style="text-align: right;">
-                                    <div style="font-weight: 700; color: var(--success);">Bs. 15,720</div>
-                                    <div style="font-size: 0.75rem; color: var(--text-muted);">2024</div>
-                                </div>
-                            </div>
-                            
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); padding: var(--space-md); background: var(--bg-secondary); border-radius: var(--radius-md);">
-                                <div style="display: flex; align-items: center; gap: var(--space-sm);">
-                                    <div class="cliente-avatar" style="width: 35px; height: 35px; font-size: 0.875rem;">CM</div>
-                                    <div>
-                                        <div style="font-weight: 600;">Dr. Carlos Mendoza</div>
-                                        <div style="font-size: 0.75rem; color: var(--text-gray);">12 compras</div>
-                                    </div>
-                                </div>
-                                <div style="text-align: right;">
-                                    <div style="font-weight: 700; color: var(--success);">Bs. 8,450</div>
-                                    <div style="font-size: 0.75rem; color: var(--text-muted);">2024</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <h3 class="text-h3">Distribución por Tipo</h3>
-                        <div style="margin-top: var(--space-lg);">
-                            <div style="margin-bottom: var(--space-md);">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-xs);">
-                                    <span>Personas Naturales</span>
-                                    <span style="font-weight: 600;">68%</span>
-                                </div>
-                                <div style="background: var(--bg-secondary); height: 8px; border-radius: var(--radius-sm);">
-                                    <div style="background: var(--color-blue); height: 100%; width: 68%; border-radius: var(--radius-sm);"></div>
-                                </div>
-                            </div>
-                            
-                            <div style="margin-bottom: var(--space-md);">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-xs);">
-                                    <span>Clínicas/Consultorios</span>
-                                    <span style="font-weight: 600;">22%</span>
-                                </div>
-                                <div style="background: var(--bg-secondary); height: 8px; border-radius: var(--radius-sm);">
-                                    <div style="background: var(--color-purple); height: 100%; width: 22%; border-radius: var(--radius-sm);"></div>
-                                </div>
-                            </div>
-                            
-                            <div style="margin-bottom: var(--space-md);">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-xs);">
-                                    <span>Hospitales</span>
-                                    <span style="font-weight: 600;">10%</span>
-                                </div>
-                                <div style="background: var(--bg-secondary); height: 8px; border-radius: var(--radius-sm);">
-                                    <div style="background: var(--color-green); height: 100%; width: 10%; border-radius: var(--radius-sm);"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <h3 class="text-h3">Oportunidades</h3>
-                        <div style="margin-top: var(--space-lg);">
-                            <div style="padding: var(--space-md); background: rgba(245, 158, 11, 0.1); border-left: 4px solid #dd6b20; border-radius: var(--radius-md); margin-bottom: var(--space-md);">
-                                <div style="font-weight: 600; color: #92400e;">15 Clientes Inactivos</div>
-                                <div style="font-size: 0.875rem; color: #92400e;">Sin compras en 60+ días</div>
-                            </div>
-                            
-                            <div style="padding: var(--space-md); background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3182ce; border-radius: var(--radius-md); margin-bottom: var(--space-md);">
-                                <div style="font-weight: 600; color: #1e3a8a;">8 Nuevos Prospectos</div>
-                                <div style="font-size: 0.875rem; color: #1e3a8a;">Contactos pendientes</div>
-                            </div>
-                            
-                            <div style="padding: var(--space-md); background: rgba(16, 185, 129, 0.1); border-left: 4px solid #38a169; border-radius: var(--radius-md);">
-                                <div style="font-weight: 600; color: #047857;">3 Candidatos VIP</div>
-                                <div style="font-size: 0.875rem; color: #047857;">Alto volumen de compras</div>
-                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -1515,343 +794,134 @@
     <!-- Modal Nuevo/Editar Cliente -->
     <div id="modalCliente" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="cerrarModalCliente()">&times;</span>
-            <h2 class="text-h2" id="tituloModal">Nuevo Cliente</h2>
+            <div class="modal-header">
+                <h2 class="text-h2" id="tituloModal" style="margin: 0;">Nuevo Cliente</h2>
+                <span class="close" onclick="cerrarModalCliente()">&times;</span>
+            </div>
             
             <form id="formCliente">
+                <!-- Información Personal -->
+                <h3 style="color: var(--color-gold-dark); margin-bottom: 1rem;">📋 Información Personal</h3>
                 <div class="grid grid-2">
                     <div class="form-group">
-                        <label class="text-label">Tipo de Cliente</label>
-                        <select class="form-input form-select" id="modal-tipo">
-                            <option value="persona">Persona Natural</option>
-                            <option value="empresa">Empresa</option>
-                            <option value="clinica">Clínica/Hospital</option>
+                        <label class="text-label">Nombre *</label>
+                        <input type="text" class="form-input" id="modal-nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Apellido Paterno *</label>
+                        <input type="text" class="form-input" id="modal-apellido-paterno" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Apellido Materno</label>
+                        <input type="text" class="form-input" id="modal-apellido-materno">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Cédula *</label>
+                        <input type="text" class="form-input" id="modal-cedula" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Celular *</label>
+                        <input type="text" class="form-input" id="modal-celular" maxlength="8" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Email *</label>
+                        <input type="email" class="form-input" id="modal-email" required>
+                    </div>
+                </div>
+
+                <!-- Información Usuario -->
+                <h3 style="color: var(--color-gold-dark); margin: 1.5rem 0 1rem;">🔐 Credenciales</h3>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="text-label">Usuario *</label>
+                        <input type="text" class="form-input" id="modal-usuario" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Contraseña</label>
+                        <input type="password" class="form-input" id="modal-password">
+                        <small style="color: var(--text-gray); font-size: 0.75rem;">Dejar vacío al editar</small>
+                    </div>
+                </div>
+
+                <!-- Información Cliente -->
+                <h3 style="color: var(--color-gold-dark); margin: 1.5rem 0 1rem;">👤 Información del Cliente</h3>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="text-label">Tipo Cliente *</label>
+                        <select class="form-input form-select" id="modal-tipo-cliente" required>
+                            <option value="">Seleccionar...</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Razón Social</label>
+                        <input type="text" class="form-input" id="modal-razon-social">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">NIT</label>
+                        <input type="text" class="form-input" id="modal-nit">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Ciudad</label>
+                        <input type="text" class="form-input" id="modal-ciudad">
                     </div>
                     <div class="form-group">
                         <label class="text-label">Especialidad</label>
-                        <select class="form-input form-select" id="modal-especialidad">
-                            <option value="odontologia">Odontología</option>
-                            <option value="medicina-general">Medicina General</option>
-                            <option value="cirugia">Cirugía</option>
-                            <option value="pediatria">Pediatría</option>
-                            <option value="ginecologia">Ginecología</option>
-                            <option value="otra">Otra</option>
-                        </select>
+                        <input type="text" class="form-input" id="modal-especialidad">
                     </div>
                 </div>
-                
-                <div class="grid grid-2">
-                    <div class="form-group">
-                        <label class="text-label">Nombre Completo / Razón Social</label>
-                        <input type="text" class="form-input" id="modal-nombre" placeholder="Ej: Dr. Juan Pérez" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-label">CI / NIT</label>
-                        <input type="text" class="form-input" id="modal-documento" placeholder="Ej: 12345678" required>
-                    </div>
-                </div>
-                
-                <div class="grid grid-2">
-                    <div class="form-group">
-                        <label class="text-label">Teléfono</label>
-                        <input type="tel" class="form-input" id="modal-telefono" placeholder="+591 70123456" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-label">Email</label>
-                        <input type="email" class="form-input" id="modal-email" placeholder="cliente@email.com">
-                    </div>
-                </div>
-                
-                <div class="grid grid-2">
-                    <div class="form-group">
-                        <label class="text-label">Ciudad</label>
-                        <select class="form-input form-select" id="modal-ciudad">
-                            <option value="la-paz">La Paz</option>
-                            <option value="cochabamba">Cochabamba</option>
-                            <option value="santa-cruz">Santa Cruz</option>
-                            <option value="sucre">Sucre</option>
-                            <option value="tarija">Tarija</option>
-                            <option value="oruro">Oruro</option>
-                            <option value="potosi">Potosí</option>
-                            <option value="beni">Beni</option>
-                            <option value="pando">Pando</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-label">Estado</label>
-                        <select class="form-input form-select" id="modal-estado">
-                            <option value="activo">Activo</option>
-                            <option value="inactivo">Inactivo</option>
-                            <option value="vip">VIP</option>
-                        </select>
-                    </div>
-                </div>
-                
+
                 <div class="form-group">
                     <label class="text-label">Dirección</label>
-                    <input type="text" class="form-input" id="modal-direccion" placeholder="Av. Principal #123, Zona Centro">
+                    <textarea class="form-input" id="modal-direccion" rows="2"></textarea>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="text-label">Observaciones</label>
-                    <textarea class="form-input" id="modal-observaciones" rows="3" placeholder="Notas adicionales sobre el cliente..."></textarea>
+                    <textarea class="form-input" id="modal-observaciones" rows="3"></textarea>
                 </div>
                 
-                <div style="display: flex; gap: var(--space-md); justify-content: flex-end; margin-top: var(--space-xl);">
-                    <button type="button" class="btn btn-secondary" onclick="cerrarModalCliente()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar Cliente</button>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalCliente()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Guardar Cliente
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- JavaScript del Sidebar -->
+    <script src="/static/js/sidebar.js"></script>
+
     <script>
-        // ============ MANEJO DE LOGOS ============
-        function handleLogoError() {
-            // Ocultar imagen y mostrar logo por defecto en el sidebar
-            document.getElementById('sidebarLogo').style.display = 'none';
-            document.getElementById('defaultLogo').style.display = 'flex';
-        }
-        
-        function handleMobileLogoError() {
-            // Reemplazar logo móvil con texto si falla la carga
-            const mobileLogo = document.getElementById('mobileLogo');
-            mobileLogo.src = '';
-            mobileLogo.alt = 'Sistema RoyDent';
-            mobileLogo.style.fontFamily = 'Inter, sans-serif';
-            mobileLogo.style.fontWeight = '700';
-            mobileLogo.style.fontSize = '1.2rem';
-            mobileLogo.style.color = 'var(--color-purple)';
-        }
-        
-        // Verificar si las imágenes se cargaron correctamente al cargar la página
+        // ============ VARIABLES GLOBALES ============
+        let clientes = [];
+        let tiposCliente = [];
+        let clienteEditando = null;
+
+        // ============ CARGAR SIDEBAR ============
         document.addEventListener('DOMContentLoaded', function() {
-            const sidebarLogo = document.getElementById('sidebarLogo');
-            const mobileLogo = document.getElementById('mobileLogo');
-            
-            // Si la imagen del sidebar no se cargó correctamente
-            if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
-                handleLogoError();
-            }
-            
-            // Si la imagen móvil no se cargó correctamente
-            if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
-                handleMobileLogoError();
-            }
-            
-            // También verificar después de un tiempo por si la carga es lenta
-            setTimeout(function() {
-                if (sidebarLogo && (sidebarLogo.complete && sidebarLogo.naturalHeight === 0)) {
-                    handleLogoError();
-                }
-                if (mobileLogo && (mobileLogo.complete && mobileLogo.naturalHeight === 0)) {
-                    handleMobileLogoError();
-                }
-            }, 1000);
-        });  
-        // ============ FUNCIONES DEL SIDEBAR ============
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
+            fetch('/components/sidebar/')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+                    setTimeout(() => {
+                        if (window.initSidebar) window.initSidebar();
+                    }, 100);
+                })
+                .catch(error => console.error('Error al cargar sidebar:', error));
 
-        // Datos de clientes para demostración
-        const clientesData = {
-            'cli-001': {
-                nombre: 'Dr. Carlos Mendoza',
-                documento: 'CI: 12345678',
-                tipo: 'Persona Natural',
-                especialidad: 'Odontología',
-                telefono: '+591 70123456',
-                email: 'carlos.mendoza@email.com',
-                ciudad: 'La Paz',
-                direccion: 'Av. Arce #1234, Sopocachi',
-                ultimaCompra: '08/09/2024',
-                totalCompras: 'Bs. 8,450.00',
-                facturas: 12,
-                estado: 'VIP'
-            }
-        };
+            cargarTiposCliente();
+            cargarClientes();
+            cargarEstadisticas();
 
-        // Función para abrir modal de cliente
-        function abrirModalCliente(clienteId = null) {
-            const modal = document.getElementById('modalCliente');
-            const titulo = document.getElementById('tituloModal');
-            
-            if (clienteId) {
-                titulo.textContent = 'Editar Cliente';
-                const cliente = clientesData[clienteId];
-                if (cliente) {
-                    document.getElementById('modal-nombre').value = cliente.nombre;
-                    document.getElementById('modal-documento').value = cliente.documento.replace('CI: ', '').replace('NIT: ', '');
-                    // Cargar otros campos según sea necesario
-                }
-            } else {
-                titulo.textContent = 'Nuevo Cliente';
-                document.getElementById('formCliente').reset();
-            }
-            
-            modal.style.display = 'block';
-        }
-
-        // Función para cerrar modal
-        function cerrarModalCliente() {
-            document.getElementById('modalCliente').style.display = 'none';
-        }
-
-        // Función para ver detalle del cliente
-        function verDetalleCliente(clienteId) {
-            mostrarNotificacion('Mostrando detalle completo del cliente ' + clienteId + '. Aquí se abriría una vista detallada con historial de compras, productos favoritos y análisis de comportamiento.', 'info');
-        }
-
-        // Función para editar cliente
-        function editarCliente(clienteId) {
-            abrirModalCliente(clienteId);
-        }
-
-        // Función para reactivar cliente
-        function reactivarCliente(clienteId) {
-            if (confirm('¿Deseas reactivar este cliente?')) {
-                mostrarNotificacion('Cliente reactivado exitosamente', 'success');
-            }
-        }
-
-        // Función para exportar clientes
-        function exportarClientes() {
-            mostrarNotificacion('Exportando lista de clientes... El archivo Excel se descargará automáticamente', 'info');
-        }
-
-        // Función para importar clientes
-        function importarClientes() {
-            mostrarNotificacion('Función de importación. Selecciona un archivo Excel con los datos de clientes', 'info');
-        }
-
-        // Función para mostrar notificaciones
-        function mostrarNotificacion(mensaje, tipo) {
-            const notificacion = document.createElement('div');
-            notificacion.style.position = 'fixed';
-            notificacion.style.top = '20px';
-            notificacion.style.right = '20px';
-            notificacion.style.zIndex = '1000';
-            notificacion.style.minWidth = '300px';
-            notificacion.style.boxShadow = 'var(--shadow-lg)';
-            notificacion.style.padding = 'var(--space-md)';
-            notificacion.style.borderRadius = 'var(--radius-lg)';
-            notificacion.style.borderLeft = `4px solid ${tipo === 'success' ? '#38a169' : tipo === 'warning' ? '#dd6b20' : '#3182ce'}`;
-            
-            if (tipo === 'success') {
-                notificacion.style.background = 'rgba(16, 185, 129, 0.1)';
-                notificacion.style.color = '#276749';
-                notificacion.innerHTML = `<strong>Éxito!</strong> ${mensaje}`;
-            } else if (tipo === 'warning') {
-                notificacion.style.background = 'rgba(245, 158, 11, 0.1)';
-                notificacion.style.color = '#9c4221';
-                notificacion.innerHTML = `<strong>Advertencia:</strong> ${mensaje}`;
-            } else {
-                notificacion.style.background = 'rgba(59, 130, 246, 0.1)';
-                notificacion.style.color = '#2c5282';
-                notificacion.innerHTML = `<strong>Info:</strong> ${mensaje}`;
-            }
-            
-            document.body.appendChild(notificacion);
-            
-            setTimeout(() => {
-                notificacion.remove();
-            }, 4000);
-        }
-
-        // Manejar envío del formulario
-        document.getElementById('formCliente').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const nombre = document.getElementById('modal-nombre').value;
-            const documento = document.getElementById('modal-documento').value;
-            
-            if (nombre && documento) {
-                mostrarNotificacion(`Cliente "${nombre}" guardado exitosamente. Documento: ${documento}`, 'success');
-                cerrarModalCliente();
-            }
-        });
-
-        // Filtros en tiempo real
-        document.addEventListener('DOMContentLoaded', function() {
-            const filtros = ['tipo-cliente', 'estado', 'ciudad', 'especialidad', 'busqueda'];
-            
-            filtros.forEach(filtroId => {
-                const elemento = document.getElementById(filtroId);
-                if (elemento) {
-                    elemento.addEventListener('change', filtrarClientes);
-                    elemento.addEventListener('input', filtrarClientes);
-                }
-            });
-        });
-
-        function filtrarClientes() {
-            const busqueda = document.getElementById('busqueda').value.toLowerCase();
-            const tipo = document.getElementById('tipo-cliente').value;
-            const estado = document.getElementById('estado').value;
-            const ciudad = document.getElementById('ciudad').value;
-            const especialidad = document.getElementById('especialidad').value;
-            
-            const filas = document.querySelectorAll('#clientes-table tr');
-            
-            filas.forEach(fila => {
-                const texto = fila.textContent.toLowerCase();
-                let mostrar = true;
-                
-                // Filtro de búsqueda
-                if (busqueda && !texto.includes(busqueda)) {
-                    mostrar = false;
-                }
-                
-                fila.style.display = mostrar ? '' : 'none';
-            });
-        }
-
-        // Cerrar modal al hacer clic fuera
-        window.onclick = function(event) {
-            const modal = document.getElementById('modalCliente');
-            if (event.target === modal) {
-                cerrarModalCliente();
-            }
-        }
-
-        // Navegación por teclado
-        document.addEventListener('keydown', function(e) {
-            // Atajos globales
-            if (e.ctrlKey || e.metaKey) {
-                switch(e.key) {
-                    case 'n':
-                        e.preventDefault();
-                        abrirModalCliente();
-                        break;
-                    case 'f':
-                        e.preventDefault();
-                        document.getElementById('busqueda').focus();
-                        break;
-                }
-            }
-            
-            // Cerrar modal con Escape
-            if (e.key === 'Escape') {
-                const modal = document.getElementById('modalCliente');
-                if (modal.style.display === 'block') {
-                    cerrarModalCliente();
-                }
-            }
-        });
-
-        // Animaciones de entrada
-        document.addEventListener('DOMContentLoaded', function() {
+            // Animaciones de entrada
             const cards = document.querySelectorAll('.card, .stat-card');
             cards.forEach((card, index) => {
                 card.style.opacity = '0';
                 card.style.transform = 'translateY(20px)';
-                
                 setTimeout(() => {
                     card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
                     card.style.opacity = '1';
@@ -1860,8 +930,482 @@
             });
         });
 
-        console.log('Sistema de Gestión de Clientes RoyDent y Mundo Médico iniciado');
-        console.log('Atajos: Ctrl+N (Nuevo cliente), Ctrl+F (Buscar), Escape (Cerrar modal)');
+        // ============ HEADERS ============
+        function getHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            };
+        }
+
+        // ============ CARGAR TIPOS DE CLIENTE ============
+        async function cargarTiposCliente() {
+            try {
+                const response = await fetch('/auth/api/tipos-cliente/', {
+                    headers: getHeaders(),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) throw new Error('Error al cargar tipos');
+
+                const data = await response.json();
+                if (data.success) {
+                    tiposCliente = data.tipos || [];
+                    
+                    // Llenar select del filtro
+                    const filtroTipo = document.getElementById('filtro-tipo');
+                    tiposCliente.forEach(tipo => {
+                        const option = document.createElement('option');
+                        option.value = tipo.codigo;
+                        option.textContent = tipo.nombre_tipo;
+                        filtroTipo.appendChild(option);
+                    });
+
+                    // Llenar select del modal
+                    const modalTipo = document.getElementById('modal-tipo-cliente');
+                    tiposCliente.forEach(tipo => {
+                        const option = document.createElement('option');
+                        option.value = tipo.id;
+                        option.textContent = tipo.nombre_tipo;
+                        modalTipo.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error al cargar tipos:', error);
+            }
+        }
+
+        // ============ CARGAR CLIENTES ============
+        async function cargarClientes(filtros = {}) {
+            try {
+                const params = new URLSearchParams();
+                
+                if (filtros.busqueda && filtros.busqueda.trim()) {
+                    params.append('busqueda', filtros.busqueda.trim());
+                }
+                if (filtros.tipo && filtros.tipo !== 'todos') {
+                    params.append('tipo_cliente', filtros.tipo);
+                }
+                if (filtros.estado && filtros.estado !== 'todos') {
+                    params.append('estado', filtros.estado);
+                }
+                if (filtros.ciudad && filtros.ciudad !== 'todas') {
+                    params.append('ciudad', filtros.ciudad);
+                }
+                if (filtros.es_vip) {
+                    params.append('es_vip', filtros.es_vip);
+                }
+
+                const response = await fetch(`/auth/api/clientes/?${params}`, {
+                    headers: getHeaders(),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) throw new Error('Error al cargar clientes');
+
+                const data = await response.json();
+                if (data.success) {
+                    clientes = data.clientes || [];
+                    renderizarClientes();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al cargar clientes', 'danger');
+            }
+        }
+
+        // ============ RENDERIZAR CLIENTES ============
+        function renderizarClientes() {
+            const tbody = document.getElementById('clientes-table');
+            tbody.innerHTML = '';
+
+            if (clientes.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                            <div style="color: var(--text-gray);">
+                                <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                                <p>No se encontraron clientes</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            clientes.forEach(cliente => {
+                const iniciales = obtenerIniciales(cliente.nombre_completo);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div style="display: flex; align-items: center; gap: var(--space-md);">
+                            <div class="cliente-avatar">${iniciales}</div>
+                            <div>
+                                <div style="font-weight: 600;">${cliente.nombre_completo}</div>
+                                <div style="font-size: 0.875rem; color: var(--text-gray);">${cliente.tipo_cliente_nombre || ''}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${cliente.tipo_cliente_nombre || '-'}</td>
+                    <td>
+                        <div><strong>${cliente.documento || cliente.cedula || '-'}</strong></div>
+                        ${cliente.nit ? `<div style="font-size: 0.875rem; color: var(--text-gray);">NIT: ${cliente.nit}</div>` : ''}
+                    </td>
+                    <td>
+                        <div>📞 ${cliente.telefono || '-'}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-gray);">${cliente.email || '-'}</div>
+                    </td>
+                    <td>${cliente.ciudad || '-'}</td>
+                    <td>
+                        <span class="badge badge-${getBadgeClass(cliente.estado)}">${cliente.estado}</span>
+                        ${cliente.es_vip ? '<span class="badge badge-vip">VIP</span>' : ''}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
+                            <button class="btn btn-info btn-sm" onclick="verCliente(${cliente.id})" title="Ver">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            ${cliente.estado === 'ACTIVO' ? `
+                                <button class="btn btn-secondary btn-sm" onclick="editarCliente(${cliente.id})" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="eliminarCliente(${cliente.id})" title="Desactivar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : `
+                                <button class="btn btn-warning btn-sm" onclick="activarCliente(${cliente.id})" title="Activar">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            `}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ============ CARGAR ESTADÍSTICAS ============
+        async function cargarEstadisticas() {
+            try {
+                const response = await fetch('/auth/api/clientes/estadisticas/', {
+                    headers: getHeaders(),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) return;
+
+                const data = await response.json();
+                if (data.success) {
+                    const stats = data.estadisticas;
+                    document.getElementById('stat-total').textContent = stats.total || 0;
+                    document.getElementById('stat-activos').textContent = stats.activos || 0;
+                    document.getElementById('stat-vip').textContent = stats.vip || 0;
+                    document.getElementById('stat-inactivos').textContent = stats.inactivos || 0;
+                }
+            } catch (error) {
+                console.error('Error al cargar estadísticas:', error);
+            }
+        }
+
+        // ============ FILTROS ============
+        function aplicarFiltros() {
+            const filtros = {
+                busqueda: document.getElementById('busqueda').value,
+                tipo: document.getElementById('filtro-tipo').value,
+                estado: document.getElementById('filtro-estado').value,
+                ciudad: document.getElementById('filtro-ciudad').value,
+                es_vip: document.getElementById('filtro-vip').value
+            };
+            cargarClientes(filtros);
+        }
+
+        // Event listeners
+        document.getElementById('busqueda')?.addEventListener('input', debounce(aplicarFiltros, 500));
+        document.getElementById('filtro-tipo')?.addEventListener('change', aplicarFiltros);
+        document.getElementById('filtro-estado')?.addEventListener('change', aplicarFiltros);
+        document.getElementById('filtro-ciudad')?.addEventListener('change', aplicarFiltros);
+        document.getElementById('filtro-vip')?.addEventListener('change', aplicarFiltros);
+
+        // ============ MODAL ============
+        function abrirModalCliente(clienteId = null) {
+            const modal = document.getElementById('modalCliente');
+            const titulo = document.getElementById('tituloModal');
+            const form = document.getElementById('formCliente');
+            
+            form.reset();
+            clienteEditando = clienteId;
+
+            if (clienteId) {
+                titulo.textContent = 'Editar Cliente';
+                cargarDatosCliente(clienteId);
+                document.getElementById('modal-password').required = false;
+                document.getElementById('modal-usuario').disabled = true;
+            } else {
+                titulo.textContent = 'Nuevo Cliente';
+                document.getElementById('modal-password').required = true;
+                document.getElementById('modal-usuario').disabled = false;
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function cerrarModalCliente() {
+            document.getElementById('modalCliente').style.display = 'none';
+            clienteEditando = null;
+        }
+
+        // ============ CARGAR DATOS CLIENTE ============
+        async function cargarDatosCliente(clienteId) {
+            try {
+                const response = await fetch(`/auth/api/clientes/${clienteId}/`, {
+                    headers: getHeaders(),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) throw new Error('Error al cargar cliente');
+
+                const data = await response.json();
+                const cliente = data.cliente;
+
+                // Llenar formulario
+                document.getElementById('modal-nombre').value = cliente.nombre || '';
+                document.getElementById('modal-apellido-paterno').value = cliente.apellido_paterno || '';
+                document.getElementById('modal-apellido-materno').value = cliente.apellido_materno || '';
+                document.getElementById('modal-cedula').value = cliente.cedula || '';
+                document.getElementById('modal-celular').value = cliente.telefono || '';
+                document.getElementById('modal-email').value = cliente.email || '';
+                document.getElementById('modal-usuario').value = cliente.usuario || '';
+                document.getElementById('modal-tipo-cliente').value = cliente.tipo_cliente || '';
+                document.getElementById('modal-razon-social').value = cliente.razon_social || '';
+                document.getElementById('modal-nit').value = cliente.nit || '';
+                document.getElementById('modal-ciudad').value = cliente.ciudad || '';
+                document.getElementById('modal-especialidad').value = cliente.especialidad || '';
+                document.getElementById('modal-direccion').value = cliente.direccion || '';
+                document.getElementById('modal-observaciones').value = cliente.observaciones || '';
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al cargar datos', 'danger');
+            }
+        }
+
+        // ============ GUARDAR CLIENTE ============
+        document.getElementById('formCliente').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                nombre: document.getElementById('modal-nombre').value,
+                apellido_paterno: document.getElementById('modal-apellido-paterno').value,
+                apellido_materno: document.getElementById('modal-apellido-materno').value,
+                cedula_identidad: document.getElementById('modal-cedula').value,
+                numero_celular: document.getElementById('modal-celular').value,
+                correo: document.getElementById('modal-email').value,
+                tipo_cliente_id: parseInt(document.getElementById('modal-tipo-cliente').value),
+                razon_social: document.getElementById('modal-razon-social').value,
+                nit: document.getElementById('modal-nit').value,
+                ciudad: document.getElementById('modal-ciudad').value,
+                especialidad: document.getElementById('modal-especialidad').value,
+                direccion: document.getElementById('modal-direccion').value,
+                observaciones: document.getElementById('modal-observaciones').value
+            };
+
+            if (clienteEditando) {
+                await actualizarCliente(clienteEditando, formData);
+            } else {
+                formData.nombre_usuario = document.getElementById('modal-usuario').value;
+                formData.password = document.getElementById('modal-password').value;
+                await crearCliente(formData);
+            }
+        });
+
+        // ============ CREAR CLIENTE ============
+        async function crearCliente(formData) {
+            try {
+                const response = await fetch('/auth/api/clientes/crear/', {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    credentials: 'include',
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    mostrarAlerta('Cliente creado exitosamente', 'success');
+                    cerrarModalCliente();
+                    cargarClientes();
+                    cargarEstadisticas();
+                } else {
+                    mostrarAlerta(data.error || 'Error al crear cliente', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error de conexión', 'danger');
+            }
+        }
+
+        // ============ ACTUALIZAR CLIENTE ============
+        async function actualizarCliente(clienteId, formData) {
+            try {
+                const response = await fetch(`/auth/api/clientes/${clienteId}/actualizar/`, {
+                    method: 'PUT',
+                    headers: getHeaders(),
+                    credentials: 'include',
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    mostrarAlerta('Cliente actualizado exitosamente', 'success');
+                    cerrarModalCliente();
+                    cargarClientes();
+                } else {
+                    mostrarAlerta(data.error || 'Error al actualizar', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error de conexión', 'danger');
+            }
+        }
+
+        // ============ ACCIONES ============
+        function editarCliente(id) {
+            abrirModalCliente(id);
+        }
+
+        async function eliminarCliente(id) {
+            if (!confirm('¿Desactivar este cliente?')) return;
+
+            try {
+                const response = await fetch(`/auth/api/clientes/${id}/eliminar/`, {
+                    method: 'DELETE',
+                    headers: getHeaders(),
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    mostrarAlerta('Cliente desactivado', 'success');
+                    cargarClientes();
+                    cargarEstadisticas();
+                } else {
+                    mostrarAlerta(data.error || 'Error', 'danger');
+                }
+            } catch (error) {
+                mostrarAlerta('Error de conexión', 'danger');
+            }
+        }
+
+        async function activarCliente(id) {
+            if (!confirm('¿Activar este cliente?')) return;
+
+            try {
+                const response = await fetch(`/auth/api/clientes/${id}/activar/`, {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    mostrarAlerta('Cliente activado', 'success');
+                    cargarClientes();
+                    cargarEstadisticas();
+                } else {
+                    mostrarAlerta(data.error || 'Error', 'danger');
+                }
+            } catch (error) {
+                mostrarAlerta('Error de conexión', 'danger');
+            }
+        }
+
+        function verCliente(id) {
+            const cliente = clientes.find(c => c.id === id);
+            if (!cliente) return;
+
+            const detalles = `
+                <div style="line-height: 2; padding: 1rem;">
+                    <p><strong>👤 Nombre:</strong> ${cliente.nombre_completo}</p>
+                    <p><strong>📋 Tipo:</strong> ${cliente.tipo_cliente_nombre || '-'}</p>
+                    <p><strong>🆔 Documento:</strong> ${cliente.documento || cliente.cedula || '-'}</p>
+                    ${cliente.nit ? `<p><strong>🏢 NIT:</strong> ${cliente.nit}</p>` : ''}
+                    <p><strong>📞 Teléfono:</strong> ${cliente.telefono || '-'}</p>
+                    <p><strong>📧 Email:</strong> ${cliente.email || '-'}</p>
+                    <p><strong>🏙️ Ciudad:</strong> ${cliente.ciudad || '-'}</p>
+                    <p><strong>📊 Estado:</strong> <span class="badge badge-${getBadgeClass(cliente.estado)}">${cliente.estado}</span></p>
+                    ${cliente.es_vip ? '<p><strong>⭐ VIP:</strong> Sí</p>' : ''}
+                </div>
+            `;
+            
+            mostrarModalDetalles('Detalles del Cliente', detalles);
+        }
+
+        function exportarClientes() {
+            mostrarAlerta('Exportando clientes...', 'info');
+        }
+
+        // ============ UTILIDADES ============
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func(...args), wait);
+            };
+        }
+
+        function obtenerIniciales(nombre) {
+            const partes = nombre.trim().split(' ');
+            return partes.length >= 2 
+                ? (partes[0][0] + partes[1][0]).toUpperCase()
+                : nombre.substring(0, 2).toUpperCase();
+        }
+
+        function getBadgeClass(estado) {
+            const map = {
+                'ACTIVO': 'activo',
+                'INACTIVO': 'inactivo',
+                'VIP': 'vip'
+            };
+            return map[estado] || 'activo';
+        }
+
+        function mostrarAlerta(mensaje, tipo) {
+            const color = tipo === 'success' ? '#00C851' : tipo === 'danger' ? '#EF4444' : '#FFD700';
+            const alerta = document.createElement('div');
+            alerta.innerHTML = `<strong>${tipo === 'success' ? 'Éxito' : tipo === 'danger' ? 'Error' : 'Info'}:</strong> ${mensaje}`;
+            alerta.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 10000;
+                min-width: 300px; padding: 1rem 1.5rem; border-radius: var(--radius-lg);
+                background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+                border-left: 4px solid ${color};
+            `;
+            document.body.appendChild(alerta);
+            setTimeout(() => alerta.remove(), 3000);
+        }
+
+        function mostrarModalDetalles(titulo, contenido) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'display: block; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);';
+            modal.innerHTML = `
+                <div style="background: white; margin: 5% auto; padding: 2rem; border-radius: 20px; width: 90%; max-width: 600px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="color: var(--color-green-dark); margin: 0;">${titulo}</h2>
+                        <span onclick="this.closest('div').parentElement.remove()" style="cursor: pointer; font-size: 28px;">&times;</span>
+                    </div>
+                    ${contenido}
+                    <button onclick="this.closest('div').parentElement.remove()" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Cerrar</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalCliente');
+            if (event.target === modal) cerrarModalCliente();
+        }
     </script>
 </body>
 </html>
