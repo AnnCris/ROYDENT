@@ -321,3 +321,345 @@ class RolPermiso(models.Model):
     
     def __str__(self):
         return f"{self.rol.nombre_rol} - {self.permiso.nombre_permiso}"
+    
+
+# autenticacion/models.py - AGREGAR AL FINAL DEL ARCHIVO EXISTENTE
+
+"""
+Modelos para Clientes y Proveedores
+Los clientes usan Persona + Usuario con rol CLIENTE
+Los proveedores son entidades independientes sin acceso al sistema
+"""
+
+class TipoCliente(models.Model):
+    """
+    Tipos predefinidos de clientes según su profesión/ocupación
+    """
+    TIPOS_PREDEFINIDOS = [
+        ('ODONTOLOGO', 'Odontólogo'),
+        ('MEDICO', 'Médico'),
+        ('EST_ODONTOLOGIA', 'Estudiante Odontología'),
+        ('EST_MEDICINA', 'Estudiante Medicina'),
+        ('EST_ENFERMERIA', 'Estudiante Enfermería'),
+        ('EST_VETERINARIA', 'Estudiante Veterinaria'),
+        ('ENFERMERO', 'Enfermero/a'),
+        ('VETERINARIO', 'Veterinario/a'),
+        ('LAB_DENTAL', 'Laboratorio Dental'),
+    ]
+    
+    codigo = models.CharField(
+        max_length=50,
+        choices=TIPOS_PREDEFINIDOS,
+        unique=True,
+        verbose_name="Código"
+    )
+    nombre_tipo = models.CharField(max_length=100, verbose_name="Nombre del Tipo")
+    descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
+    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
+    
+    class Meta:
+        verbose_name = "Tipo de Cliente"
+        verbose_name_plural = "Tipos de Cliente"
+        db_table = "tipo_cliente"
+        ordering = ['nombre_tipo']
+    
+    def __str__(self):
+        return self.nombre_tipo
+
+
+class Cliente(models.Model):
+    """
+    Cliente del sistema - Extiende el modelo Usuario con rol CLIENTE
+    Los clientes tienen acceso limitado al catálogo de productos
+    """
+    ESTADO_CHOICES = [
+        ('ACTIVO', 'Activo'),
+        ('INACTIVO', 'Inactivo'),
+        ('VIP', 'VIP'),
+        ('SUSPENDIDO', 'Suspendido'),
+    ]
+    
+    # Relación uno a uno con Usuario (que ya tiene Persona)
+    usuario = models.OneToOneField(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='cliente',
+        verbose_name="Usuario"
+    )
+    
+    # Información específica del cliente
+    tipo_cliente = models.ForeignKey(
+        TipoCliente,
+        on_delete=models.PROTECT,
+        related_name='clientes',
+        verbose_name="Tipo de Cliente"
+    )
+    
+    razon_social = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name="Razón Social",
+        help_text="Para clínicas, laboratorios o empresas"
+    )
+    
+    nit = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        unique=True,
+        verbose_name="NIT",
+        help_text="Para facturación"
+    )
+    
+    ciudad = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="Ciudad"
+    )
+    
+    direccion = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Dirección"
+    )
+    
+    especialidad = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name="Especialidad"
+    )
+    
+    estado = models.CharField(
+        max_length=20,
+        choices=ESTADO_CHOICES,
+        default='ACTIVO',
+        verbose_name="Estado"
+    )
+    
+    es_vip = models.BooleanField(
+        default=False,
+        verbose_name="Cliente VIP"
+    )
+    
+    limite_credito = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00,
+        verbose_name="Límite de Crédito (Bs.)"
+    )
+    
+    descuento_especial = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0.00,
+        verbose_name="Descuento Especial (%)",
+        help_text="Porcentaje de descuento adicional"
+    )
+    
+    observaciones = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Observaciones"
+    )
+    
+    fecha_registro = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Fecha de Registro"
+    )
+    
+    fecha_actualizacion = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Fecha de Actualización"
+    )
+    
+    class Meta:
+        verbose_name = "Cliente"
+        verbose_name_plural = "Clientes"
+        db_table = "cliente"
+        ordering = ['-fecha_registro']
+    
+    def __str__(self):
+        if self.razon_social:
+            return f"{self.razon_social} - {self.usuario.persona.get_nombre_completo()}"
+        return self.usuario.persona.get_nombre_completo()
+    
+    def get_nombre_completo(self):
+        """Retorna el nombre completo o razón social"""
+        if self.razon_social:
+            return self.razon_social
+        return self.usuario.persona.get_nombre_completo()
+    
+    def get_documento(self):
+        """Retorna NIT o CI según corresponda"""
+        if self.nit:
+            return f"NIT: {self.nit}"
+        return f"CI: {self.usuario.persona.cedula_identidad}"
+    
+    def total_compras(self):
+        """Calcula el total de compras del cliente"""
+        # Placeholder - implementar cuando tengamos el módulo de ventas
+        return 0.00
+    
+    def puede_comprar(self):
+        """Verifica si el cliente puede realizar compras"""
+        return self.estado in ['ACTIVO', 'VIP'] and self.usuario.is_active
+
+
+class Proveedor(models.Model):
+    """
+    Proveedor de productos médicos y odontológicos
+    Los proveedores NO tienen acceso al sistema
+    """
+    TIPO_PROVEEDOR = [
+        ('DISTRIBUIDOR', 'Distribuidor'),
+        ('FABRICANTE', 'Fabricante'),
+        ('IMPORTADOR', 'Importador'),
+        ('MAYORISTA', 'Mayorista'),
+        ('MINORISTA', 'Minorista'),
+    ]
+    
+    ESTADO_CHOICES = [
+        ('ACTIVO', 'Activo'),
+        ('INACTIVO', 'Inactivo'),
+        ('PREMIUM', 'Premium'),
+        ('SUSPENDIDO', 'Suspendido'),
+    ]
+    
+    # Información básica
+    nombre = models.CharField(
+        max_length=200,
+        verbose_name="Nombre / Razón Social"
+    )
+    
+    nit = models.CharField(
+        max_length=20,
+        unique=True,
+        verbose_name="NIT"
+    )
+    
+    tipo_proveedor = models.CharField(
+        max_length=20,
+        choices=TIPO_PROVEEDOR,
+        default='DISTRIBUIDOR',
+        verbose_name="Tipo de Proveedor"
+    )
+    
+    # Contacto
+    telefono = models.CharField(
+        max_length=20,
+        verbose_name="Teléfono"
+    )
+    
+    email = models.EmailField(
+        verbose_name="Email"
+    )
+    
+    pais = models.CharField(
+        max_length=100,
+        default='Bolivia',
+        verbose_name="País"
+    )
+    
+    ciudad = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="Ciudad"
+    )
+    
+    direccion = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Dirección"
+    )
+    
+    # Persona de contacto
+    persona_contacto = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name="Persona de Contacto"
+    )
+    
+    cargo_contacto = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="Cargo"
+    )
+    
+    # Condiciones comerciales
+    condiciones_pago = models.CharField(
+        max_length=100,
+        default='Contado',
+        verbose_name="Condiciones de Pago"
+    )
+    
+    dias_credito = models.IntegerField(
+        default=0,
+        verbose_name="Días de Crédito"
+    )
+    
+    calificacion = models.DecimalField(
+        max_digits=3,
+        decimal_places=1,
+        default=0.0,
+        verbose_name="Calificación (0-5)",
+        help_text="Calificación del proveedor"
+    )
+    
+    # Estado y control
+    estado = models.CharField(
+        max_length=20,
+        choices=ESTADO_CHOICES,
+        default='ACTIVO',
+        verbose_name="Estado"
+    )
+    
+    es_premium = models.BooleanField(
+        default=False,
+        verbose_name="Proveedor Premium"
+    )
+    
+    observaciones = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Observaciones"
+    )
+    
+    fecha_registro = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Fecha de Registro"
+    )
+    
+    fecha_actualizacion = models.DateTimeField(
+        auto_now=True,
+        verbose_name="Fecha de Actualización"
+    )
+    
+    class Meta:
+        verbose_name = "Proveedor"
+        verbose_name_plural = "Proveedores"
+        db_table = "proveedor"
+        ordering = ['nombre']
+    
+    def __str__(self):
+        return f"{self.nombre} - {self.nit}"
+    
+    def total_compras(self):
+        """Calcula el total de compras realizadas a este proveedor"""
+        # Placeholder - implementar cuando tengamos el módulo de compras
+        return 0.00
+    
+    def promedio_tiempo_entrega(self):
+        """Calcula el promedio de días de entrega"""
+        # Placeholder - implementar cuando tengamos el módulo de compras
+        return 0
+    
+    def productos_suministrados(self):
+        """Cantidad de productos que suministra este proveedor"""
+        # Placeholder - implementar cuando tengamos el módulo de productos
+        return 0

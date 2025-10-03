@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
-from .models import Persona, Usuario, Rol, UsuarioRol, Permiso, RolPermiso
+from .models import Cliente, Persona, Proveedor, TipoCliente, Usuario, Rol, UsuarioRol, Permiso, RolPermiso
 
 
 # ============= FORMULARIOS PERSONALIZADOS =============
@@ -197,3 +197,192 @@ class RolPermisoAdmin(admin.ModelAdmin):
         }),
     )
     readonly_fields = ('fecha_asignacion',)
+
+# autenticacion/admin.py - AGREGAR AL FINAL DEL ARCHIVO EXISTENTE
+
+"""
+Admin para Clientes y Proveedores
+"""
+
+# ============= TIPO DE CLIENTE =============
+
+@admin.register(TipoCliente)
+class TipoClienteAdmin(admin.ModelAdmin):
+    list_display = ('nombre_tipo', 'codigo', 'fecha_creacion')
+    list_filter = ('codigo',)
+    search_fields = ('nombre_tipo', 'codigo', 'descripcion')
+    ordering = ('nombre_tipo',)
+    readonly_fields = ('fecha_creacion',)
+    
+    fieldsets = (
+        ('Información del Tipo', {
+            'fields': ('codigo', 'nombre_tipo', 'descripcion')
+        }),
+        ('Fechas', {
+            'fields': ('fecha_creacion',),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+# ============= CLIENTE =============
+
+@admin.register(Cliente)
+class ClienteAdmin(admin.ModelAdmin):
+    list_display = (
+        'get_nombre_completo',
+        'tipo_cliente',
+        'ciudad',
+        'estado',
+        'es_vip',
+        'fecha_registro'
+    )
+    
+    list_filter = (
+        'estado',
+        'es_vip',
+        'tipo_cliente',
+        'ciudad',
+        'fecha_registro'
+    )
+    
+    search_fields = (
+        'usuario__persona__nombre',
+        'usuario__persona__apellido_paterno',
+        'usuario__persona__apellido_materno',
+        'usuario__persona__cedula_identidad',
+        'razon_social',
+        'nit',
+        'usuario__persona__correo'
+    )
+    
+    readonly_fields = ('fecha_registro', 'fecha_actualizacion')
+    
+    autocomplete_fields = ['usuario', 'tipo_cliente']
+    
+    fieldsets = (
+        ('Usuario Asociado', {
+            'fields': ('usuario',)
+        }),
+        ('Tipo de Cliente', {
+            'fields': ('tipo_cliente', 'especialidad')
+        }),
+        ('Información Comercial', {
+            'fields': ('razon_social', 'nit')
+        }),
+        ('Ubicación', {
+            'fields': ('ciudad', 'direccion')
+        }),
+        ('Estado y Beneficios', {
+            'fields': (
+                'estado',
+                'es_vip',
+                'limite_credito',
+                'descuento_especial'
+            )
+        }),
+        ('Observaciones', {
+            'fields': ('observaciones',)
+        }),
+        ('Fechas', {
+            'fields': ('fecha_registro', 'fecha_actualizacion'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_nombre_completo(self, obj):
+        return obj.get_nombre_completo()
+    get_nombre_completo.short_description = 'Cliente'
+    get_nombre_completo.admin_order_field = 'usuario__persona__nombre'
+
+
+# ============= PROVEEDOR =============
+
+@admin.register(Proveedor)
+class ProveedorAdmin(admin.ModelAdmin):
+    list_display = (
+        'nombre',
+        'nit',
+        'tipo_proveedor',
+        'pais',
+        'ciudad',
+        'telefono',
+        'calificacion',
+        'estado',
+        'es_premium',
+        'fecha_registro'
+    )
+    
+    list_filter = (
+        'estado',
+        'es_premium',
+        'tipo_proveedor',
+        'pais',
+        'ciudad',
+        'fecha_registro'
+    )
+    
+    search_fields = (
+        'nombre',
+        'nit',
+        'email',
+        'telefono',
+        'persona_contacto'
+    )
+    
+    readonly_fields = ('fecha_registro', 'fecha_actualizacion')
+    
+    ordering = ('nombre',)
+    
+    fieldsets = (
+        ('Información Básica', {
+            'fields': ('nombre', 'nit', 'tipo_proveedor')
+        }),
+        ('Contacto', {
+            'fields': (
+                'telefono',
+                'email',
+                'persona_contacto',
+                'cargo_contacto'
+            )
+        }),
+        ('Ubicación', {
+            'fields': ('pais', 'ciudad', 'direccion')
+        }),
+        ('Condiciones Comerciales', {
+            'fields': (
+                'condiciones_pago',
+                'dias_credito',
+                'calificacion'
+            )
+        }),
+        ('Estado', {
+            'fields': ('estado', 'es_premium')
+        }),
+        ('Observaciones', {
+            'fields': ('observaciones',),
+            'classes': ('collapse',)
+        }),
+        ('Fechas', {
+            'fields': ('fecha_registro', 'fecha_actualizacion'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    # Acciones personalizadas
+    actions = ['marcar_como_premium', 'marcar_como_activo', 'marcar_como_inactivo']
+    
+    def marcar_como_premium(self, request, queryset):
+        queryset.update(es_premium=True, estado='PREMIUM')
+        self.message_user(request, f"{queryset.count()} proveedores marcados como Premium")
+    marcar_como_premium.short_description = "Marcar como Premium"
+    
+    def marcar_como_activo(self, request, queryset):
+        queryset.update(estado='ACTIVO')
+        self.message_user(request, f"{queryset.count()} proveedores activados")
+    marcar_como_activo.short_description = "Activar proveedores"
+    
+    def marcar_como_inactivo(self, request, queryset):
+        queryset.update(estado='INACTIVO')
+        self.message_user(request, f"{queryset.count()} proveedores desactivados")
+    marcar_como_inactivo.short_description = "Desactivar proveedores"

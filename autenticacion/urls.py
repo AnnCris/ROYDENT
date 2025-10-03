@@ -47,4 +47,27 @@ urlpatterns = [
     # Utilidades
     path('api/roles/', views.RolesUsuarioAPIView.as_view(), name='api_roles'),
     path('api/estadisticas/', views.EstadisticasAPIView.as_view(), name='api_estadisticas'),
+
+    # autenticacion/urls.py - AGREGAR AL FINAL DEL ARCHIVO EXISTENTE
+
+    # ============ TIPOS DE CLIENTE ============
+    path('api/tipos-cliente/', views.listar_tipos_cliente, name='api_tipos_cliente'),
+
+    # ============ CLIENTES ============
+    path('api/clientes/', views.listar_clientes, name='api_listar_clientes'),
+    path('api/clientes/<int:cliente_id>/', views.obtener_cliente, name='api_obtener_cliente'),
+    path('api/clientes/crear/', views.crear_cliente, name='api_crear_cliente'),
+    path('api/clientes/<int:cliente_id>/actualizar/', views.actualizar_cliente, name='api_actualizar_cliente'),
+    path('api/clientes/<int:cliente_id>/eliminar/', views.eliminar_cliente, name='api_eliminar_cliente'),
+    path('api/clientes/<int:cliente_id>/activar/', views.activar_cliente, name='api_activar_cliente'),
+    path('api/clientes/estadisticas/', views.estadisticas_clientes, name='api_estadisticas_clientes'),
+
+    # ============ PROVEEDORES ============
+    path('api/proveedores/', views.listar_proveedores, name='api_listar_proveedores'),
+    path('api/proveedores/<int:proveedor_id>/', views.obtener_proveedor, name='api_obtener_proveedor'),
+    path('api/proveedores/crear/', views.crear_proveedor, name='api_crear_proveedor'),
+    path('api/proveedores/<int:proveedor_id>/actualizar/', views.actualizar_proveedor, name='api_actualizar_proveedor'),
+    path('api/proveedores/<int:proveedor_id>/eliminar/', views.eliminar_proveedor, name='api_eliminar_proveedor'),
+    path('api/proveedores/<int:proveedor_id>/activar/', views.activar_proveedor, name='api_activar_proveedor'),
+    path('api/proveedores/estadisticas/', views.estadisticas_proveedores, name='api_estadisticas_proveedores'),
 ]

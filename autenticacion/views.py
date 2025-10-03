@@ -22,6 +22,8 @@ from django.views.decorators.http import require_http_methods
 from rest_framework.decorators import api_view
 from django.db.models import Q
 
+from autenticacion import models
+
 # Vistas web tradicionales
 def logout_view(request):
     """Vista para cerrar sesión"""
@@ -895,3 +897,457 @@ def matriz_permisos_roles(request):
             'success': False,
             'error': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+# autenticacion/views.py - AGREGAR AL FINAL DEL ARCHIVO EXISTENTE
+
+"""
+Views para Clientes y Proveedores
+"""
+from autenticacion.models import Cliente, Proveedor, TipoCliente
+from autenticacion.serializers import (
+    ClienteSerializer,
+    ClienteCreateSerializer,
+    ProveedorSerializer,
+    TipoClienteSerializer
+)
+
+# ============ TIPOS DE CLIENTE ============
+
+@api_view(['GET'])
+def listar_tipos_cliente(request):
+    """API para listar tipos de cliente"""
+    tipos = TipoCliente.objects.all().order_by('nombre_tipo')
+    serializer = TipoClienteSerializer(tipos, many=True)
+    
+    return Response({
+        'success': True,
+        'count': len(serializer.data),
+        'tipos': serializer.data
+    })
+
+
+# ============ CLIENTES - CRUD ============
+
+@api_view(['GET'])
+def listar_clientes(request):
+    """API para listar clientes con filtros"""
+    tipo_cliente = request.GET.get('tipo_cliente', '').strip()
+    estado = request.GET.get('estado', '').strip()
+    ciudad = request.GET.get('ciudad', '').strip()
+    es_vip = request.GET.get('es_vip', '').strip()
+    busqueda = request.GET.get('busqueda', '').strip()
+    
+    # Base query
+    clientes = Cliente.objects.select_related(
+        'usuario__persona',
+        'tipo_cliente'
+    ).all()
+    
+    # Aplicar filtros
+    if tipo_cliente and tipo_cliente != 'todos':
+        clientes = clientes.filter(tipo_cliente__codigo=tipo_cliente)
+    
+    if estado and estado != 'todos':
+        clientes = clientes.filter(estado=estado.upper())
+    
+    if ciudad and ciudad != 'todas':
+        clientes = clientes.filter(ciudad__icontains=ciudad)
+    
+    if es_vip == 'true':
+        clientes = clientes.filter(es_vip=True)
+    
+    # Búsqueda por texto
+    if busqueda:
+        clientes = clientes.filter(
+            Q(usuario__persona__nombre__icontains=busqueda) |
+            Q(usuario__persona__apellido_paterno__icontains=busqueda) |
+            Q(usuario__persona__apellido_materno__icontains=busqueda) |
+            Q(usuario__persona__cedula_identidad__icontains=busqueda) |
+            Q(usuario__persona__correo__icontains=busqueda) |
+            Q(razon_social__icontains=busqueda) |
+            Q(nit__icontains=busqueda)
+        )
+    
+    # Ordenar por fecha de registro descendente
+    clientes = clientes.order_by('-fecha_registro')
+    
+    serializer = ClienteSerializer(clientes, many=True)
+    
+    return Response({
+        'success': True,
+        'count': len(serializer.data),
+        'clientes': serializer.data
+    })
+
+
+@api_view(['GET'])
+def obtener_cliente(request, cliente_id):
+    """API para obtener un cliente específico"""
+    try:
+        cliente = Cliente.objects.select_related(
+            'usuario__persona',
+            'tipo_cliente'
+        ).get(id=cliente_id)
+        
+        serializer = ClienteSerializer(cliente)
+        
+        return Response({
+            'success': True,
+            'cliente': serializer.data
+        })
+        
+    except Cliente.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Cliente no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+def crear_cliente(request):
+    """API para crear un nuevo cliente (con usuario y persona)"""
+    serializer = ClienteCreateSerializer(data=request.data)
+    
+    if serializer.is_valid():
+        try:
+            cliente = serializer.save()
+            
+            # Serializar el cliente creado
+            cliente_serializer = ClienteSerializer(cliente)
+            
+            return Response({
+                'success': True,
+                'message': 'Cliente creado exitosamente',
+                'cliente': cliente_serializer.data
+            }, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': f'Error al crear cliente: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    return Response({
+        'success': False,
+        'error': 'Datos inválidos',
+        'detalles': serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+def actualizar_cliente(request, cliente_id):
+    """API para actualizar un cliente existente"""
+    try:
+        cliente = Cliente.objects.get(id=cliente_id)
+        
+        # Actualizar solo campos de Cliente
+        campos_permitidos = [
+            'razon_social', 'nit', 'ciudad', 'direccion',
+            'especialidad', 'estado', 'es_vip',
+            'limite_credito', 'descuento_especial', 'observaciones'
+        ]
+        
+        for campo in campos_permitidos:
+            if campo in request.data:
+                setattr(cliente, campo, request.data[campo])
+        
+        # Actualizar tipo_cliente si se proporciona
+        if 'tipo_cliente_id' in request.data:
+            try:
+                tipo_cliente = TipoCliente.objects.get(id=request.data['tipo_cliente_id'])
+                cliente.tipo_cliente = tipo_cliente
+            except TipoCliente.DoesNotExist:
+                return Response({
+                    'success': False,
+                    'error': 'Tipo de cliente no válido'
+                }, status=status.HTTP_400_BAD_REQUEST)
+        
+        cliente.save()
+        
+        serializer = ClienteSerializer(cliente)
+        
+        return Response({
+            'success': True,
+            'message': 'Cliente actualizado exitosamente',
+            'cliente': serializer.data
+        })
+        
+    except Cliente.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Cliente no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': f'Error: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['DELETE'])
+def eliminar_cliente(request, cliente_id):
+    """API para desactivar un cliente"""
+    try:
+        cliente = Cliente.objects.get(id=cliente_id)
+        
+        # Desactivar cliente y usuario asociado
+        cliente.estado = 'INACTIVO'
+        cliente.save()
+        
+        cliente.usuario.is_active = False
+        cliente.usuario.save()
+        
+        return Response({
+            'success': True,
+            'message': 'Cliente desactivado exitosamente'
+        })
+        
+    except Cliente.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Cliente no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+def activar_cliente(request, cliente_id):
+    """API para activar un cliente"""
+    try:
+        cliente = Cliente.objects.get(id=cliente_id)
+        
+        # Activar cliente y usuario asociado
+        cliente.estado = 'ACTIVO'
+        cliente.save()
+        
+        cliente.usuario.is_active = True
+        cliente.usuario.save()
+        
+        return Response({
+            'success': True,
+            'message': 'Cliente activado exitosamente'
+        })
+        
+    except Cliente.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Cliente no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+def estadisticas_clientes(request):
+    """API para estadísticas de clientes"""
+    stats = {
+        'total': Cliente.objects.count(),
+        'activos': Cliente.objects.filter(estado='ACTIVO').count(),
+        'inactivos': Cliente.objects.filter(estado='INACTIVO').count(),
+        'vip': Cliente.objects.filter(es_vip=True).count(),
+        'por_tipo': {}
+    }
+    
+    # Estadísticas por tipo de cliente
+    for tipo in TipoCliente.objects.all():
+        count = Cliente.objects.filter(tipo_cliente=tipo).count()
+        stats['por_tipo'][tipo.nombre_tipo] = count
+    
+    return Response({
+        'success': True,
+        'estadisticas': stats
+    })
+
+
+# ============ PROVEEDORES - CRUD ============
+
+@api_view(['GET'])
+def listar_proveedores(request):
+    """API para listar proveedores con filtros"""
+    tipo_proveedor = request.GET.get('tipo', '').strip()
+    estado = request.GET.get('estado', '').strip()
+    pais = request.GET.get('pais', '').strip()
+    es_premium = request.GET.get('es_premium', '').strip()
+    busqueda = request.GET.get('busqueda', '').strip()
+    
+    # Base query
+    proveedores = Proveedor.objects.all()
+    
+    # Aplicar filtros
+    if tipo_proveedor and tipo_proveedor != 'todos':
+        proveedores = proveedores.filter(tipo_proveedor=tipo_proveedor.upper())
+    
+    if estado and estado != 'todos':
+        proveedores = proveedores.filter(estado=estado.upper())
+    
+    if pais and pais != 'todos':
+        proveedores = proveedores.filter(pais__icontains=pais)
+    
+    if es_premium == 'true':
+        proveedores = proveedores.filter(es_premium=True)
+    
+    # Búsqueda por texto
+    if busqueda:
+        proveedores = proveedores.filter(
+            Q(nombre__icontains=busqueda) |
+            Q(nit__icontains=busqueda) |
+            Q(email__icontains=busqueda) |
+            Q(telefono__icontains=busqueda) |
+            Q(persona_contacto__icontains=busqueda)
+        )
+    
+    # Ordenar por nombre
+    proveedores = proveedores.order_by('nombre')
+    
+    serializer = ProveedorSerializer(proveedores, many=True)
+    
+    return Response({
+        'success': True,
+        'count': len(serializer.data),
+        'proveedores': serializer.data
+    })
+
+
+@api_view(['GET'])
+def obtener_proveedor(request, proveedor_id):
+    """API para obtener un proveedor específico"""
+    try:
+        proveedor = Proveedor.objects.get(id=proveedor_id)
+        serializer = ProveedorSerializer(proveedor)
+        
+        return Response({
+            'success': True,
+            'proveedor': serializer.data
+        })
+        
+    except Proveedor.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Proveedor no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+def crear_proveedor(request):
+    """API para crear un nuevo proveedor"""
+    serializer = ProveedorSerializer(data=request.data)
+    
+    if serializer.is_valid():
+        try:
+            proveedor = serializer.save()
+            
+            return Response({
+                'success': True,
+                'message': 'Proveedor creado exitosamente',
+                'proveedor': ProveedorSerializer(proveedor).data
+            }, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': f'Error al crear proveedor: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    return Response({
+        'success': False,
+        'error': 'Datos inválidos',
+        'detalles': serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+def actualizar_proveedor(request, proveedor_id):
+    """API para actualizar un proveedor"""
+    try:
+        proveedor = Proveedor.objects.get(id=proveedor_id)
+        serializer = ProveedorSerializer(proveedor, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            
+            return Response({
+                'success': True,
+                'message': 'Proveedor actualizado exitosamente',
+                'proveedor': serializer.data
+            })
+        
+        return Response({
+            'success': False,
+            'error': 'Datos inválidos',
+            'detalles': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+        
+    except Proveedor.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Proveedor no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['DELETE'])
+def eliminar_proveedor(request, proveedor_id):
+    """API para desactivar un proveedor"""
+    try:
+        proveedor = Proveedor.objects.get(id=proveedor_id)
+        proveedor.estado = 'INACTIVO'
+        proveedor.save()
+        
+        return Response({
+            'success': True,
+            'message': 'Proveedor desactivado exitosamente'
+        })
+        
+    except Proveedor.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Proveedor no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+def activar_proveedor(request, proveedor_id):
+    """API para activar un proveedor"""
+    try:
+        proveedor = Proveedor.objects.get(id=proveedor_id)
+        proveedor.estado = 'ACTIVO'
+        proveedor.save()
+        
+        return Response({
+            'success': True,
+            'message': 'Proveedor activado exitosamente'
+        })
+        
+    except Proveedor.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Proveedor no encontrado'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+def estadisticas_proveedores(request):
+    """API para estadísticas de proveedores"""
+    stats = {
+        'total': Proveedor.objects.count(),
+        'activos': Proveedor.objects.filter(estado='ACTIVO').count(),
+        'inactivos': Proveedor.objects.filter(estado='INACTIVO').count(),
+        'premium': Proveedor.objects.filter(es_premium=True).count(),
+        'por_tipo': {},
+        'por_pais': {}
+    }
+    
+    # Estadísticas por tipo
+    for tipo_code, tipo_name in Proveedor.TIPO_PROVEEDOR:
+        count = Proveedor.objects.filter(tipo_proveedor=tipo_code).count()
+        stats['por_tipo'][tipo_name] = count
+    
+    # Estadísticas por país (top 5)
+    paises = Proveedor.objects.values('pais').annotate(
+        count=models.Count('id')
+    ).order_by('-count')[:5]
+    
+    for pais in paises:
+        stats['por_pais'][pais['pais']] = pais['count']
+    
+    return Response({
+        'success': True,
+        'estadisticas': stats
+    })
