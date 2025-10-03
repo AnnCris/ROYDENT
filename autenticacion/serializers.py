@@ -504,15 +504,22 @@ class TipoClienteSerializer(serializers.ModelSerializer):
 
 
 class ClienteSerializer(serializers.ModelSerializer):
-    """Serializer para clientes"""
+    """Serializer para clientes con datos completos de Persona"""
     
-    # Campos anidados de solo lectura
+    # Datos de Persona desde Usuario->Persona
+    nombre = serializers.CharField(source='usuario.persona.nombre', read_only=True)
+    apellido_paterno = serializers.CharField(source='usuario.persona.apellido_paterno', read_only=True)
+    apellido_materno = serializers.CharField(source='usuario.persona.apellido_materno', read_only=True)
+    cedula = serializers.CharField(source='usuario.persona.cedula_identidad', read_only=True)
+    telefono = serializers.CharField(source='usuario.persona.numero_celular', read_only=True)
+    email = serializers.EmailField(source='usuario.persona.correo', read_only=True)
+    
+    # Datos adicionales
+    tipo_cliente_nombre = serializers.CharField(source='tipo_cliente.nombre_tipo', read_only=True)
+    tipo_cliente_codigo = serializers.CharField(source='tipo_cliente.codigo', read_only=True)
     nombre_completo = serializers.CharField(source='get_nombre_completo', read_only=True)
     documento = serializers.CharField(source='get_documento', read_only=True)
-    tipo_cliente_nombre = serializers.CharField(source='tipo_cliente.nombre_tipo', read_only=True)
-    email = serializers.EmailField(source='usuario.persona.correo', read_only=True)
-    telefono = serializers.CharField(source='usuario.persona.numero_celular', read_only=True)
-    cedula = serializers.CharField(source='usuario.persona.cedula_identidad', read_only=True)
+    nombre_usuario = serializers.CharField(source='usuario.nombre_usuario', read_only=True)
     
     class Meta:
         model = Cliente
@@ -521,60 +528,25 @@ class ClienteSerializer(serializers.ModelSerializer):
             'usuario',
             'tipo_cliente',
             'tipo_cliente_nombre',
-            'razon_social',
-            'nit',
-            'ciudad',
-            'direccion',
-            'especialidad',
-            'estado',
-            'es_vip',
-            'limite_credito',
-            'descuento_especial',
-            'observaciones',
-            'fecha_registro',
-            'fecha_actualizacion',
-            # Campos calculados
-            'nombre_completo',
-            'documento',
-            'email',
-            'telefono',
-            'cedula',
-        ]
-        read_only_fields = ['id', 'fecha_registro', 'fecha_actualizacion']
-
-
-class ClienteSerializer(serializers.ModelSerializer):
-    """Serializer para clientes"""
-    
-    # Campos anidados de solo lectura desde Usuario->Persona
-    nombre_completo = serializers.CharField(source='get_nombre_completo', read_only=True)
-    documento = serializers.CharField(source='get_documento', read_only=True)
-    tipo_cliente_nombre = serializers.CharField(source='tipo_cliente.nombre_tipo', read_only=True)
-    email = serializers.EmailField(source='usuario.persona.correo', read_only=True)
-    telefono = serializers.CharField(source='usuario.persona.numero_celular', read_only=True)
-    cedula = serializers.CharField(source='usuario.persona.cedula_identidad', read_only=True)
-    
-    class Meta:
-        model = Cliente
-        fields = [
-            'id',
-            'usuario',
-            'tipo_cliente',
-            'tipo_cliente_nombre',
+            'tipo_cliente_codigo',
             'razon_social',
             'nit',
             'estado',
             'fecha_registro',
             'fecha_actualizacion',
+            # Datos de Persona
+            'nombre',
+            'apellido_paterno',
+            'apellido_materno',
+            'cedula',
+            'telefono',
+            'email',
             # Campos calculados
             'nombre_completo',
             'documento',
-            'email',
-            'telefono',
-            'cedula',
+            'nombre_usuario',
         ]
         read_only_fields = ['id', 'fecha_registro', 'fecha_actualizacion']
-
 
 class ClienteCreateSerializer(serializers.Serializer):
     """Serializer para crear un cliente nuevo (con usuario y persona)"""

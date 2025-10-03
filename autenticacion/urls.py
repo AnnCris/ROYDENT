@@ -61,7 +61,8 @@ urlpatterns = [
     path('api/clientes/<int:cliente_id>/eliminar/', views.eliminar_cliente, name='api_eliminar_cliente'),
     path('api/clientes/<int:cliente_id>/activar/', views.activar_cliente, name='api_activar_cliente'),
     path('api/clientes/estadisticas/', views.estadisticas_clientes, name='api_estadisticas_clientes'),
-
+    path('api/clientes/exportar-excel/', views.exportar_clientes_excel, name='api_exportar_clientes_excel'),
+    
     # ============ PROVEEDORES ============
     path('api/proveedores/', views.listar_proveedores, name='api_listar_proveedores'),
     path('api/proveedores/<int:proveedor_id>/', views.obtener_proveedor, name='api_obtener_proveedor'),

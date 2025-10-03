@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
 from .models import Cliente, Persona, Proveedor, TipoCliente, Usuario, Rol, UsuarioRol, Permiso, RolPermiso
-
+from django.utils.html import format_html
 
 # ============= FORMULARIOS PERSONALIZADOS =============
 
@@ -224,13 +224,15 @@ class TipoClienteAdmin(admin.ModelAdmin):
         }),
     )
 
-
-# ============= CLIENTE =============
+# ============= CLIENTE ADMIN - CORREGIDO =============
 
 @admin.register(Cliente)
 class ClienteAdmin(admin.ModelAdmin):
     list_display = (
         'get_nombre_completo',
+        'get_cedula',
+        'get_telefono',
+        'get_email',
         'tipo_cliente',
         'nit',
         'estado',
@@ -249,15 +251,16 @@ class ClienteAdmin(admin.ModelAdmin):
         'usuario__persona__cedula_identidad',
         'razon_social',
         'nit',
-        'usuario__persona__correo'
+        'usuario__persona__correo',
+        'usuario__nombre_usuario'
     )
     
-    readonly_fields = ('fecha_registro', 'fecha_actualizacion')
+    readonly_fields = ('fecha_registro', 'fecha_actualizacion', 'mostrar_datos_persona')
     autocomplete_fields = ['usuario', 'tipo_cliente']
     
     fieldsets = (
         ('Usuario Asociado', {
-            'fields': ('usuario',)
+            'fields': ('usuario', 'mostrar_datos_persona')
         }),
         ('Tipo de Cliente', {
             'fields': ('tipo_cliente',)
@@ -275,14 +278,58 @@ class ClienteAdmin(admin.ModelAdmin):
     )
     
     def get_nombre_completo(self, obj):
+        """Mostrar nombre completo desde Persona"""
         return obj.get_nombre_completo()
     get_nombre_completo.short_description = 'Cliente'
+    get_nombre_completo.admin_order_field = 'usuario__persona__nombre'
+    
+    def get_cedula(self, obj):
+        """Mostrar CI desde Persona"""
+        return obj.usuario.persona.cedula_identidad
+    get_cedula.short_description = 'CI'
+    
+    def get_telefono(self, obj):
+        """Mostrar teléfono desde Persona"""
+        return obj.usuario.persona.numero_celular or '-'
+    get_telefono.short_description = 'Teléfono'
+    
+    def get_email(self, obj):
+        """Mostrar email desde Persona"""
+        return obj.usuario.persona.correo or '-'
+    get_email.short_description = 'Email'
+    
+    def mostrar_datos_persona(self, obj):
+        """Mostrar datos completos de la persona en el admin"""
+        if obj.usuario and obj.usuario.persona:
+            p = obj.usuario.persona
+            return format_html(
+                '<div style="background: #f8f9fa; padding: 15px; border-radius: 5px;">'
+                '<h4 style="margin-top: 0; color: #2E8B57;">Datos Personales</h4>'
+                '<p><strong>Nombre Completo:</strong> {}</p>'
+                '<p><strong>CI:</strong> {}</p>'
+                '<p><strong>Teléfono:</strong> {}</p>'
+                '<p><strong>Email:</strong> {}</p>'
+                '<p><strong>Usuario:</strong> {}</p>'
+                '</div>',
+                p.get_nombre_completo(),
+                p.cedula_identidad,
+                p.numero_celular or 'No registrado',
+                p.correo or 'No registrado',
+                obj.usuario.nombre_usuario
+            )
+        return '-'
+    mostrar_datos_persona.short_description = 'Información Personal'
 
+
+# ============= PROVEEDOR ADMIN - CORREGIDO =============
 
 @admin.register(Proveedor)
 class ProveedorAdmin(admin.ModelAdmin):
     list_display = (
         'get_nombre_completo',
+        'get_cedula',
+        'get_telefono',
+        'get_email',
         'nit',
         'tipo_proveedor',
         'estado',
@@ -304,12 +351,12 @@ class ProveedorAdmin(admin.ModelAdmin):
         'persona__correo'
     )
     
-    readonly_fields = ('fecha_registro', 'fecha_actualizacion')
+    readonly_fields = ('fecha_registro', 'fecha_actualizacion', 'mostrar_datos_persona')
     autocomplete_fields = ['persona']
     
     fieldsets = (
         ('Información Personal', {
-            'fields': ('persona',)
+            'fields': ('persona', 'mostrar_datos_persona')
         }),
         ('Información Comercial', {
             'fields': ('tipo_proveedor', 'nit', 'razon_social')
@@ -324,5 +371,42 @@ class ProveedorAdmin(admin.ModelAdmin):
     )
     
     def get_nombre_completo(self, obj):
+        """Mostrar nombre completo desde Persona"""
         return obj.get_nombre_completo()
     get_nombre_completo.short_description = 'Proveedor'
+    get_nombre_completo.admin_order_field = 'persona__nombre'
+    
+    def get_cedula(self, obj):
+        """Mostrar CI desde Persona"""
+        return obj.persona.cedula_identidad
+    get_cedula.short_description = 'CI'
+    
+    def get_telefono(self, obj):
+        """Mostrar teléfono desde Persona"""
+        return obj.persona.numero_celular or '-'
+    get_telefono.short_description = 'Teléfono'
+    
+    def get_email(self, obj):
+        """Mostrar email desde Persona"""
+        return obj.persona.correo or '-'
+    get_email.short_description = 'Email'
+    
+    def mostrar_datos_persona(self, obj):
+        """Mostrar datos completos de la persona en el admin"""
+        if obj.persona:
+            p = obj.persona
+            return format_html(
+                '<div style="background: #f8f9fa; padding: 15px; border-radius: 5px;">'
+                '<h4 style="margin-top: 0; color: #FFD700;">Datos Personales</h4>'
+                '<p><strong>Nombre Completo:</strong> {}</p>'
+                '<p><strong>CI:</strong> {}</p>'
+                '<p><strong>Teléfono:</strong> {}</p>'
+                '<p><strong>Email:</strong> {}</p>'
+                '</div>',
+                p.get_nombre_completo(),
+                p.cedula_identidad,
+                p.numero_celular or 'No registrado',
+                p.correo or 'No registrado'
+            )
+        return '-'
+    mostrar_datos_persona.short_description = 'Información Personal'

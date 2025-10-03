@@ -1048,22 +1048,61 @@ def crear_cliente(request):
 
 @api_view(['PUT'])
 def actualizar_cliente(request, cliente_id):
-    """API para actualizar un cliente existente"""
+    """API para actualizar un cliente y sus datos de persona"""
     try:
-        cliente = Cliente.objects.get(id=cliente_id)
+        cliente = Cliente.objects.select_related('usuario__persona', 'tipo_cliente').get(id=cliente_id)
+        persona = cliente.usuario.persona
+        data = request.data
         
-        # Actualizar campos de Cliente
-        if 'razon_social' in request.data:
-            cliente.razon_social = request.data['razon_social']
-        if 'nit' in request.data:
-            cliente.nit = request.data['nit']
-        if 'estado' in request.data:
-            cliente.estado = request.data['estado']
+        # Actualizar datos de Persona
+        campos_persona = {
+            'nombre': 'nombre',
+            'apellido_paterno': 'apellido_paterno',
+            'apellido_materno': 'apellido_materno',
+            'numero_celular': 'numero_celular',
+            'correo': 'correo'
+        }
+        
+        for campo_request, campo_modelo in campos_persona.items():
+            if campo_request in data:
+                setattr(persona, campo_modelo, data[campo_request])
+        
+        # Validar que el correo no esté en uso por otra persona
+        if 'correo' in data:
+            if Persona.objects.filter(correo=data['correo']).exclude(id=persona.id).exists():
+                return Response({
+                    'success': False,
+                    'error': 'El correo ya está en uso por otro usuario'
+                }, status=status.HTTP_400_BAD_REQUEST)
+        
+        persona.save()
+        
+        # Actualizar datos de Cliente
+        if 'razon_social' in data:
+            cliente.razon_social = data['razon_social']
+        if 'nit' in data:
+            # Validar NIT único
+            if data['nit'] and Cliente.objects.filter(nit=data['nit']).exclude(id=cliente_id).exists():
+                return Response({
+                    'success': False,
+                    'error': 'El NIT ya está registrado'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            cliente.nit = data['nit']
+        
+        # CRÍTICO: Actualizar estado del Cliente
+        if 'estado' in data:
+            cliente.estado = data['estado']
+            # Sincronizar con Usuario
+            if data['estado'] == 'ACTIVO':
+                cliente.usuario.is_active = True
+            else:
+                cliente.usuario.is_active = False
+            cliente.usuario.save()
         
         # Actualizar tipo_cliente
-        if 'tipo_cliente_id' in request.data:
+        if 'tipo_cliente_id' in data:
             try:
-                tipo_cliente = TipoCliente.objects.get(id=request.data['tipo_cliente_id'])
+                tipo_cliente = TipoCliente.objects.get(id=data['tipo_cliente_id'])
                 cliente.tipo_cliente = tipo_cliente
             except TipoCliente.DoesNotExist:
                 return Response({
@@ -1072,6 +1111,11 @@ def actualizar_cliente(request, cliente_id):
                 }, status=status.HTTP_400_BAD_REQUEST)
         
         cliente.save()
+        
+        # Actualizar contraseña si se proporciona
+        if 'password' in data and data['password']:
+            cliente.usuario.set_password(data['password'])
+            cliente.usuario.save()
         
         serializer = ClienteSerializer(cliente)
         
@@ -1095,19 +1139,28 @@ def actualizar_cliente(request, cliente_id):
 
 @api_view(['DELETE'])
 def eliminar_cliente(request, cliente_id):
-    """API para desactivar un cliente"""
+    """API para eliminar cliente COMPLETAMENTE (Usuario y Persona incluidos)"""
     try:
-        cliente = Cliente.objects.get(id=cliente_id)
+        from django.db import transaction
         
-        cliente.estado = 'INACTIVO'
-        cliente.save()
+        cliente = Cliente.objects.select_related('usuario__persona').get(id=cliente_id)
         
-        cliente.usuario.is_active = False
-        cliente.usuario.save()
+        # Guardar información antes de eliminar
+        nombre_completo = cliente.get_nombre_completo()
+        
+        with transaction.atomic():
+            # Guardar referencias
+            usuario = cliente.usuario
+            persona = usuario.persona
+            
+            # Eliminar en orden: Cliente -> Usuario -> Persona
+            cliente.delete()  # Esto elimina el Cliente
+            usuario.delete()  # Esto elimina el Usuario
+            persona.delete()  # Esto elimina la Persona
         
         return Response({
             'success': True,
-            'message': 'Cliente desactivado exitosamente'
+            'message': f'Cliente {nombre_completo} eliminado completamente del sistema'
         })
         
     except Cliente.DoesNotExist:
@@ -1115,7 +1168,12 @@ def eliminar_cliente(request, cliente_id):
             'success': False,
             'error': 'Cliente no encontrado'
         }, status=status.HTTP_404_NOT_FOUND)
-
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': f'Error al eliminar: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
 @api_view(['POST'])
 def activar_cliente(request, cliente_id):
@@ -1143,7 +1201,7 @@ def activar_cliente(request, cliente_id):
 
 @api_view(['GET'])
 def estadisticas_clientes(request):
-    """API para estadísticas de clientes"""
+    """API para estadísticas de clientes - CORREGIDA"""
     stats = {
         'total': Cliente.objects.count(),
         'activos': Cliente.objects.filter(estado='ACTIVO').count(),
@@ -1151,7 +1209,7 @@ def estadisticas_clientes(request):
         'por_tipo': {}
     }
     
-    # Estadísticas por tipo
+    # Estadísticas por tipo de cliente
     for tipo in TipoCliente.objects.all():
         count = Cliente.objects.filter(tipo_cliente=tipo).count()
         stats['por_tipo'][tipo.nombre_tipo] = count
@@ -1160,6 +1218,97 @@ def estadisticas_clientes(request):
         'success': True,
         'estadisticas': stats
     })
+ 
+
+from django.http import HttpResponse
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Alignment
+from datetime import datetime
+
+@api_view(['GET'])
+def exportar_clientes_excel(request):
+    """Exportar clientes a Excel real (.xlsx)"""
+    try:
+        # Obtener filtros de la query string
+        tipo_cliente = request.GET.get('tipo_cliente', '')
+        estado = request.GET.get('estado', '')
+        busqueda = request.GET.get('busqueda', '')
+        
+        # Base query
+        clientes = Cliente.objects.select_related(
+            'usuario__persona',
+            'tipo_cliente'
+        ).all()
+        
+        # Aplicar filtros
+        if tipo_cliente and tipo_cliente != 'todos':
+            clientes = clientes.filter(tipo_cliente__codigo=tipo_cliente)
+        
+        if estado and estado != 'todos':
+            clientes = clientes.filter(estado=estado.upper())
+        
+        if busqueda:
+            clientes = clientes.filter(
+                Q(usuario__persona__nombre__icontains=busqueda) |
+                Q(usuario__persona__apellido_paterno__icontains=busqueda) |
+                Q(usuario__persona__cedula_identidad__icontains=busqueda) |
+                Q(nit__icontains=busqueda)
+            )
+        
+        # Crear workbook
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Clientes"
+        
+        # Estilos
+        header_fill = PatternFill(start_color="FFD700", end_color="FFD700", fill_type="solid")
+        header_font = Font(bold=True, size=12, color="000000")
+        
+        # Headers
+        headers = [
+            'Nombre Completo', 'Tipo Cliente', 'Cédula', 'NIT',
+            'Teléfono', 'Email', 'Razón Social', 'Usuario',
+            'Estado', 'Fecha Registro'
+        ]
+        
+        for col, header in enumerate(headers, start=1):
+            cell = ws.cell(row=1, column=col, value=header)
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+        
+        # Datos
+        for row, cliente in enumerate(clientes, start=2):
+            ws.cell(row=row, column=1, value=cliente.get_nombre_completo())
+            ws.cell(row=row, column=2, value=cliente.tipo_cliente.nombre_tipo if cliente.tipo_cliente else '')
+            ws.cell(row=row, column=3, value=cliente.usuario.persona.cedula_identidad)
+            ws.cell(row=row, column=4, value=cliente.nit or '')
+            ws.cell(row=row, column=5, value=cliente.usuario.persona.numero_celular or '')
+            ws.cell(row=row, column=6, value=cliente.usuario.persona.correo or '')
+            ws.cell(row=row, column=7, value=cliente.razon_social or '')
+            ws.cell(row=row, column=8, value=cliente.usuario.nombre_usuario)
+            ws.cell(row=row, column=9, value=cliente.estado)
+            ws.cell(row=row, column=10, value=cliente.fecha_registro.strftime('%d/%m/%Y'))
+        
+        # Ajustar anchos
+        for col in range(1, len(headers) + 1):
+            ws.column_dimensions[chr(64 + col)].width = 20
+        
+        # Preparar respuesta
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        fecha = datetime.now().strftime('%Y-%m-%d')
+        response['Content-Disposition'] = f'attachment; filename=clientes_{fecha}.xlsx'
+        
+        wb.save(response)
+        return response
+        
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': f'Error al exportar: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # ============ PROVEEDORES - CRUD ============
@@ -1325,7 +1474,7 @@ def activar_proveedor(request, proveedor_id):
 
 @api_view(['GET'])
 def estadisticas_proveedores(request):
-    """API para estadísticas de proveedores"""
+    """API para estadísticas de proveedores - CORREGIDA"""
     stats = {
         'total': Proveedor.objects.count(),
         'activos': Proveedor.objects.filter(estado='ACTIVO').count(),
@@ -1333,7 +1482,7 @@ def estadisticas_proveedores(request):
         'por_tipo': {}
     }
     
-    # Estadísticas por tipo
+    # Estadísticas por tipo de proveedor
     for tipo_code, tipo_name in Proveedor.TIPO_PROVEEDOR:
         count = Proveedor.objects.filter(tipo_proveedor=tipo_code).count()
         stats['por_tipo'][tipo_name] = count

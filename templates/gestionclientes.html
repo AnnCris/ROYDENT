@@ -308,6 +308,30 @@
             appearance: none;
         }
 
+        /* Input con icono (password toggle) */
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon input {
+            padding-right: 3rem;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-gray);
+            transition: color 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .input-icon:hover {
+            color: var(--color-green);
+        }
+
         /* Botones */
         .btn {
             display: inline-flex;
@@ -461,11 +485,6 @@
             color: white;
         }
 
-        .badge-vip {
-            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
-            color: white;
-        }
-
         /* Tabla */
         .table-container {
             background: rgba(255, 255, 255, 0.8);
@@ -480,7 +499,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1000px;
+            min-width: 900px;
         }
 
         th, td {
@@ -615,7 +634,7 @@
             }
 
             table {
-                min-width: 800px;
+                min-width: 700px;
             }
             
             th, td {
@@ -690,12 +709,12 @@
                         <div class="stat-label">Activos</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="stat-vip">0</div>
-                        <div class="stat-label">Clientes VIP</div>
-                    </div>
-                    <div class="stat-card">
                         <div class="stat-number" id="stat-inactivos">0</div>
                         <div class="stat-label">Inactivos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-por-tipo">0</div>
+                        <div class="stat-label">Tipos de Cliente</div>
                     </div>
                 </div>
             </div>
@@ -712,7 +731,7 @@
                             </div>
                         </div>
                         
-                        <div class="grid grid-4">
+                        <div class="grid grid-3">
                             <div class="form-group">
                                 <label class="text-label">Tipo de Cliente</label>
                                 <select class="form-input form-select" id="filtro-tipo">
@@ -725,25 +744,13 @@
                                     <option value="todos">Todos</option>
                                     <option value="ACTIVO">Activo</option>
                                     <option value="INACTIVO">Inactivo</option>
-                                    <option value="VIP">VIP</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="text-label">Ciudad</label>
-                                <select class="form-input form-select" id="filtro-ciudad">
-                                    <option value="todas">Todas</option>
-                                    <option value="La Paz">La Paz</option>
-                                    <option value="Cochabamba">Cochabamba</option>
-                                    <option value="Santa Cruz">Santa Cruz</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="text-label">VIP</label>
-                                <select class="form-input form-select" id="filtro-vip">
-                                    <option value="">Todos</option>
-                                    <option value="true">Solo VIP</option>
-                                    <option value="false">No VIP</option>
-                                </select>
+                                <label class="text-label">&nbsp;</label>
+                                <button class="btn btn-secondary" onclick="limpiarFiltros()" style="width: 100%; margin: 0;">
+                                    🔄 Limpiar Filtros
+                                </button>
                             </div>
                         </div>
                         
@@ -768,14 +775,13 @@
                                         <th>Tipo</th>
                                         <th>Documento</th>
                                         <th>Contacto</th>
-                                        <th>Ciudad</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="clientes-table">
                                     <tr id="loading-row">
-                                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                                        <td colspan="6" style="text-align: center; padding: 2rem;">
                                             <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
                                                 <div style="width: 20px; height: 20px; border: 3px solid var(--color-gold); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
                                                 <span>Cargando clientes...</span>
@@ -817,15 +823,15 @@
                     </div>
                     <div class="form-group">
                         <label class="text-label">Cédula *</label>
-                        <input type="text" class="form-input" id="modal-cedula" required>
+                        <input type="text" class="form-input" id="modal-cedula" required placeholder="Ej: 1234567-LP">
                     </div>
                     <div class="form-group">
                         <label class="text-label">Celular *</label>
-                        <input type="text" class="form-input" id="modal-celular" maxlength="8" required>
+                        <input type="text" class="form-input" id="modal-celular" maxlength="8" required placeholder="Ej: 71234567">
                     </div>
                     <div class="form-group">
                         <label class="text-label">Email *</label>
-                        <input type="email" class="form-input" id="modal-email" required>
+                        <input type="email" class="form-input" id="modal-email" required placeholder="ejemplo@correo.com">
                     </div>
                 </div>
 
@@ -834,12 +840,15 @@
                 <div class="grid grid-2">
                     <div class="form-group">
                         <label class="text-label">Usuario *</label>
-                        <input type="text" class="form-input" id="modal-usuario" required>
+                        <input type="text" class="form-input" id="modal-usuario" required placeholder="nombre.usuario">
                     </div>
                     <div class="form-group">
-                        <label class="text-label">Contraseña</label>
-                        <input type="password" class="form-input" id="modal-password">
-                        <small style="color: var(--text-gray); font-size: 0.75rem;">Dejar vacío al editar</small>
+                        <label class="text-label">Contraseña <span id="password-required-label">*</span></label>
+                        <div class="input-with-icon">
+                            <input type="password" class="form-input" id="modal-password" placeholder="Min. 6 caracteres">
+                            <i class="fas fa-eye input-icon" id="toggle-password" onclick="togglePassword()"></i>
+                        </div>
+                        <small style="color: var(--text-gray); font-size: 0.75rem;" id="password-hint">Dejar vacío para no cambiar (al editar)</small>
                     </div>
                 </div>
 
@@ -853,31 +862,20 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="text-label">Razón Social</label>
-                        <input type="text" class="form-input" id="modal-razon-social">
+                        <label class="text-label">Estado *</label>
+                        <select class="form-input form-select" id="modal-estado" required>
+                            <option value="ACTIVO">Activo</option>
+                            <option value="INACTIVO">Inactivo</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label class="text-label">NIT</label>
-                        <input type="text" class="form-input" id="modal-nit">
+                        <input type="text" class="form-input" id="modal-nit" placeholder="Para facturación (opcional)">
                     </div>
                     <div class="form-group">
-                        <label class="text-label">Ciudad</label>
-                        <input type="text" class="form-input" id="modal-ciudad">
+                        <label class="text-label">Razón Social</label>
+                        <input type="text" class="form-input" id="modal-razon-social" placeholder="Para clínicas, laboratorios o empresas (opcional)">
                     </div>
-                    <div class="form-group">
-                        <label class="text-label">Especialidad</label>
-                        <input type="text" class="form-input" id="modal-especialidad">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="text-label">Dirección</label>
-                    <textarea class="form-input" id="modal-direccion" rows="2"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label class="text-label">Observaciones</label>
-                    <textarea class="form-input" id="modal-observaciones" rows="3"></textarea>
                 </div>
                 
                 <div class="modal-actions">
@@ -929,6 +927,22 @@
                 }, index * 100);
             });
         });
+
+        // ============ TOGGLE PASSWORD VISIBILITY ============
+        function togglePassword() {
+            const passwordInput = document.getElementById('modal-password');
+            const toggleIcon = document.getElementById('toggle-password');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
 
         // ============ HEADERS ============
         function getHeaders() {
@@ -989,12 +1003,6 @@
                 if (filtros.estado && filtros.estado !== 'todos') {
                     params.append('estado', filtros.estado);
                 }
-                if (filtros.ciudad && filtros.ciudad !== 'todas') {
-                    params.append('ciudad', filtros.ciudad);
-                }
-                if (filtros.es_vip) {
-                    params.append('es_vip', filtros.es_vip);
-                }
 
                 const response = await fetch(`/auth/api/clientes/?${params}`, {
                     headers: getHeaders(),
@@ -1022,7 +1030,7 @@
             if (clientes.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                        <td colspan="6" style="text-align: center; padding: 2rem;">
                             <div style="color: var(--text-gray);">
                                 <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
                                 <p>No se encontraron clientes</p>
@@ -1042,23 +1050,23 @@
                             <div class="cliente-avatar">${iniciales}</div>
                             <div>
                                 <div style="font-weight: 600;">${cliente.nombre_completo}</div>
-                                <div style="font-size: 0.875rem; color: var(--text-gray);">${cliente.tipo_cliente_nombre || ''}</div>
+                                <div style="font-size: 0.875rem; color: var(--text-gray);">
+                                    ${cliente.tipo_cliente_nombre || '-'}
+                                </div>
                             </div>
                         </div>
                     </td>
                     <td>${cliente.tipo_cliente_nombre || '-'}</td>
                     <td>
-                        <div><strong>${cliente.documento || cliente.cedula || '-'}</strong></div>
-                        ${cliente.nit ? `<div style="font-size: 0.875rem; color: var(--text-gray);">NIT: ${cliente.nit}</div>` : ''}
+                        <div><strong>CI:</strong> ${cliente.cedula || '-'}</div>
+                        ${cliente.nit ? `<div style="font-size: 0.875rem; color: var(--text-gray);"><strong>NIT:</strong> ${cliente.nit}</div>` : ''}
                     </td>
                     <td>
                         <div>📞 ${cliente.telefono || '-'}</div>
                         <div style="font-size: 0.875rem; color: var(--text-gray);">${cliente.email || '-'}</div>
                     </td>
-                    <td>${cliente.ciudad || '-'}</td>
                     <td>
                         <span class="badge badge-${getBadgeClass(cliente.estado)}">${cliente.estado}</span>
-                        ${cliente.es_vip ? '<span class="badge badge-vip">VIP</span>' : ''}
                     </td>
                     <td>
                         <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
@@ -1099,8 +1107,11 @@
                     const stats = data.estadisticas;
                     document.getElementById('stat-total').textContent = stats.total || 0;
                     document.getElementById('stat-activos').textContent = stats.activos || 0;
-                    document.getElementById('stat-vip').textContent = stats.vip || 0;
                     document.getElementById('stat-inactivos').textContent = stats.inactivos || 0;
+                    
+                    // Contar tipos diferentes
+                    const tiposDiferentes = Object.keys(stats.por_tipo || {}).length;
+                    document.getElementById('stat-por-tipo').textContent = tiposDiferentes;
                 }
             } catch (error) {
                 console.error('Error al cargar estadísticas:', error);
@@ -1112,38 +1123,58 @@
             const filtros = {
                 busqueda: document.getElementById('busqueda').value,
                 tipo: document.getElementById('filtro-tipo').value,
-                estado: document.getElementById('filtro-estado').value,
-                ciudad: document.getElementById('filtro-ciudad').value,
-                es_vip: document.getElementById('filtro-vip').value
+                estado: document.getElementById('filtro-estado').value
             };
             cargarClientes(filtros);
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('busqueda').value = '';
+            document.getElementById('filtro-tipo').value = 'todos';
+            document.getElementById('filtro-estado').value = 'todos';
+            cargarClientes();
         }
 
         // Event listeners
         document.getElementById('busqueda')?.addEventListener('input', debounce(aplicarFiltros, 500));
         document.getElementById('filtro-tipo')?.addEventListener('change', aplicarFiltros);
         document.getElementById('filtro-estado')?.addEventListener('change', aplicarFiltros);
-        document.getElementById('filtro-ciudad')?.addEventListener('change', aplicarFiltros);
-        document.getElementById('filtro-vip')?.addEventListener('change', aplicarFiltros);
 
         // ============ MODAL ============
         function abrirModalCliente(clienteId = null) {
             const modal = document.getElementById('modalCliente');
             const titulo = document.getElementById('tituloModal');
             const form = document.getElementById('formCliente');
+            const passwordInput = document.getElementById('modal-password');
+            const passwordLabel = document.getElementById('password-required-label');
+            const passwordHint = document.getElementById('password-hint');
+            const usuarioInput = document.getElementById('modal-usuario');
             
             form.reset();
             clienteEditando = clienteId;
 
+            // Reset password toggle
+            passwordInput.type = 'password';
+            document.getElementById('toggle-password').classList.remove('fa-eye-slash');
+            document.getElementById('toggle-password').classList.add('fa-eye');
+
             if (clienteId) {
                 titulo.textContent = 'Editar Cliente';
                 cargarDatosCliente(clienteId);
-                document.getElementById('modal-password').required = false;
-                document.getElementById('modal-usuario').disabled = true;
+                passwordInput.required = false;
+                passwordLabel.style.display = 'none';
+                passwordHint.style.display = 'block';
+                usuarioInput.disabled = true;
+                usuarioInput.style.opacity = '0.6';
+                usuarioInput.style.cursor = 'not-allowed';
             } else {
                 titulo.textContent = 'Nuevo Cliente';
-                document.getElementById('modal-password').required = true;
-                document.getElementById('modal-usuario').disabled = false;
+                passwordInput.required = true;
+                passwordLabel.style.display = 'inline';
+                passwordHint.style.display = 'none';
+                usuarioInput.disabled = false;
+                usuarioInput.style.opacity = '1';
+                usuarioInput.style.cursor = 'text';
             }
             
             modal.style.display = 'block';
@@ -1167,21 +1198,22 @@
                 const data = await response.json();
                 const cliente = data.cliente;
 
-                // Llenar formulario
+                // Llenar formulario con datos de Persona
                 document.getElementById('modal-nombre').value = cliente.nombre || '';
                 document.getElementById('modal-apellido-paterno').value = cliente.apellido_paterno || '';
                 document.getElementById('modal-apellido-materno').value = cliente.apellido_materno || '';
                 document.getElementById('modal-cedula').value = cliente.cedula || '';
                 document.getElementById('modal-celular').value = cliente.telefono || '';
                 document.getElementById('modal-email').value = cliente.email || '';
-                document.getElementById('modal-usuario').value = cliente.usuario || '';
+                
+                // Datos de Usuario
+                document.getElementById('modal-usuario').value = cliente.nombre_usuario || '';
+                
+                // Datos de Cliente
                 document.getElementById('modal-tipo-cliente').value = cliente.tipo_cliente || '';
                 document.getElementById('modal-razon-social').value = cliente.razon_social || '';
                 document.getElementById('modal-nit').value = cliente.nit || '';
-                document.getElementById('modal-ciudad').value = cliente.ciudad || '';
-                document.getElementById('modal-especialidad').value = cliente.especialidad || '';
-                document.getElementById('modal-direccion').value = cliente.direccion || '';
-                document.getElementById('modal-observaciones').value = cliente.observaciones || '';
+                
             } catch (error) {
                 console.error('Error:', error);
                 mostrarAlerta('Error al cargar datos', 'danger');
@@ -1193,26 +1225,35 @@
             e.preventDefault();
 
             const formData = {
-                nombre: document.getElementById('modal-nombre').value,
-                apellido_paterno: document.getElementById('modal-apellido-paterno').value,
-                apellido_materno: document.getElementById('modal-apellido-materno').value,
-                cedula_identidad: document.getElementById('modal-cedula').value,
-                numero_celular: document.getElementById('modal-celular').value,
-                correo: document.getElementById('modal-email').value,
+                // Datos de Persona
+                nombre: document.getElementById('modal-nombre').value.trim(),
+                apellido_paterno: document.getElementById('modal-apellido-paterno').value.trim(),
+                apellido_materno: document.getElementById('modal-apellido-materno').value.trim(),
+                cedula_identidad: document.getElementById('modal-cedula').value.trim(),
+                numero_celular: document.getElementById('modal-celular').value.trim(),
+                correo: document.getElementById('modal-email').value.trim(),
+                
+                // Datos de Cliente
                 tipo_cliente_id: parseInt(document.getElementById('modal-tipo-cliente').value),
-                razon_social: document.getElementById('modal-razon-social').value,
-                nit: document.getElementById('modal-nit').value,
-                ciudad: document.getElementById('modal-ciudad').value,
-                especialidad: document.getElementById('modal-especialidad').value,
-                direccion: document.getElementById('modal-direccion').value,
-                observaciones: document.getElementById('modal-observaciones').value
+                estado: document.getElementById('modal-estado').value,  // ← ESTE CAMPO
+                razon_social: document.getElementById('modal-razon-social').value.trim(),
+                nit: document.getElementById('modal-nit').value.trim()
             };
+
+            // Agregar password solo si se ingresó
+            const password = document.getElementById('modal-password').value;
+            if (password) {
+                formData.password = password;
+            }
 
             if (clienteEditando) {
                 await actualizarCliente(clienteEditando, formData);
             } else {
-                formData.nombre_usuario = document.getElementById('modal-usuario').value;
-                formData.password = document.getElementById('modal-password').value;
+                formData.nombre_usuario = document.getElementById('modal-usuario').value.trim();
+                if (!formData.password) {
+                    mostrarAlerta('La contraseña es obligatoria para nuevos clientes', 'danger');
+                    return;
+                }
                 await crearCliente(formData);
             }
         });
@@ -1258,7 +1299,8 @@
                 if (response.ok && data.success) {
                     mostrarAlerta('Cliente actualizado exitosamente', 'success');
                     cerrarModalCliente();
-                    cargarClientes();
+                    await cargarClientes(); // ← IMPORTANTE: Recargar lista
+                    cargarEstadisticas();
                 } else {
                     mostrarAlerta(data.error || 'Error al actualizar', 'danger');
                 }
@@ -1269,12 +1311,20 @@
         }
 
         // ============ ACCIONES ============
-        function editarCliente(id) {
-            abrirModalCliente(id);
-        }
-
         async function eliminarCliente(id) {
-            if (!confirm('¿Desactivar este cliente?')) return;
+            const cliente = clientes.find(c => c.id === id);
+            if (!cliente) return;
+            
+            const confirmacion = confirm(
+                `¿ELIMINAR PERMANENTEMENTE a ${cliente.nombre_completo}?\n\n` +
+                `⚠️ ADVERTENCIA: Esto eliminará:\n` +
+                `• El cliente\n` +
+                `• El usuario asociado\n` +
+                `• Los datos personales\n\n` +
+                `Esta acción NO se puede deshacer.`
+            );
+            
+            if (!confirmacion) return;
 
             try {
                 const response = await fetch(`/auth/api/clientes/${id}/eliminar/`, {
@@ -1286,14 +1336,55 @@
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    mostrarAlerta('Cliente desactivado', 'success');
-                    cargarClientes();
+                    mostrarAlerta(data.message || 'Cliente eliminado completamente', 'success');
+                    await cargarClientes();
                     cargarEstadisticas();
                 } else {
-                    mostrarAlerta(data.error || 'Error', 'danger');
+                    mostrarAlerta(data.error || 'Error al eliminar', 'danger');
                 }
             } catch (error) {
+                console.error('Error:', error);
                 mostrarAlerta('Error de conexión', 'danger');
+            }
+        }
+
+        async function exportarClientes() {
+            if (clientes.length === 0) {
+                mostrarAlerta('No hay clientes para exportar', 'danger');
+                return;
+            }
+
+            try {
+                // Obtener filtros actuales
+                const params = new URLSearchParams();
+                
+                const tipo = document.getElementById('filtro-tipo').value;
+                const estado = document.getElementById('filtro-estado').value;
+                const busqueda = document.getElementById('busqueda').value;
+                
+                if (tipo && tipo !== 'todos') params.append('tipo_cliente', tipo);
+                if (estado && estado !== 'todos') params.append('estado', estado);
+                if (busqueda) params.append('busqueda', busqueda);
+                
+                // Mostrar loading
+                mostrarAlerta('Generando archivo Excel...', 'info');
+                
+                // Descargar archivo
+                const url = `/auth/api/clientes/exportar-excel/?${params}`;
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `clientes_${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                setTimeout(() => {
+                    mostrarAlerta(`${clientes.length} clientes exportados a Excel exitosamente`, 'success');
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al exportar', 'danger');
             }
         }
 
@@ -1327,24 +1418,26 @@
 
             const detalles = `
                 <div style="line-height: 2; padding: 1rem;">
-                    <p><strong>👤 Nombre:</strong> ${cliente.nombre_completo}</p>
-                    <p><strong>📋 Tipo:</strong> ${cliente.tipo_cliente_nombre || '-'}</p>
-                    <p><strong>🆔 Documento:</strong> ${cliente.documento || cliente.cedula || '-'}</p>
-                    ${cliente.nit ? `<p><strong>🏢 NIT:</strong> ${cliente.nit}</p>` : ''}
+                    <h4 style="color: var(--color-gold-dark); margin-bottom: 1rem;">📋 Datos Personales</h4>
+                    <p><strong>👤 Nombre Completo:</strong> ${cliente.nombre_completo}</p>
+                    <p><strong>🆔 Cédula de Identidad:</strong> ${cliente.cedula || '-'}</p>
                     <p><strong>📞 Teléfono:</strong> ${cliente.telefono || '-'}</p>
                     <p><strong>📧 Email:</strong> ${cliente.email || '-'}</p>
-                    <p><strong>🏙️ Ciudad:</strong> ${cliente.ciudad || '-'}</p>
+                    
+                    <h4 style="color: var(--color-green-dark); margin: 1.5rem 0 1rem;">🏢 Información del Cliente</h4>
+                    <p><strong>📋 Tipo:</strong> ${cliente.tipo_cliente_nombre || '-'}</p>
+                    ${cliente.razon_social ? `<p><strong>🏢 Razón Social:</strong> ${cliente.razon_social}</p>` : ''}
+                    ${cliente.nit ? `<p><strong>🏢 NIT:</strong> ${cliente.nit}</p>` : ''}
                     <p><strong>📊 Estado:</strong> <span class="badge badge-${getBadgeClass(cliente.estado)}">${cliente.estado}</span></p>
-                    ${cliente.es_vip ? '<p><strong>⭐ VIP:</strong> Sí</p>' : ''}
+                    
+                    <h4 style="color: var(--color-gold-dark); margin: 1.5rem 0 1rem;">📅 Registro</h4>
+                    <p><strong>Fecha de Registro:</strong> ${new Date(cliente.fecha_registro).toLocaleDateString('es-BO')}</p>
                 </div>
             `;
             
             mostrarModalDetalles('Detalles del Cliente', detalles);
         }
 
-        function exportarClientes() {
-            mostrarAlerta('Exportando clientes...', 'info');
-        }
 
         // ============ UTILIDADES ============
         function debounce(func, wait) {
@@ -1365,8 +1458,7 @@
         function getBadgeClass(estado) {
             const map = {
                 'ACTIVO': 'activo',
-                'INACTIVO': 'inactivo',
-                'VIP': 'vip'
+                'INACTIVO': 'inactivo'
             };
             return map[estado] || 'activo';
         }
@@ -1374,16 +1466,20 @@
         function mostrarAlerta(mensaje, tipo) {
             const color = tipo === 'success' ? '#00C851' : tipo === 'danger' ? '#EF4444' : '#FFD700';
             const alerta = document.createElement('div');
-            alerta.innerHTML = `<strong>${tipo === 'success' ? 'Éxito' : tipo === 'danger' ? 'Error' : 'Info'}:</strong> ${mensaje}`;
+            alerta.innerHTML = `<strong>${tipo === 'success' ? '✓ Éxito' : tipo === 'danger' ? '✗ Error' : 'ℹ Info'}:</strong> ${mensaje}`;
             alerta.style.cssText = `
                 position: fixed; top: 20px; right: 20px; z-index: 10000;
                 min-width: 300px; padding: 1rem 1.5rem; border-radius: var(--radius-lg);
                 background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
                 border-left: 4px solid ${color};
+                animation: slideIn 0.3s ease;
             `;
             document.body.appendChild(alerta);
-            setTimeout(() => alerta.remove(), 3000);
+            setTimeout(() => {
+                alerta.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => alerta.remove(), 300);
+            }, 3000);
         }
 
         function mostrarModalDetalles(titulo, contenido) {
@@ -1393,7 +1489,7 @@
                 <div style="background: white; margin: 5% auto; padding: 2rem; border-radius: 20px; width: 90%; max-width: 600px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                         <h2 style="color: var(--color-green-dark); margin: 0;">${titulo}</h2>
-                        <span onclick="this.closest('div').parentElement.remove()" style="cursor: pointer; font-size: 28px;">&times;</span>
+                        <span onclick="this.closest('div').parentElement.remove()" style="cursor: pointer; font-size: 28px; color: #9CA3AF; transition: color 0.3s;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#9CA3AF'">&times;</span>
                     </div>
                     ${contenido}
                     <button onclick="this.closest('div').parentElement.remove()" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Cerrar</button>

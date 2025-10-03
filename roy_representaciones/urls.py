@@ -55,6 +55,8 @@ urlpatterns = [
     path('api/usuarios/<int:usuario_id>/permisos/', views.obtener_permisos_usuario, name='api_permisos_usuario'),
     path('api/usuarios/<int:usuario_id>/permisos/actualizar/', views.actualizar_permisos_usuario, name='api_actualizar_permisos_usuario'),
     path('api/roles/permisos/', views.matriz_permisos_roles, name='api_matriz_permisos'),
+
+    
 ]
 
 # ============ ARCHIVOS MEDIA Y STATIC EN DESARROLLO ============
