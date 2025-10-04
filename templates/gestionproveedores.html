@@ -793,106 +793,201 @@
     </main>
 
     <!-- MODAL PROVEEDOR -->
-    <div id="modalProveedor" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="text-h2" id="tituloModal" style="margin: 0;">Nuevo Proveedor</h2>
-                <span class="close" onclick="cerrarModalProveedor()">&times;</span>
+    <!-- MODAL CREAR PROVEEDOR -->
+<div id="modalCrearProveedor" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="text-h2" style="margin: 0;">
+                <i class="fas fa-user-plus"></i> Nuevo Proveedor
+            </h2>
+            <span class="close" onclick="cerrarModalCrear()">&times;</span>
+        </div>
+        
+        <form id="formCrearProveedor">
+            <!-- DATOS PERSONALES -->
+            <div class="section-divider">
+                <h3><i class="fas fa-user"></i> Datos Personales</h3>
             </div>
             
-            <form id="formProveedor">
-                <!-- DATOS PERSONALES -->
-                <div class="section-divider">
-                    <h3><i class="fas fa-user"></i> Datos Personales</h3>
-                </div>
-                
-                <div class="grid grid-3">
-                    <div class="form-group">
-                        <label class="text-label">Nombre *</label>
-                        <input type="text" class="form-input" id="modal-nombre" required>
-                        <span class="error-message" id="error-nombre"></span>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-label">Apellido Paterno *</label>
-                        <input type="text" class="form-input" id="modal-apellido-paterno" required>
-                        <span class="error-message" id="error-apellido-paterno"></span>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-label">Apellido Materno</label>
-                        <input type="text" class="form-input" id="modal-apellido-materno">
-                    </div>
-                </div>
-
-                <div class="grid grid-3">
-                    <div class="form-group">
-                        <label class="text-label">Cédula de Identidad *</label>
-                        <input type="text" class="form-input" id="modal-cedula" placeholder="1234567-LP" required>
-                        <span class="error-message" id="error-cedula"></span>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-label">Teléfono/Celular *</label>
-                        <input type="text" class="form-input" id="modal-celular" placeholder="72345678" maxlength="8" required>
-                        <span class="error-message" id="error-celular"></span>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-label">Correo Electrónico *</label>
-                        <input type="email" class="form-input" id="modal-correo" placeholder="proveedor@example.com" required>
-                        <span class="error-message" id="error-correo"></span>
-                    </div>
-                </div>
-
-                <!-- DATOS DEL PROVEEDOR -->
-                <div class="section-divider">
-                    <h3><i class="fas fa-building"></i> Datos del Proveedor</h3>
-                </div>
-
-                <div class="grid grid-2">
-                    <div class="form-group">
-                        <label class="text-label">Tipo de Proveedor *</label>
-                        <select class="form-input form-select" id="modal-tipo-proveedor" required>
-                            <option value="">Seleccionar...</option>
-                            <option value="DISTRIBUIDOR">Distribuidor</option>
-                            <option value="FABRICANTE">Fabricante</option>
-                            <option value="IMPORTADOR">Importador</option>
-                        </select>
-                        <span class="error-message" id="error-tipo-proveedor"></span>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-label">NIT *</label>
-                        <input type="text" class="form-input" id="modal-nit" placeholder="1234567890" required>
-                        <span class="error-message" id="error-nit"></span>
-                    </div>
-                </div>
-
+            <div class="grid grid-3">
                 <div class="form-group">
-                    <label class="text-label">Razón Social (Opcional)</label>
-                    <input type="text" class="form-input" id="modal-razon-social" placeholder="Para empresas...">
+                    <label class="text-label">Nombre *</label>
+                    <input type="text" class="form-input" id="crear-nombre" required>
+                    <span class="error-message" id="error-crear-nombre"></span>
                 </div>
-
                 <div class="form-group">
-                    <label class="text-label">Estado</label>
-                    <select class="form-input form-select" id="modal-estado">
-                        <option value="ACTIVO">Activo</option>
-                        <option value="INACTIVO">Inactivo</option>
+                    <label class="text-label">Apellido Paterno *</label>
+                    <input type="text" class="form-input" id="crear-apellido-paterno" required>
+                    <span class="error-message" id="error-crear-apellido-paterno"></span>
+                </div>
+                <div class="form-group">
+                    <label class="text-label">Apellido Materno</label>
+                    <input type="text" class="form-input" id="crear-apellido-materno">
+                </div>
+            </div>
+
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label class="text-label">Cédula de Identidad *</label>
+                    <input type="text" class="form-input" id="crear-cedula" placeholder="1234567-LP" required>
+                    <span class="error-message" id="error-crear-cedula"></span>
+                </div>
+                <div class="form-group">
+                    <label class="text-label">Teléfono/Celular *</label>
+                    <input type="text" class="form-input" id="crear-celular" placeholder="72345678" maxlength="8" required>
+                    <span class="error-message" id="error-crear-celular"></span>
+                </div>
+                <div class="form-group">
+                    <label class="text-label">Correo Electrónico *</label>
+                    <input type="email" class="form-input" id="crear-correo" placeholder="proveedor@example.com" required>
+                    <span class="error-message" id="error-crear-correo"></span>
+                </div>
+            </div>
+
+            <!-- DATOS DEL PROVEEDOR -->
+            <div class="section-divider">
+                <h3><i class="fas fa-building"></i> Datos del Proveedor</h3>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label class="text-label">Tipo de Proveedor *</label>
+                    <select class="form-input form-select" id="crear-tipo-proveedor" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="DISTRIBUIDOR">Distribuidor</option>
+                        <option value="FABRICANTE">Fabricante</option>
+                        <option value="IMPORTADOR">Importador</option>
                     </select>
+                    <span class="error-message" id="error-crear-tipo-proveedor"></span>
                 </div>
-                
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" onclick="cerrarModalProveedor()">
-                        <i class="fas fa-times"></i> Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Guardar Proveedor
-                    </button>
+                <div class="form-group">
+                    <label class="text-label">NIT *</label>
+                    <input type="text" class="form-input" id="crear-nit" placeholder="1234567890" required>
+                    <span class="error-message" id="error-crear-nit"></span>
                 </div>
-            </form>
-        </div>
+            </div>
+
+            <div class="form-group">
+                <label class="text-label">Razón Social (Opcional)</label>
+                <input type="text" class="form-input" id="crear-razon-social" placeholder="Para empresas...">
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalCrear()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Crear Proveedor
+                </button>
+            </div>
+        </form>
     </div>
+</div>
+
+<!-- MODAL EDITAR PROVEEDOR -->
+<div id="modalEditarProveedor" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="text-h2" style="margin: 0;">
+                <i class="fas fa-edit"></i> Editar Proveedor
+            </h2>
+            <span class="close" onclick="cerrarModalEditar()">&times;</span>
+        </div>
+        
+        <form id="formEditarProveedor">
+            <!-- DATOS PERSONALES -->
+            <div class="section-divider">
+                <h3><i class="fas fa-user"></i> Datos Personales</h3>
+            </div>
+            
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label class="text-label">Nombre *</label>
+                    <input type="text" class="form-input" id="editar-nombre" required>
+                    <span class="error-message" id="error-editar-nombre"></span>
+                </div>
+                <div class="form-group">
+                    <label class="text-label">Apellido Paterno *</label>
+                    <input type="text" class="form-input" id="editar-apellido-paterno" required>
+                    <span class="error-message" id="error-editar-apellido-paterno"></span>
+                </div>
+                <div class="form-group">
+                    <label class="text-label">Apellido Materno</label>
+                    <input type="text" class="form-input" id="editar-apellido-materno">
+                </div>
+            </div>
+
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label class="text-label">Cédula de Identidad *</label>
+                    <input type="text" class="form-input" id="editar-cedula" placeholder="1234567-LP" required>
+                    <span class="error-message" id="error-editar-cedula"></span>
+                </div>
+                <div class="form-group">
+                    <label class="text-label">Teléfono/Celular *</label>
+                    <input type="text" class="form-input" id="editar-celular" placeholder="72345678" maxlength="8" required>
+                    <span class="error-message" id="error-editar-celular"></span>
+                </div>
+                <div class="form-group">
+                    <label class="text-label">Correo Electrónico *</label>
+                    <input type="email" class="form-input" id="editar-correo" placeholder="proveedor@example.com" required>
+                    <span class="error-message" id="error-editar-correo"></span>
+                </div>
+            </div>
+
+            <!-- DATOS DEL PROVEEDOR -->
+            <div class="section-divider">
+                <h3><i class="fas fa-building"></i> Datos del Proveedor</h3>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label class="text-label">Tipo de Proveedor *</label>
+                    <select class="form-input form-select" id="editar-tipo-proveedor" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="DISTRIBUIDOR">Distribuidor</option>
+                        <option value="FABRICANTE">Fabricante</option>
+                        <option value="IMPORTADOR">Importador</option>
+                    </select>
+                    <span class="error-message" id="error-editar-tipo-proveedor"></span>
+                </div>
+                <div class="form-group">
+                    <label class="text-label">NIT *</label>
+                    <input type="text" class="form-input" id="editar-nit" placeholder="1234567890" required>
+                    <span class="error-message" id="error-editar-nit"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="text-label">Razón Social (Opcional)</label>
+                <input type="text" class="form-input" id="editar-razon-social" placeholder="Para empresas...">
+            </div>
+
+            <!-- SOLO EN EDITAR: Estado -->
+            <div class="form-group">
+                <label class="text-label">Estado *</label>
+                <select class="form-input form-select" id="editar-estado" required>
+                    <option value="ACTIVO">Activo</option>
+                    <option value="INACTIVO">Inactivo</option>
+                </select>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalEditar()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Actualizar Proveedor
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
     <script src="/static/js/sidebar.js"></script>
 
     <script>
-       // ============ VARIABLES GLOBALES ============
+        // ============ VARIABLES GLOBALES ============
         let proveedores = [];
         let proveedorEditando = null;
 
@@ -912,18 +1007,6 @@
             cargarProveedores();
             cargarEstadisticas();
 
-            // Animaciones de entrada
-            const cards = document.querySelectorAll('.card, .stat-card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                setTimeout(() => {
-                    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-
             // Event listeners de filtros
             document.getElementById('busqueda')?.addEventListener('input', debounce(aplicarFiltros, 500));
             document.getElementById('filtro-tipo')?.addEventListener('change', aplicarFiltros);
@@ -931,6 +1014,10 @@
 
             // Validaciones en tiempo real
             setupValidacionesFormulario();
+            
+            // Event listeners de formularios
+            document.getElementById('formCrearProveedor')?.addEventListener('submit', handleCrearProveedor);
+            document.getElementById('formEditarProveedor')?.addEventListener('submit', handleEditarProveedor);
         });
 
         function getHeaders() {
@@ -1020,7 +1107,7 @@
                                 <i class="fas fa-eye"></i>
                             </button>
                             ${proveedor.estado === 'ACTIVO' ? `
-                                <button class="btn btn-secondary btn-sm" onclick="editarProveedor(${proveedor.id})" title="Editar">
+                                <button class="btn btn-secondary btn-sm" onclick="abrirModalEditar(${proveedor.id})" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn btn-danger btn-sm" onclick="eliminarProveedor(${proveedor.id})" title="Desactivar">
@@ -1068,7 +1155,6 @@
             cargarProveedores(filtros);
         }
 
-        // ============ FUNCIÓN LIMPIAR FILTROS ============
         function limpiarFiltros() {
             document.getElementById('busqueda').value = '';
             document.getElementById('filtro-tipo').value = 'todos';
@@ -1077,7 +1163,6 @@
             mostrarAlerta('Filtros limpiados', 'info');
         }
 
-        // ============ FUNCIÓN EXPORTAR ============
         function exportarProveedores() {
             if (proveedores.length === 0) {
                 mostrarAlerta('No hay proveedores para exportar', 'danger');
@@ -1115,91 +1200,42 @@
             }
         }
 
-        function abrirModalProveedor(proveedorId = null) {
-            const modal = document.getElementById('modalProveedor');
-            const titulo = document.getElementById('tituloModal');
-            const form = document.getElementById('formProveedor');
-            
-            form.reset();
-            limpiarErrores();
-            proveedorEditando = proveedorId;
-
-            if (proveedorId) {
-                titulo.textContent = 'Editar Proveedor';
-                cargarDatosProveedor(proveedorId);
-            } else {
-                titulo.textContent = 'Nuevo Proveedor';
-                // Al crear, establecer estado ACTIVO por defecto
-                document.getElementById('modal-estado').value = 'ACTIVO';
-            }
-            
+        // ============ MODAL CREAR ============
+        function abrirModalProveedor() {
+            const modal = document.getElementById('modalCrearProveedor');
+            document.getElementById('formCrearProveedor').reset();
+            limpiarErrores('crear');
             modal.style.display = 'block';
         }
 
-        function cerrarModalProveedor() {
-            document.getElementById('modalProveedor').style.display = 'none';
-            proveedorEditando = null;
-            limpiarErrores();
+        function cerrarModalCrear() {
+            document.getElementById('modalCrearProveedor').style.display = 'none';
+            limpiarErrores('crear');
         }
 
-        async function cargarDatosProveedor(proveedorId) {
-            try {
-                const response = await fetch(`/auth/api/proveedores/${proveedorId}/`, {
-                    headers: getHeaders(),
-                    credentials: 'include'
-                });
-
-                if (!response.ok) throw new Error('Error al cargar proveedor');
-
-                const data = await response.json();
-                const proveedor = data.proveedor;
-
-                // Dividir nombre completo (esto es aproximado, ajusta según tu lógica)
-                const nombres = proveedor.nombre_completo.split(' ');
-                document.getElementById('modal-nombre').value = nombres[0] || '';
-                document.getElementById('modal-apellido-paterno').value = nombres[1] || '';
-                document.getElementById('modal-apellido-materno').value = nombres.slice(2).join(' ') || '';
-                
-                document.getElementById('modal-cedula').value = proveedor.cedula || '';
-                document.getElementById('modal-celular').value = proveedor.telefono || '';
-                document.getElementById('modal-correo').value = proveedor.email || '';
-                document.getElementById('modal-tipo-proveedor').value = proveedor.tipo_proveedor || '';
-                document.getElementById('modal-nit').value = proveedor.nit || '';
-                document.getElementById('modal-razon-social').value = proveedor.razon_social || '';
-                document.getElementById('modal-estado').value = proveedor.estado || 'ACTIVO';
-            } catch (error) {
-                console.error('Error:', error);
-                mostrarAlerta('Error al cargar datos del proveedor', 'danger');
-            }
-        }
-
-        document.getElementById('formProveedor')?.addEventListener('submit', async function(e) {
+        async function handleCrearProveedor(e) {
             e.preventDefault();
 
-            if (!validarFormulario()) {
+            if (!validarFormulario('crear')) {
                 mostrarAlerta('Por favor corrija los errores en el formulario', 'danger');
                 return;
             }
 
             const formData = {
-                nombre: document.getElementById('modal-nombre').value.trim(),
-                apellido_paterno: document.getElementById('modal-apellido-paterno').value.trim(),
-                apellido_materno: document.getElementById('modal-apellido-materno').value.trim(),
-                cedula_identidad: document.getElementById('modal-cedula').value.trim(),
-                numero_celular: document.getElementById('modal-celular').value.trim(),
-                correo: document.getElementById('modal-correo').value.trim(),
-                tipo_proveedor: document.getElementById('modal-tipo-proveedor').value,
-                nit: document.getElementById('modal-nit').value.trim(),
-                razon_social: document.getElementById('modal-razon-social').value.trim(),
-                estado: document.getElementById('modal-estado').value
+                nombre: document.getElementById('crear-nombre').value.trim(),
+                apellido_paterno: document.getElementById('crear-apellido-paterno').value.trim(),
+                apellido_materno: document.getElementById('crear-apellido-materno').value.trim(),
+                cedula_identidad: document.getElementById('crear-cedula').value.trim(),
+                numero_celular: document.getElementById('crear-celular').value.trim(),
+                correo: document.getElementById('crear-correo').value.trim(),
+                tipo_proveedor: document.getElementById('crear-tipo-proveedor').value,
+                nit: document.getElementById('crear-nit').value.trim(),
+                razon_social: document.getElementById('crear-razon-social').value.trim(),
+                estado: 'ACTIVO' // Siempre ACTIVO al crear
             };
 
-            if (proveedorEditando) {
-                await actualizarProveedor(proveedorEditando, formData);
-            } else {
-                await crearProveedor(formData);
-            }
-        });
+            await crearProveedor(formData);
+        }
 
         async function crearProveedor(formData) {
             try {
@@ -1214,17 +1250,88 @@
 
                 if (response.ok && data.success) {
                     mostrarAlerta('Proveedor creado exitosamente', 'success');
-                    cerrarModalProveedor();
+                    cerrarModalCrear();
                     await cargarProveedores();
                     cargarEstadisticas();
                 } else {
-                    mostrarErroresFormulario(data.detalles || {});
+                    mostrarErroresFormulario(data.detalles || {}, 'crear');
                     mostrarAlerta(data.error || 'Error al crear proveedor', 'danger');
                 }
             } catch (error) {
                 console.error('Error:', error);
                 mostrarAlerta('Error de conexión al crear proveedor', 'danger');
             }
+        }
+
+        // ============ MODAL EDITAR ============
+        function abrirModalEditar(proveedorId) {
+            const modal = document.getElementById('modalEditarProveedor');
+            document.getElementById('formEditarProveedor').reset();
+            limpiarErrores('editar');
+            proveedorEditando = proveedorId;
+            cargarDatosProveedor(proveedorId);
+            modal.style.display = 'block';
+        }
+
+        function cerrarModalEditar() {
+            document.getElementById('modalEditarProveedor').style.display = 'none';
+            proveedorEditando = null;
+            limpiarErrores('editar');
+        }
+
+        async function cargarDatosProveedor(proveedorId) {
+            try {
+                const response = await fetch(`/auth/api/proveedores/${proveedorId}/`, {
+                    headers: getHeaders(),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) throw new Error('Error al cargar proveedor');
+
+                const data = await response.json();
+                const proveedor = data.proveedor;
+
+                // Dividir nombre completo
+                const nombres = proveedor.nombre_completo.split(' ');
+                document.getElementById('editar-nombre').value = nombres[0] || '';
+                document.getElementById('editar-apellido-paterno').value = nombres[1] || '';
+                document.getElementById('editar-apellido-materno').value = nombres.slice(2).join(' ') || '';
+                
+                document.getElementById('editar-cedula').value = proveedor.cedula || '';
+                document.getElementById('editar-celular').value = proveedor.telefono || '';
+                document.getElementById('editar-correo').value = proveedor.email || '';
+                document.getElementById('editar-tipo-proveedor').value = proveedor.tipo_proveedor || '';
+                document.getElementById('editar-nit').value = proveedor.nit || '';
+                document.getElementById('editar-razon-social').value = proveedor.razon_social || '';
+                document.getElementById('editar-estado').value = proveedor.estado || 'ACTIVO';
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al cargar datos del proveedor', 'danger');
+            }
+        }
+
+        async function handleEditarProveedor(e) {
+            e.preventDefault();
+
+            if (!validarFormulario('editar')) {
+                mostrarAlerta('Por favor corrija los errores en el formulario', 'danger');
+                return;
+            }
+
+            const formData = {
+                nombre: document.getElementById('editar-nombre').value.trim(),
+                apellido_paterno: document.getElementById('editar-apellido-paterno').value.trim(),
+                apellido_materno: document.getElementById('editar-apellido-materno').value.trim(),
+                cedula_identidad: document.getElementById('editar-cedula').value.trim(),
+                numero_celular: document.getElementById('editar-celular').value.trim(),
+                correo: document.getElementById('editar-correo').value.trim(),
+                tipo_proveedor: document.getElementById('editar-tipo-proveedor').value,
+                nit: document.getElementById('editar-nit').value.trim(),
+                razon_social: document.getElementById('editar-razon-social').value.trim(),
+                estado: document.getElementById('editar-estado').value
+            };
+
+            await actualizarProveedor(proveedorEditando, formData);
         }
 
         async function actualizarProveedor(proveedorId, formData) {
@@ -1240,22 +1347,17 @@
 
                 if (response.ok && data.success) {
                     mostrarAlerta('Proveedor actualizado exitosamente', 'success');
-                    cerrarModalProveedor();
-                    // IMPORTANTE: Esperar a que se recargue la lista
+                    cerrarModalEditar();
                     await cargarProveedores();
                     cargarEstadisticas();
                 } else {
-                    mostrarErroresFormulario(data.detalles || {});
+                    mostrarErroresFormulario(data.detalles || {}, 'editar');
                     mostrarAlerta(data.error || 'Error al actualizar proveedor', 'danger');
                 }
             } catch (error) {
                 console.error('Error:', error);
                 mostrarAlerta('Error de conexión al actualizar', 'danger');
             }
-        }
-
-        function editarProveedor(id) {
-            abrirModalProveedor(id);
         }
 
         async function eliminarProveedor(id) {
@@ -1338,131 +1440,154 @@
 
         // ============ VALIDACIONES ============
         function setupValidacionesFormulario() {
-            document.getElementById('modal-cedula')?.addEventListener('blur', function() {
-                validarCedula(this.value);
+            // Validaciones para CREAR
+            document.getElementById('crear-cedula')?.addEventListener('blur', function() {
+                validarCedula(this.value, 'crear');
             });
 
-            document.getElementById('modal-celular')?.addEventListener('input', function() {
+            document.getElementById('crear-celular')?.addEventListener('input', function() {
                 this.value = this.value.replace(/\D/g, '');
                 if (this.value.length > 8) this.value = this.value.slice(0, 8);
             });
 
-            document.getElementById('modal-celular')?.addEventListener('blur', function() {
-                validarCelular(this.value);
+            document.getElementById('crear-celular')?.addEventListener('blur', function() {
+                validarCelular(this.value, 'crear');
             });
 
-            document.getElementById('modal-correo')?.addEventListener('blur', function() {
-                validarCorreo(this.value);
+            document.getElementById('crear-correo')?.addEventListener('blur', function() {
+                validarCorreo(this.value, 'crear');
             });
 
-            document.getElementById('modal-nit')?.addEventListener('blur', function() {
-                validarNit(this.value);
+            document.getElementById('crear-nit')?.addEventListener('blur', function() {
+                validarNit(this.value, 'crear');
+            });
+
+            // Validaciones para EDITAR
+            document.getElementById('editar-cedula')?.addEventListener('blur', function() {
+                validarCedula(this.value, 'editar');
+            });
+
+            document.getElementById('editar-celular')?.addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '');
+                if (this.value.length > 8) this.value = this.value.slice(0, 8);
+            });
+
+            document.getElementById('editar-celular')?.addEventListener('blur', function() {
+                validarCelular(this.value, 'editar');
+            });
+
+            document.getElementById('editar-correo')?.addEventListener('blur', function() {
+                validarCorreo(this.value, 'editar');
+            });
+
+            document.getElementById('editar-nit')?.addEventListener('blur', function() {
+                validarNit(this.value, 'editar');
             });
         }
 
-        function validarFormulario() {
+        function validarFormulario(prefijo) {
             let valido = true;
-            limpiarErrores();
+            limpiarErrores(prefijo);
 
-            const nombre = document.getElementById('modal-nombre').value.trim();
+            const nombre = document.getElementById(`${prefijo}-nombre`).value.trim();
             if (!nombre || nombre.length < 2) {
-                mostrarError('nombre', 'El nombre debe tener al menos 2 caracteres');
+                mostrarError('nombre', 'El nombre debe tener al menos 2 caracteres', prefijo);
                 valido = false;
             }
 
-            const apellidoPaterno = document.getElementById('modal-apellido-paterno').value.trim();
+            const apellidoPaterno = document.getElementById(`${prefijo}-apellido-paterno`).value.trim();
             if (!apellidoPaterno || apellidoPaterno.length < 2) {
-                mostrarError('apellido-paterno', 'El apellido paterno debe tener al menos 2 caracteres');
+                mostrarError('apellido-paterno', 'El apellido paterno debe tener al menos 2 caracteres', prefijo);
                 valido = false;
             }
 
-            const cedula = document.getElementById('modal-cedula').value.trim();
-            if (!validarCedula(cedula)) valido = false;
+            const cedula = document.getElementById(`${prefijo}-cedula`).value.trim();
+            if (!validarCedula(cedula, prefijo)) valido = false;
 
-            const celular = document.getElementById('modal-celular').value.trim();
-            if (!validarCelular(celular)) valido = false;
+            const celular = document.getElementById(`${prefijo}-celular`).value.trim();
+            if (!validarCelular(celular, prefijo)) valido = false;
 
-            const correo = document.getElementById('modal-correo').value.trim();
-            if (!validarCorreo(correo)) valido = false;
+            const correo = document.getElementById(`${prefijo}-correo`).value.trim();
+            if (!validarCorreo(correo, prefijo)) valido = false;
 
-            const nit = document.getElementById('modal-nit').value.trim();
-            if (!validarNit(nit)) valido = false;
+            const nit = document.getElementById(`${prefijo}-nit`).value.trim();
+            if (!validarNit(nit, prefijo)) valido = false;
 
-            const tipoProveedor = document.getElementById('modal-tipo-proveedor').value;
+            const tipoProveedor = document.getElementById(`${prefijo}-tipo-proveedor`).value;
             if (!tipoProveedor) {
-                mostrarError('tipo-proveedor', 'Debe seleccionar un tipo de proveedor');
+                mostrarError('tipo-proveedor', 'Debe seleccionar un tipo de proveedor', prefijo);
                 valido = false;
             }
 
             return valido;
         }
 
-        function validarCedula(cedula) {
+        function validarCedula(cedula, prefijo) {
             if (!cedula) {
-                mostrarError('cedula', 'La cédula es obligatoria');
+                mostrarError('cedula', 'La cédula es obligatoria', prefijo);
                 return false;
             }
 
             const regex = /^\d{7,8}(-[A-Z]{1,3})?$/;
             if (!regex.test(cedula.toUpperCase())) {
-                mostrarError('cedula', 'Formato inválido. Ejemplos: 1234567, 1234567-LP');
+                mostrarError('cedula', 'Formato inválido. Ejemplos: 1234567, 1234567-LP', prefijo);
                 return false;
             }
 
             return true;
         }
 
-        function validarCelular(celular) {
+        function validarCelular(celular, prefijo) {
             if (!celular) {
-                mostrarError('celular', 'El celular es obligatorio');
+                mostrarError('celular', 'El celular es obligatorio', prefijo);
                 return false;
             }
 
             if (celular.length !== 8) {
-                mostrarError('celular', 'Debe tener 8 dígitos');
+                mostrarError('celular', 'Debe tener 8 dígitos', prefijo);
                 return false;
             }
 
             if (!celular.startsWith('6') && !celular.startsWith('7')) {
-                mostrarError('celular', 'Debe empezar con 6 o 7');
+                mostrarError('celular', 'Debe empezar con 6 o 7', prefijo);
                 return false;
             }
 
             return true;
         }
 
-        function validarCorreo(correo) {
+        function validarCorreo(correo, prefijo) {
             if (!correo) {
-                mostrarError('correo', 'El correo es obligatorio');
+                mostrarError('correo', 'El correo es obligatorio', prefijo);
                 return false;
             }
 
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!regex.test(correo)) {
-                mostrarError('correo', 'Formato de correo inválido');
+                mostrarError('correo', 'Formato de correo inválido', prefijo);
                 return false;
             }
 
             return true;
         }
 
-        function validarNit(nit) {
+        function validarNit(nit, prefijo) {
             if (!nit) {
-                mostrarError('nit', 'El NIT es obligatorio');
+                mostrarError('nit', 'El NIT es obligatorio', prefijo);
                 return false;
             }
 
             if (nit.length < 5) {
-                mostrarError('nit', 'El NIT debe tener al menos 5 caracteres');
+                mostrarError('nit', 'El NIT debe tener al menos 5 caracteres', prefijo);
                 return false;
             }
 
             return true;
         }
 
-        function mostrarError(campo, mensaje) {
-            const errorElement = document.getElementById(`error-${campo}`);
-            const inputElement = document.getElementById(`modal-${campo}`);
+        function mostrarError(campo, mensaje, prefijo) {
+            const errorElement = document.getElementById(`error-${prefijo}-${campo}`);
+            const inputElement = document.getElementById(`${prefijo}-${campo}`);
             
             if (errorElement && inputElement) {
                 errorElement.textContent = mensaje;
@@ -1471,21 +1596,21 @@
             }
         }
 
-        function limpiarErrores() {
-            document.querySelectorAll('.error-message').forEach(el => {
+        function limpiarErrores(prefijo) {
+            document.querySelectorAll(`#modal${prefijo === 'crear' ? 'Crear' : 'Editar'}Proveedor .error-message`).forEach(el => {
                 el.classList.remove('show');
                 el.textContent = '';
             });
-            document.querySelectorAll('.form-input').forEach(el => {
+            document.querySelectorAll(`#modal${prefijo === 'crear' ? 'Crear' : 'Editar'}Proveedor .form-input`).forEach(el => {
                 el.classList.remove('error');
             });
         }
 
-        function mostrarErroresFormulario(errores) {
+        function mostrarErroresFormulario(errores, prefijo) {
             Object.keys(errores).forEach(campo => {
                 const mensajes = errores[campo];
                 if (Array.isArray(mensajes) && mensajes.length > 0) {
-                    mostrarError(campo.replace('_', '-'), mensajes[0]);
+                    mostrarError(campo.replace('_', '-'), mensajes[0], prefijo);
                 }
             });
         }
@@ -1566,11 +1691,16 @@
             document.body.appendChild(modal);
         }
 
+        // Cerrar modales al hacer clic fuera
         window.onclick = function(event) {
-            const modal = document.getElementById('modalProveedor');
-            if (event.target === modal) cerrarModalProveedor();
+            const modalCrear = document.getElementById('modalCrearProveedor');
+            const modalEditar = document.getElementById('modalEditarProveedor');
+            
+            if (event.target === modalCrear) cerrarModalCrear();
+            if (event.target === modalEditar) cerrarModalEditar();
         }
 
+        // Estilos de animación
         const style = document.createElement('style');
         style.textContent = `
             @keyframes slideIn {
