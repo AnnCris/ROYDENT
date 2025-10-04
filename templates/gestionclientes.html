@@ -1050,9 +1050,7 @@
                             <div class="cliente-avatar">${iniciales}</div>
                             <div>
                                 <div style="font-weight: 600;">${cliente.nombre_completo}</div>
-                                <div style="font-size: 0.875rem; color: var(--text-gray);">
-                                    ${cliente.tipo_cliente_nombre || '-'}
-                                </div>
+                                ${cliente.razon_social ? `<div style="font-size: 0.875rem; color: var(--text-gray);">Empresa: ${cliente.razon_social}</div>` : `<div style="font-size: 0.875rem; color: var(--text-gray);">${cliente.tipo_cliente_nombre || '-'}</div>`}
                             </div>
                         </div>
                     </td>
@@ -1081,8 +1079,8 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             ` : `
-                                <button class="btn btn-warning btn-sm" onclick="activarCliente(${cliente.id})" title="Activar">
-                                    <i class="fas fa-check"></i>
+                                <button class="btn btn-primary btn-sm" onclick="activarCliente(${cliente.id})" title="Activar">
+                                    <i class="fas fa-check"></i> Activar
                                 </button>
                             `}
                         </div>
@@ -1213,6 +1211,7 @@
                 document.getElementById('modal-tipo-cliente').value = cliente.tipo_cliente || '';
                 document.getElementById('modal-razon-social').value = cliente.razon_social || '';
                 document.getElementById('modal-nit').value = cliente.nit || '';
+                document.getElementById('modal-estado').value = cliente.estado || 'ACTIVO';
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -1273,9 +1272,10 @@
                 if (response.ok && data.success) {
                     mostrarAlerta('Cliente creado exitosamente', 'success');
                     cerrarModalCliente();
-                    cargarClientes();
+                    await cargarClientes();
                     cargarEstadisticas();
                 } else {
+                    mostrarErroresFormulario(data.detalles || {});
                     mostrarAlerta(data.error || 'Error al crear cliente', 'danger');
                 }
             } catch (error) {
@@ -1299,9 +1299,10 @@
                 if (response.ok && data.success) {
                     mostrarAlerta('Cliente actualizado exitosamente', 'success');
                     cerrarModalCliente();
-                    await cargarClientes(); // ← IMPORTANTE: Recargar lista
+                    await cargarClientes();
                     cargarEstadisticas();
                 } else {
+                    mostrarErroresFormulario(data.detalles || {});
                     mostrarAlerta(data.error || 'Error al actualizar', 'danger');
                 }
             } catch (error) {
@@ -1311,6 +1312,10 @@
         }
 
         // ============ ACCIONES ============
+        function editarCliente(id) {
+            abrirModalCliente(id);
+        }
+
         async function eliminarCliente(id) {
             const cliente = clientes.find(c => c.id === id);
             if (!cliente) return;
@@ -1345,46 +1350,6 @@
             } catch (error) {
                 console.error('Error:', error);
                 mostrarAlerta('Error de conexión', 'danger');
-            }
-        }
-
-        async function exportarClientes() {
-            if (clientes.length === 0) {
-                mostrarAlerta('No hay clientes para exportar', 'danger');
-                return;
-            }
-
-            try {
-                // Obtener filtros actuales
-                const params = new URLSearchParams();
-                
-                const tipo = document.getElementById('filtro-tipo').value;
-                const estado = document.getElementById('filtro-estado').value;
-                const busqueda = document.getElementById('busqueda').value;
-                
-                if (tipo && tipo !== 'todos') params.append('tipo_cliente', tipo);
-                if (estado && estado !== 'todos') params.append('estado', estado);
-                if (busqueda) params.append('busqueda', busqueda);
-                
-                // Mostrar loading
-                mostrarAlerta('Generando archivo Excel...', 'info');
-                
-                // Descargar archivo
-                const url = `/auth/api/clientes/exportar-excel/?${params}`;
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `clientes_${new Date().toISOString().split('T')[0]}.xlsx`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                setTimeout(() => {
-                    mostrarAlerta(`${clientes.length} clientes exportados a Excel exitosamente`, 'success');
-                }, 500);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                mostrarAlerta('Error al exportar', 'danger');
             }
         }
 
@@ -1438,6 +1403,45 @@
             mostrarModalDetalles('Detalles del Cliente', detalles);
         }
 
+        async function exportarClientes() {
+            if (clientes.length === 0) {
+                mostrarAlerta('No hay clientes para exportar', 'danger');
+                return;
+            }
+
+            try {
+                // Obtener filtros actuales
+                const params = new URLSearchParams();
+                
+                const tipo = document.getElementById('filtro-tipo').value;
+                const estado = document.getElementById('filtro-estado').value;
+                const busqueda = document.getElementById('busqueda').value;
+                
+                if (tipo && tipo !== 'todos') params.append('tipo_cliente', tipo);
+                if (estado && estado !== 'todos') params.append('estado', estado);
+                if (busqueda) params.append('busqueda', busqueda);
+                
+                // Mostrar loading
+                mostrarAlerta('Generando archivo Excel...', 'info');
+                
+                // Descargar archivo
+                const url = `/auth/api/clientes/exportar-excel/?${params}`;
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `clientes_${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                setTimeout(() => {
+                    mostrarAlerta(`${clientes.length} clientes exportados a Excel exitosamente`, 'success');
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al exportar', 'danger');
+            }
+        }
 
         // ============ UTILIDADES ============
         function debounce(func, wait) {

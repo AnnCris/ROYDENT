@@ -81,8 +81,8 @@
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
         }
 
-        .grid-4 {
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         }
 
         .card {
@@ -447,24 +447,19 @@
             color: white;
         }
 
-        .badge-premium {
-            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
+        .badge-distribuidor {
+            background: linear-gradient(135deg, #3B82F6, #1E40AF);
             color: white;
         }
 
-        .rating {
-            display: flex;
-            gap: 2px;
-            align-items: center;
+        .badge-fabricante {
+            background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+            color: white;
         }
 
-        .star {
-            color: var(--color-gold);
-            font-size: 1rem;
-        }
-
-        .star.empty {
-            color: #9CA3AF;
+        .badge-importador {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
         }
 
         .table-container {
@@ -549,7 +544,7 @@
             padding: 2rem;
             border-radius: 20px;
             width: 95%;
-            max-width: 700px;
+            max-width: 800px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
             border: 3px solid;
             border-image: linear-gradient(45deg, #FFD700, #2E8B57, #F0E68C, #FFD700) 1;
@@ -598,12 +593,27 @@
             border-top: 2px solid rgba(255, 215, 0, 0.2);
         }
 
+        .section-divider {
+            margin: 2rem 0 1.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: var(--radius-lg);
+            border-left: 4px solid var(--color-gold);
+        }
+
+        .section-divider h3 {
+            color: var(--color-gold-dark);
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 0;
             }
             
-            .grid-2, .grid-4 {
+            .grid-2, .grid-3 {
                 grid-template-columns: 1fr;
             }
             
@@ -651,6 +661,21 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .error-message {
+            color: #DC2626;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .form-input.error {
+            border-color: #DC2626;
+        }
     </style>
 </head>
 <body>
@@ -682,10 +707,6 @@
                         <div class="stat-label">Activos</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="stat-premium">0</div>
-                        <div class="stat-label">Premium</div>
-                    </div>
-                    <div class="stat-card">
                         <div class="stat-number" id="stat-inactivos">0</div>
                         <div class="stat-label">Inactivos</div>
                     </div>
@@ -696,22 +717,21 @@
                 <div class="card">
                     <div class="card-content">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg); flex-wrap: wrap;">
-                            <h2 class="text-h2" style="margin-bottom: 0;">Buscar Proveedores</h2>
+                            <h2 class="text-h2" style="margin-bottom: 0;">Filtros y Búsqueda</h2>
                             <div>
                                 <button class="btn btn-secondary" onclick="exportarProveedores()">📤 Exportar</button>
                                 <button class="btn btn-primary" onclick="abrirModalProveedor()">👨‍💼 Nuevo Proveedor</button>
                             </div>
                         </div>
                         
-                        <div class="grid grid-4">
+                        <div class="grid grid-3">
                             <div class="form-group">
-                                <label class="text-label">Tipo</label>
+                                <label class="text-label">Tipo de Proveedor</label>
                                 <select class="form-input form-select" id="filtro-tipo">
                                     <option value="todos">Todos</option>
                                     <option value="DISTRIBUIDOR">Distribuidor</option>
                                     <option value="FABRICANTE">Fabricante</option>
                                     <option value="IMPORTADOR">Importador</option>
-                                    <option value="MAYORISTA">Mayorista</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -720,30 +740,19 @@
                                     <option value="todos">Todos</option>
                                     <option value="ACTIVO">Activo</option>
                                     <option value="INACTIVO">Inactivo</option>
-                                    <option value="PREMIUM">Premium</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="text-label">País</label>
-                                <select class="form-input form-select" id="filtro-pais">
-                                    <option value="todos">Todos</option>
-                                    <option value="Bolivia">Bolivia</option>
-                                    <option value="Brasil">Brasil</option>
-                                    <option value="Argentina">Argentina</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="text-label">Premium</label>
-                                <select class="form-input form-select" id="filtro-premium">
-                                    <option value="">Todos</option>
-                                    <option value="true">Solo Premium</option>
-                                </select>
+                                <label class="text-label">&nbsp;</label>
+                                <button class="btn btn-secondary" onclick="limpiarFiltros()" style="width: 100%; margin: 0;">
+                                    🔄 Limpiar Filtros
+                                </button>
                             </div>
                         </div>
                         
                         <div class="search-container">
                             <span class="search-icon">🔍</span>
-                            <input type="text" class="form-input search-input" id="busqueda" placeholder="Buscar por nombre, NIT, email o teléfono...">
+                            <input type="text" class="form-input search-input" id="busqueda" placeholder="Buscar por nombre, NIT, CI, teléfono o email...">
                         </div>
                     </div>
                 </div>
@@ -758,17 +767,16 @@
                                 <thead>
                                     <tr>
                                         <th>Proveedor</th>
-                                        <th>Tipo</th>
+                                        <th>NIT</th>
                                         <th>Contacto</th>
-                                        <th>País</th>
-                                        <th>Calificación</th>
+                                        <th>Tipo</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="proveedores-table">
                                     <tr id="loading-row">
-                                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                                        <td colspan="6" style="text-align: center; padding: 2rem;">
                                             <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
                                                 <div style="width: 20px; height: 20px; border: 3px solid var(--color-gold); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
                                                 <span>Cargando proveedores...</span>
@@ -784,6 +792,7 @@
         </div>
     </main>
 
+    <!-- MODAL PROVEEDOR -->
     <div id="modalProveedor" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -792,67 +801,80 @@
             </div>
             
             <form id="formProveedor">
-                <h3 style="color: var(--color-gold-dark); margin-bottom: 1rem;">📋 Información Básica</h3>
+                <!-- DATOS PERSONALES -->
+                <div class="section-divider">
+                    <h3><i class="fas fa-user"></i> Datos Personales</h3>
+                </div>
+                
+                <div class="grid grid-3">
+                    <div class="form-group">
+                        <label class="text-label">Nombre *</label>
+                        <input type="text" class="form-input" id="modal-nombre" required>
+                        <span class="error-message" id="error-nombre"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Apellido Paterno *</label>
+                        <input type="text" class="form-input" id="modal-apellido-paterno" required>
+                        <span class="error-message" id="error-apellido-paterno"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Apellido Materno</label>
+                        <input type="text" class="form-input" id="modal-apellido-materno">
+                    </div>
+                </div>
+
+                <div class="grid grid-3">
+                    <div class="form-group">
+                        <label class="text-label">Cédula de Identidad *</label>
+                        <input type="text" class="form-input" id="modal-cedula" placeholder="1234567-LP" required>
+                        <span class="error-message" id="error-cedula"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Teléfono/Celular *</label>
+                        <input type="text" class="form-input" id="modal-celular" placeholder="72345678" maxlength="8" required>
+                        <span class="error-message" id="error-celular"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-label">Correo Electrónico *</label>
+                        <input type="email" class="form-input" id="modal-correo" placeholder="proveedor@example.com" required>
+                        <span class="error-message" id="error-correo"></span>
+                    </div>
+                </div>
+
+                <!-- DATOS DEL PROVEEDOR -->
+                <div class="section-divider">
+                    <h3><i class="fas fa-building"></i> Datos del Proveedor</h3>
+                </div>
+
                 <div class="grid grid-2">
                     <div class="form-group">
-                        <label class="text-label">Nombre/Razón Social *</label>
-                        <input type="text" class="form-input" id="modal-nombre" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-label">NIT *</label>
-                        <input type="text" class="form-input" id="modal-nit" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-label">Tipo *</label>
-                        <select class="form-input form-select" id="modal-tipo" required>
+                        <label class="text-label">Tipo de Proveedor *</label>
+                        <select class="form-input form-select" id="modal-tipo-proveedor" required>
                             <option value="">Seleccionar...</option>
                             <option value="DISTRIBUIDOR">Distribuidor</option>
                             <option value="FABRICANTE">Fabricante</option>
                             <option value="IMPORTADOR">Importador</option>
-                            <option value="MAYORISTA">Mayorista</option>
-                            <option value="MINORISTA">Minorista</option>
                         </select>
+                        <span class="error-message" id="error-tipo-proveedor"></span>
                     </div>
                     <div class="form-group">
-                        <label class="text-label">País *</label>
-                        <select class="form-input form-select" id="modal-pais" required>
-                            <option value="Bolivia">Bolivia</option>
-                            <option value="Brasil">Brasil</option>
-                            <option value="Argentina">Argentina</option>
-                            <option value="Chile">Chile</option>
-                            <option value="Perú">Perú</option>
-                        </select>
-                    </div>
-                </div>
-
-                <h3 style="color: var(--color-gold-dark); margin: 1.5rem 0 1rem;">📞 Contacto</h3>
-                <div class="grid grid-2">
-                    <div class="form-group">
-                        <label class="text-label">Teléfono *</label>
-                        <input type="text" class="form-input" id="modal-telefono" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-label">Email *</label>
-                        <input type="email" class="form-input" id="modal-email" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-label">Persona Contacto</label>
-                        <input type="text" class="form-input" id="modal-persona-contacto">
-                    </div>
-                    <div class="form-group">
-                        <label class="text-label">Cargo</label>
-                        <input type="text" class="form-input" id="modal-cargo">
+                        <label class="text-label">NIT *</label>
+                        <input type="text" class="form-input" id="modal-nit" placeholder="1234567890" required>
+                        <span class="error-message" id="error-nit"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="text-label">Dirección</label>
-                    <textarea class="form-input" id="modal-direccion" rows="2"></textarea>
+                    <label class="text-label">Razón Social (Opcional)</label>
+                    <input type="text" class="form-input" id="modal-razon-social" placeholder="Para empresas...">
                 </div>
 
                 <div class="form-group">
-                    <label class="text-label">Observaciones</label>
-                    <textarea class="form-input" id="modal-observaciones" rows="3"></textarea>
+                    <label class="text-label">Estado</label>
+                    <select class="form-input form-select" id="modal-estado">
+                        <option value="ACTIVO">Activo</option>
+                        <option value="INACTIVO">Inactivo</option>
+                    </select>
                 </div>
                 
                 <div class="modal-actions">
@@ -870,10 +892,12 @@
     <script src="/static/js/sidebar.js"></script>
 
     <script>
+       // ============ VARIABLES GLOBALES ============
         let proveedores = [];
         let proveedorEditando = null;
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Cargar sidebar
             fetch('/components/sidebar/')
                 .then(response => response.text())
                 .then(data => {
@@ -884,9 +908,11 @@
                 })
                 .catch(error => console.error('Error al cargar sidebar:', error));
 
+            // Cargar datos iniciales
             cargarProveedores();
             cargarEstadisticas();
 
+            // Animaciones de entrada
             const cards = document.querySelectorAll('.card, .stat-card');
             cards.forEach((card, index) => {
                 card.style.opacity = '0';
@@ -897,6 +923,14 @@
                     card.style.transform = 'translateY(0)';
                 }, index * 100);
             });
+
+            // Event listeners de filtros
+            document.getElementById('busqueda')?.addEventListener('input', debounce(aplicarFiltros, 500));
+            document.getElementById('filtro-tipo')?.addEventListener('change', aplicarFiltros);
+            document.getElementById('filtro-estado')?.addEventListener('change', aplicarFiltros);
+
+            // Validaciones en tiempo real
+            setupValidacionesFormulario();
         });
 
         function getHeaders() {
@@ -918,12 +952,6 @@
                 }
                 if (filtros.estado && filtros.estado !== 'todos') {
                     params.append('estado', filtros.estado);
-                }
-                if (filtros.pais && filtros.pais !== 'todos') {
-                    params.append('pais', filtros.pais);
-                }
-                if (filtros.es_premium) {
-                    params.append('es_premium', filtros.es_premium);
                 }
 
                 const response = await fetch(`/auth/api/proveedores/?${params}`, {
@@ -951,7 +979,7 @@
             if (proveedores.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                        <td colspan="6" style="text-align: center; padding: 2rem;">
                             <div style="color: var(--text-gray);">
                                 <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;"></i>
                                 <p>No se encontraron proveedores</p>
@@ -963,33 +991,28 @@
             }
 
             proveedores.forEach(proveedor => {
-                const iniciales = obtenerIniciales(proveedor.nombre);
+                const iniciales = obtenerIniciales(proveedor.nombre_completo);
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
                         <div style="display: flex; align-items: center; gap: var(--space-md);">
                             <div class="proveedor-avatar">${iniciales}</div>
                             <div>
-                                <div style="font-weight: 600;">${proveedor.nombre}</div>
-                                <div style="font-size: 0.875rem; color: var(--text-gray);">NIT: ${proveedor.nit}</div>
+                                <div style="font-weight: 600;">${proveedor.nombre_completo}</div>
+                                ${proveedor.razon_social ? `<div style="font-size: 0.875rem; color: var(--text-gray);">Empresa: ${proveedor.razon_social}</div>` : ''}
                             </div>
                         </div>
                     </td>
-                    <td>${proveedor.tipo_proveedor || '-'}</td>
+                    <td>${proveedor.nit}</td>
                     <td>
-                        <div>📞 ${proveedor.telefono}</div>
-                        <div style="font-size: 0.875rem; color: var(--text-gray);">${proveedor.email}</div>
-                    </td>
-                    <td>${proveedor.pais || '-'}</td>
-                    <td>
-                        <div class="rating">
-                            ${generarEstrellas(proveedor.calificacion)}
-                            <span style="margin-left: 0.25rem; font-size: 0.875rem;">${proveedor.calificacion || '0.0'}</span>
-                        </div>
+                        <div><i class="fas fa-phone"></i> ${proveedor.telefono || '-'}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-gray);"><i class="fas fa-envelope"></i> ${proveedor.email || '-'}</div>
                     </td>
                     <td>
-                        <span class="badge badge-${getBadgeClass(proveedor.estado)}">${proveedor.estado}</span>
-                        ${proveedor.es_premium ? '<span class="badge badge-premium">Premium</span>' : ''}
+                        <span class="badge badge-${proveedor.tipo_proveedor.toLowerCase()}">${proveedor.tipo_proveedor}</span>
+                    </td>
+                    <td>
+                        <span class="badge badge-${proveedor.estado.toLowerCase()}">${proveedor.estado}</span>
                     </td>
                     <td>
                         <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
@@ -1004,8 +1027,8 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             ` : `
-                                <button class="btn btn-warning btn-sm" onclick="activarProveedor(${proveedor.id})" title="Activar">
-                                    <i class="fas fa-check"></i>
+                                <button class="btn btn-primary btn-sm" onclick="activarProveedor(${proveedor.id})" title="Activar">
+                                    <i class="fas fa-check"></i> Activar
                                 </button>
                             `}
                         </div>
@@ -1029,7 +1052,6 @@
                     const stats = data.estadisticas;
                     document.getElementById('stat-total').textContent = stats.total || 0;
                     document.getElementById('stat-activos').textContent = stats.activos || 0;
-                    document.getElementById('stat-premium').textContent = stats.premium || 0;
                     document.getElementById('stat-inactivos').textContent = stats.inactivos || 0;
                 }
             } catch (error) {
@@ -1041,18 +1063,57 @@
             const filtros = {
                 busqueda: document.getElementById('busqueda').value,
                 tipo: document.getElementById('filtro-tipo').value,
-                estado: document.getElementById('filtro-estado').value,
-                pais: document.getElementById('filtro-pais').value,
-                es_premium: document.getElementById('filtro-premium').value
+                estado: document.getElementById('filtro-estado').value
             };
             cargarProveedores(filtros);
         }
 
-        document.getElementById('busqueda')?.addEventListener('input', debounce(aplicarFiltros, 500));
-        document.getElementById('filtro-tipo')?.addEventListener('change', aplicarFiltros);
-        document.getElementById('filtro-estado')?.addEventListener('change', aplicarFiltros);
-        document.getElementById('filtro-pais')?.addEventListener('change', aplicarFiltros);
-        document.getElementById('filtro-premium')?.addEventListener('change', aplicarFiltros);
+        // ============ FUNCIÓN LIMPIAR FILTROS ============
+        function limpiarFiltros() {
+            document.getElementById('busqueda').value = '';
+            document.getElementById('filtro-tipo').value = 'todos';
+            document.getElementById('filtro-estado').value = 'todos';
+            cargarProveedores();
+            mostrarAlerta('Filtros limpiados', 'info');
+        }
+
+        // ============ FUNCIÓN EXPORTAR ============
+        function exportarProveedores() {
+            if (proveedores.length === 0) {
+                mostrarAlerta('No hay proveedores para exportar', 'danger');
+                return;
+            }
+
+            try {
+                const params = new URLSearchParams();
+                
+                const tipo = document.getElementById('filtro-tipo').value;
+                const estado = document.getElementById('filtro-estado').value;
+                const busqueda = document.getElementById('busqueda').value;
+                
+                if (tipo && tipo !== 'todos') params.append('tipo', tipo);
+                if (estado && estado !== 'todos') params.append('estado', estado);
+                if (busqueda) params.append('busqueda', busqueda);
+                
+                mostrarAlerta('Generando archivo Excel...', 'info');
+                
+                const url = `/auth/api/proveedores/exportar-excel/?${params}`;
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `proveedores_${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                setTimeout(() => {
+                    mostrarAlerta(`${proveedores.length} proveedores exportados exitosamente`, 'success');
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarAlerta('Error al exportar', 'danger');
+            }
+        }
 
         function abrirModalProveedor(proveedorId = null) {
             const modal = document.getElementById('modalProveedor');
@@ -1060,6 +1121,7 @@
             const form = document.getElementById('formProveedor');
             
             form.reset();
+            limpiarErrores();
             proveedorEditando = proveedorId;
 
             if (proveedorId) {
@@ -1067,6 +1129,8 @@
                 cargarDatosProveedor(proveedorId);
             } else {
                 titulo.textContent = 'Nuevo Proveedor';
+                // Al crear, establecer estado ACTIVO por defecto
+                document.getElementById('modal-estado').value = 'ACTIVO';
             }
             
             modal.style.display = 'block';
@@ -1075,6 +1139,7 @@
         function cerrarModalProveedor() {
             document.getElementById('modalProveedor').style.display = 'none';
             proveedorEditando = null;
+            limpiarErrores();
         }
 
         async function cargarDatosProveedor(proveedorId) {
@@ -1089,36 +1154,44 @@
                 const data = await response.json();
                 const proveedor = data.proveedor;
 
-                document.getElementById('modal-nombre').value = proveedor.nombre || '';
+                // Dividir nombre completo (esto es aproximado, ajusta según tu lógica)
+                const nombres = proveedor.nombre_completo.split(' ');
+                document.getElementById('modal-nombre').value = nombres[0] || '';
+                document.getElementById('modal-apellido-paterno').value = nombres[1] || '';
+                document.getElementById('modal-apellido-materno').value = nombres.slice(2).join(' ') || '';
+                
+                document.getElementById('modal-cedula').value = proveedor.cedula || '';
+                document.getElementById('modal-celular').value = proveedor.telefono || '';
+                document.getElementById('modal-correo').value = proveedor.email || '';
+                document.getElementById('modal-tipo-proveedor').value = proveedor.tipo_proveedor || '';
                 document.getElementById('modal-nit').value = proveedor.nit || '';
-                document.getElementById('modal-tipo').value = proveedor.tipo_proveedor || '';
-                document.getElementById('modal-pais').value = proveedor.pais || '';
-                document.getElementById('modal-telefono').value = proveedor.telefono || '';
-                document.getElementById('modal-email').value = proveedor.email || '';
-                document.getElementById('modal-persona-contacto').value = proveedor.persona_contacto || '';
-                document.getElementById('modal-cargo').value = proveedor.cargo_contacto || '';
-                document.getElementById('modal-direccion').value = proveedor.direccion || '';
-                document.getElementById('modal-observaciones').value = proveedor.observaciones || '';
+                document.getElementById('modal-razon-social').value = proveedor.razon_social || '';
+                document.getElementById('modal-estado').value = proveedor.estado || 'ACTIVO';
             } catch (error) {
                 console.error('Error:', error);
-                mostrarAlerta('Error al cargar datos', 'danger');
+                mostrarAlerta('Error al cargar datos del proveedor', 'danger');
             }
         }
 
-        document.getElementById('formProveedor').addEventListener('submit', async function(e) {
+        document.getElementById('formProveedor')?.addEventListener('submit', async function(e) {
             e.preventDefault();
 
+            if (!validarFormulario()) {
+                mostrarAlerta('Por favor corrija los errores en el formulario', 'danger');
+                return;
+            }
+
             const formData = {
-                nombre: document.getElementById('modal-nombre').value,
-                nit: document.getElementById('modal-nit').value,
-                tipo_proveedor: document.getElementById('modal-tipo').value,
-                pais: document.getElementById('modal-pais').value,
-                telefono: document.getElementById('modal-telefono').value,
-                email: document.getElementById('modal-email').value,
-                persona_contacto: document.getElementById('modal-persona-contacto').value,
-                cargo_contacto: document.getElementById('modal-cargo').value,
-                direccion: document.getElementById('modal-direccion').value,
-                observaciones: document.getElementById('modal-observaciones').value
+                nombre: document.getElementById('modal-nombre').value.trim(),
+                apellido_paterno: document.getElementById('modal-apellido-paterno').value.trim(),
+                apellido_materno: document.getElementById('modal-apellido-materno').value.trim(),
+                cedula_identidad: document.getElementById('modal-cedula').value.trim(),
+                numero_celular: document.getElementById('modal-celular').value.trim(),
+                correo: document.getElementById('modal-correo').value.trim(),
+                tipo_proveedor: document.getElementById('modal-tipo-proveedor').value,
+                nit: document.getElementById('modal-nit').value.trim(),
+                razon_social: document.getElementById('modal-razon-social').value.trim(),
+                estado: document.getElementById('modal-estado').value
             };
 
             if (proveedorEditando) {
@@ -1142,14 +1215,15 @@
                 if (response.ok && data.success) {
                     mostrarAlerta('Proveedor creado exitosamente', 'success');
                     cerrarModalProveedor();
-                    cargarProveedores();
+                    await cargarProveedores();
                     cargarEstadisticas();
                 } else {
+                    mostrarErroresFormulario(data.detalles || {});
                     mostrarAlerta(data.error || 'Error al crear proveedor', 'danger');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                mostrarAlerta('Error de conexión', 'danger');
+                mostrarAlerta('Error de conexión al crear proveedor', 'danger');
             }
         }
 
@@ -1167,13 +1241,16 @@
                 if (response.ok && data.success) {
                     mostrarAlerta('Proveedor actualizado exitosamente', 'success');
                     cerrarModalProveedor();
-                    cargarProveedores();
+                    // IMPORTANTE: Esperar a que se recargue la lista
+                    await cargarProveedores();
+                    cargarEstadisticas();
                 } else {
-                    mostrarAlerta(data.error || 'Error al actualizar', 'danger');
+                    mostrarErroresFormulario(data.detalles || {});
+                    mostrarAlerta(data.error || 'Error al actualizar proveedor', 'danger');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                mostrarAlerta('Error de conexión', 'danger');
+                mostrarAlerta('Error de conexión al actualizar', 'danger');
             }
         }
 
@@ -1182,7 +1259,7 @@
         }
 
         async function eliminarProveedor(id) {
-            if (!confirm('¿Desactivar este proveedor?')) return;
+            if (!confirm('¿Está seguro de desactivar este proveedor?\n\nPodrá reactivarlo más tarde si lo necesita.')) return;
 
             try {
                 const response = await fetch(`/auth/api/proveedores/${id}/eliminar/`, {
@@ -1194,13 +1271,14 @@
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    mostrarAlerta('Proveedor desactivado', 'success');
+                    mostrarAlerta('Proveedor desactivado exitosamente', 'success');
                     cargarProveedores();
                     cargarEstadisticas();
                 } else {
-                    mostrarAlerta(data.error || 'Error', 'danger');
+                    mostrarAlerta(data.error || 'Error al desactivar proveedor', 'danger');
                 }
             } catch (error) {
+                console.error('Error:', error);
                 mostrarAlerta('Error de conexión', 'danger');
             }
         }
@@ -1218,13 +1296,14 @@
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    mostrarAlerta('Proveedor activado', 'success');
+                    mostrarAlerta('Proveedor activado exitosamente', 'success');
                     cargarProveedores();
                     cargarEstadisticas();
                 } else {
-                    mostrarAlerta(data.error || 'Error', 'danger');
+                    mostrarAlerta(data.error || 'Error al activar', 'danger');
                 }
             } catch (error) {
+                console.error('Error:', error);
                 mostrarAlerta('Error de conexión', 'danger');
             }
         }
@@ -1235,26 +1314,183 @@
 
             const detalles = `
                 <div style="line-height: 2; padding: 1rem;">
-                    <p><strong>🏢 Nombre:</strong> ${proveedor.nombre}</p>
-                    <p><strong>🆔 NIT:</strong> ${proveedor.nit}</p>
-                    <p><strong>📋 Tipo:</strong> ${proveedor.tipo_proveedor || '-'}</p>
-                    <p><strong>🌎 País:</strong> ${proveedor.pais || '-'}</p>
-                    <p><strong>📞 Teléfono:</strong> ${proveedor.telefono}</p>
-                    <p><strong>📧 Email:</strong> ${proveedor.email}</p>
-                    ${proveedor.persona_contacto ? `<p><strong>👤 Contacto:</strong> ${proveedor.persona_contacto}</p>` : ''}
-                    <p><strong>⭐ Calificación:</strong> ${proveedor.calificacion || '0.0'}</p>
-                    <p><strong>📊 Estado:</strong> <span class="badge badge-${getBadgeClass(proveedor.estado)}">${proveedor.estado}</span></p>
-                    ${proveedor.es_premium ? '<p><strong>💎 Premium:</strong> Sí</p>' : ''}
+                    <h3 style="color: var(--color-gold-dark); margin-bottom: 1rem;">
+                        <i class="fas fa-user"></i> Información Personal
+                    </h3>
+                    <p><strong>Nombre Completo:</strong> ${proveedor.nombre_completo}</p>
+                    <p><strong>CI:</strong> ${proveedor.cedula || '-'}</p>
+                    <p><strong>Teléfono:</strong> ${proveedor.telefono || '-'}</p>
+                    <p><strong>Email:</strong> ${proveedor.email || '-'}</p>
+                    
+                    <h3 style="color: var(--color-gold-dark); margin: 1.5rem 0 1rem;">
+                        <i class="fas fa-building"></i> Información Comercial
+                    </h3>
+                    <p><strong>NIT:</strong> ${proveedor.nit}</p>
+                    ${proveedor.razon_social ? `<p><strong>Razón Social:</strong> ${proveedor.razon_social}</p>` : ''}
+                    <p><strong>Tipo:</strong> <span class="badge badge-${proveedor.tipo_proveedor.toLowerCase()}">${proveedor.tipo_proveedor}</span></p>
+                    <p><strong>Estado:</strong> <span class="badge badge-${proveedor.estado.toLowerCase()}">${proveedor.estado}</span></p>
+                    <p><strong>Fecha Registro:</strong> ${new Date(proveedor.fecha_registro).toLocaleDateString('es-BO')}</p>
                 </div>
             `;
             
             mostrarModalDetalles('Detalles del Proveedor', detalles);
         }
 
-        function exportarProveedores() {
-            mostrarAlerta('Exportando proveedores...', 'info');
+        // ============ VALIDACIONES ============
+        function setupValidacionesFormulario() {
+            document.getElementById('modal-cedula')?.addEventListener('blur', function() {
+                validarCedula(this.value);
+            });
+
+            document.getElementById('modal-celular')?.addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '');
+                if (this.value.length > 8) this.value = this.value.slice(0, 8);
+            });
+
+            document.getElementById('modal-celular')?.addEventListener('blur', function() {
+                validarCelular(this.value);
+            });
+
+            document.getElementById('modal-correo')?.addEventListener('blur', function() {
+                validarCorreo(this.value);
+            });
+
+            document.getElementById('modal-nit')?.addEventListener('blur', function() {
+                validarNit(this.value);
+            });
         }
 
+        function validarFormulario() {
+            let valido = true;
+            limpiarErrores();
+
+            const nombre = document.getElementById('modal-nombre').value.trim();
+            if (!nombre || nombre.length < 2) {
+                mostrarError('nombre', 'El nombre debe tener al menos 2 caracteres');
+                valido = false;
+            }
+
+            const apellidoPaterno = document.getElementById('modal-apellido-paterno').value.trim();
+            if (!apellidoPaterno || apellidoPaterno.length < 2) {
+                mostrarError('apellido-paterno', 'El apellido paterno debe tener al menos 2 caracteres');
+                valido = false;
+            }
+
+            const cedula = document.getElementById('modal-cedula').value.trim();
+            if (!validarCedula(cedula)) valido = false;
+
+            const celular = document.getElementById('modal-celular').value.trim();
+            if (!validarCelular(celular)) valido = false;
+
+            const correo = document.getElementById('modal-correo').value.trim();
+            if (!validarCorreo(correo)) valido = false;
+
+            const nit = document.getElementById('modal-nit').value.trim();
+            if (!validarNit(nit)) valido = false;
+
+            const tipoProveedor = document.getElementById('modal-tipo-proveedor').value;
+            if (!tipoProveedor) {
+                mostrarError('tipo-proveedor', 'Debe seleccionar un tipo de proveedor');
+                valido = false;
+            }
+
+            return valido;
+        }
+
+        function validarCedula(cedula) {
+            if (!cedula) {
+                mostrarError('cedula', 'La cédula es obligatoria');
+                return false;
+            }
+
+            const regex = /^\d{7,8}(-[A-Z]{1,3})?$/;
+            if (!regex.test(cedula.toUpperCase())) {
+                mostrarError('cedula', 'Formato inválido. Ejemplos: 1234567, 1234567-LP');
+                return false;
+            }
+
+            return true;
+        }
+
+        function validarCelular(celular) {
+            if (!celular) {
+                mostrarError('celular', 'El celular es obligatorio');
+                return false;
+            }
+
+            if (celular.length !== 8) {
+                mostrarError('celular', 'Debe tener 8 dígitos');
+                return false;
+            }
+
+            if (!celular.startsWith('6') && !celular.startsWith('7')) {
+                mostrarError('celular', 'Debe empezar con 6 o 7');
+                return false;
+            }
+
+            return true;
+        }
+
+        function validarCorreo(correo) {
+            if (!correo) {
+                mostrarError('correo', 'El correo es obligatorio');
+                return false;
+            }
+
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!regex.test(correo)) {
+                mostrarError('correo', 'Formato de correo inválido');
+                return false;
+            }
+
+            return true;
+        }
+
+        function validarNit(nit) {
+            if (!nit) {
+                mostrarError('nit', 'El NIT es obligatorio');
+                return false;
+            }
+
+            if (nit.length < 5) {
+                mostrarError('nit', 'El NIT debe tener al menos 5 caracteres');
+                return false;
+            }
+
+            return true;
+        }
+
+        function mostrarError(campo, mensaje) {
+            const errorElement = document.getElementById(`error-${campo}`);
+            const inputElement = document.getElementById(`modal-${campo}`);
+            
+            if (errorElement && inputElement) {
+                errorElement.textContent = mensaje;
+                errorElement.classList.add('show');
+                inputElement.classList.add('error');
+            }
+        }
+
+        function limpiarErrores() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('show');
+                el.textContent = '';
+            });
+            document.querySelectorAll('.form-input').forEach(el => {
+                el.classList.remove('error');
+            });
+        }
+
+        function mostrarErroresFormulario(errores) {
+            Object.keys(errores).forEach(campo => {
+                const mensajes = errores[campo];
+                if (Array.isArray(mensajes) && mensajes.length > 0) {
+                    mostrarError(campo.replace('_', '-'), mensajes[0]);
+                }
+            });
+        }
+
+        // ============ UTILIDADES ============
         function debounce(func, wait) {
             let timeout;
             return function(...args) {
@@ -1264,47 +1500,52 @@
         }
 
         function obtenerIniciales(nombre) {
+            if (!nombre) return '??';
             const partes = nombre.trim().split(' ');
             return partes.length >= 2 
                 ? (partes[0][0] + partes[1][0]).toUpperCase()
                 : nombre.substring(0, 2).toUpperCase();
         }
 
-        function getBadgeClass(estado) {
-            const map = {
-                'ACTIVO': 'activo',
-                'INACTIVO': 'inactivo',
-                'PREMIUM': 'premium'
-            };
-            return map[estado] || 'activo';
-        }
-
-        function generarEstrellas(calificacion) {
-            const cal = parseFloat(calificacion) || 0;
-            let estrellas = '';
-            for (let i = 1; i <= 5; i++) {
-                if (i <= cal) {
-                    estrellas += '<span class="star">⭐</span>';
-                } else {
-                    estrellas += '<span class="star empty">⭐</span>';
-                }
-            }
-            return estrellas;
-        }
-
         function mostrarAlerta(mensaje, tipo) {
-            const color = tipo === 'success' ? '#00C851' : tipo === 'danger' ? '#EF4444' : '#FFD700';
+            const colores = {
+                'success': '#00C851',
+                'danger': '#EF4444',
+                'info': '#3B82F6',
+                'warning': '#F59E0B'
+            };
+            
+            const iconos = {
+                'success': '✓',
+                'danger': '✕',
+                'info': 'ℹ',
+                'warning': '⚠'
+            };
+
+            const color = colores[tipo] || colores.info;
+            const icono = iconos[tipo] || iconos.info;
+            
             const alerta = document.createElement('div');
-            alerta.innerHTML = `<strong>${tipo === 'success' ? 'Éxito' : tipo === 'danger' ? 'Error' : 'Info'}:</strong> ${mensaje}`;
+            alerta.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="font-size: 1.5rem;">${icono}</span>
+                    <span>${mensaje}</span>
+                </div>
+            `;
             alerta.style.cssText = `
                 position: fixed; top: 20px; right: 20px; z-index: 10000;
-                min-width: 300px; padding: 1rem 1.5rem; border-radius: var(--radius-lg);
+                min-width: 320px; padding: 1rem 1.5rem; border-radius: var(--radius-lg);
                 background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
                 border-left: 4px solid ${color};
+                animation: slideIn 0.3s ease-out;
             `;
+            
             document.body.appendChild(alerta);
-            setTimeout(() => alerta.remove(), 3000);
+            setTimeout(() => {
+                alerta.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => alerta.remove(), 300);
+            }, 3000);
         }
 
         function mostrarModalDetalles(titulo, contenido) {
@@ -1314,10 +1555,12 @@
                 <div style="background: white; margin: 5% auto; padding: 2rem; border-radius: 20px; width: 90%; max-width: 600px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                         <h2 style="color: var(--color-green-dark); margin: 0;">${titulo}</h2>
-                        <span onclick="this.closest('div').parentElement.remove()" style="cursor: pointer; font-size: 28px;">&times;</span>
+                        <span onclick="this.closest('div').parentElement.remove()" style="cursor: pointer; font-size: 28px; color: #9CA3AF; transition: all 0.3s;">&times;</span>
                     </div>
                     ${contenido}
-                    <button onclick="this.closest('div').parentElement.remove()" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Cerrar</button>
+                    <button onclick="this.closest('div').parentElement.remove()" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                        <i class="fas fa-times"></i> Cerrar
+                    </button>
                 </div>
             `;
             document.body.appendChild(modal);
@@ -1327,6 +1570,31 @@
             const modal = document.getElementById('modalProveedor');
             if (event.target === modal) cerrarModalProveedor();
         }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>

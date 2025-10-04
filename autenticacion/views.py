@@ -1017,14 +1017,19 @@ def obtener_cliente(request, cliente_id):
         }, status=status.HTTP_404_NOT_FOUND)
 
 
+# autenticacion/views.py - REEMPLAZAR crear_cliente y actualizar_cliente
+
 @api_view(['POST'])
 def crear_cliente(request):
-    """API para crear un nuevo cliente (con usuario y persona)"""
+    """API para crear un nuevo cliente con validaciones completas"""
     serializer = ClienteCreateSerializer(data=request.data)
     
     if serializer.is_valid():
         try:
+            # Crear cliente (incluye Persona y Usuario)
             cliente = serializer.save()
+            
+            # Serializar con el serializer de lectura para obtener nombre_completo
             cliente_serializer = ClienteSerializer(cliente)
             
             return Response({
@@ -1054,32 +1059,35 @@ def actualizar_cliente(request, cliente_id):
         persona = cliente.usuario.persona
         data = request.data
         
-        # Actualizar datos de Persona
-        campos_persona = {
-            'nombre': 'nombre',
-            'apellido_paterno': 'apellido_paterno',
-            'apellido_materno': 'apellido_materno',
-            'numero_celular': 'numero_celular',
-            'correo': 'correo'
-        }
+        # ============ ACTUALIZAR DATOS DE PERSONA ============
+        if 'nombre' in data:
+            persona.nombre = data['nombre'].strip()
         
-        for campo_request, campo_modelo in campos_persona.items():
-            if campo_request in data:
-                setattr(persona, campo_modelo, data[campo_request])
+        if 'apellido_paterno' in data:
+            persona.apellido_paterno = data['apellido_paterno'].strip()
         
-        # Validar que el correo no esté en uso por otra persona
+        if 'apellido_materno' in data:
+            persona.apellido_materno = data['apellido_materno'].strip()
+        
+        if 'numero_celular' in data:
+            persona.numero_celular = data['numero_celular'].strip()
+        
         if 'correo' in data:
+            # Validar que el correo no esté en uso por otra persona
             if Persona.objects.filter(correo=data['correo']).exclude(id=persona.id).exists():
                 return Response({
                     'success': False,
                     'error': 'El correo ya está en uso por otro usuario'
                 }, status=status.HTTP_400_BAD_REQUEST)
+            persona.correo = data['correo'].strip()
         
+        # Guardar cambios en Persona
         persona.save()
         
-        # Actualizar datos de Cliente
+        # ============ ACTUALIZAR DATOS DE CLIENTE ============
         if 'razon_social' in data:
-            cliente.razon_social = data['razon_social']
+            cliente.razon_social = data['razon_social'].strip()
+        
         if 'nit' in data:
             # Validar NIT único
             if data['nit'] and Cliente.objects.filter(nit=data['nit']).exclude(id=cliente_id).exists():
@@ -1087,7 +1095,7 @@ def actualizar_cliente(request, cliente_id):
                     'success': False,
                     'error': 'El NIT ya está registrado'
                 }, status=status.HTTP_400_BAD_REQUEST)
-            cliente.nit = data['nit']
+            cliente.nit = data['nit'].strip()
         
         # CRÍTICO: Actualizar estado del Cliente
         if 'estado' in data:
@@ -1110,6 +1118,7 @@ def actualizar_cliente(request, cliente_id):
                     'error': 'Tipo de cliente no válido'
                 }, status=status.HTTP_400_BAD_REQUEST)
         
+        # Guardar cambios en Cliente
         cliente.save()
         
         # Actualizar contraseña si se proporciona
@@ -1117,6 +1126,10 @@ def actualizar_cliente(request, cliente_id):
             cliente.usuario.set_password(data['password'])
             cliente.usuario.save()
         
+        # Refrescar desde BD para obtener datos actualizados
+        cliente.refresh_from_db()
+        
+        # Serializar con datos actualizados
         serializer = ClienteSerializer(cliente)
         
         return Response({
@@ -1135,7 +1148,6 @@ def actualizar_cliente(request, cliente_id):
             'success': False,
             'error': f'Error: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 @api_view(['DELETE'])
 def eliminar_cliente(request, cliente_id):
@@ -1375,17 +1387,21 @@ def obtener_proveedor(request, proveedor_id):
 
 @api_view(['POST'])
 def crear_proveedor(request):
-    """API para crear un nuevo proveedor"""
+    """API para crear un nuevo proveedor con validaciones completas"""
     serializer = ProveedorCreateSerializer(data=request.data)
     
     if serializer.is_valid():
         try:
+            # Crear proveedor (incluye Persona)
             proveedor = serializer.save()
+            
+            # Serializar con el serializer de lectura para obtener nombre_completo
+            proveedor_serializer = ProveedorSerializer(proveedor)
             
             return Response({
                 'success': True,
                 'message': 'Proveedor creado exitosamente',
-                'proveedor': ProveedorSerializer(proveedor).data
+                'proveedor': proveedor_serializer.data
             }, status=status.HTTP_201_CREATED)
             
         except Exception as e:
@@ -1400,29 +1416,71 @@ def crear_proveedor(request):
         'detalles': serializer.errors
     }, status=status.HTTP_400_BAD_REQUEST)
 
-
 @api_view(['PUT'])
 def actualizar_proveedor(request, proveedor_id):
-    """API para actualizar un proveedor"""
+    """API para actualizar un proveedor y sus datos de persona"""
     try:
-        proveedor = Proveedor.objects.get(id=proveedor_id)
+        proveedor = Proveedor.objects.select_related('persona').get(id=proveedor_id)
+        persona = proveedor.persona
+        data = request.data
         
-        # Actualizar campos
-        if 'tipo_proveedor' in request.data:
-            proveedor.tipo_proveedor = request.data['tipo_proveedor']
-        if 'nit' in request.data:
-            proveedor.nit = request.data['nit']
-        if 'razon_social' in request.data:
-            proveedor.razon_social = request.data['razon_social']
-        if 'estado' in request.data:
-            proveedor.estado = request.data['estado']
+        # ============ ACTUALIZAR DATOS DE PERSONA ============
+        if 'nombre' in data:
+            persona.nombre = data['nombre'].strip()
         
+        if 'apellido_paterno' in data:
+            persona.apellido_paterno = data['apellido_paterno'].strip()
+        
+        if 'apellido_materno' in data:
+            persona.apellido_materno = data['apellido_materno'].strip()
+        
+        if 'numero_celular' in data:
+            persona.numero_celular = data['numero_celular'].strip()
+        
+        if 'correo' in data:
+            # Validar que el correo no esté en uso por otra persona
+            if Persona.objects.filter(correo=data['correo']).exclude(id=persona.id).exists():
+                return Response({
+                    'success': False,
+                    'error': 'El correo ya está en uso por otro usuario'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            persona.correo = data['correo'].strip()
+        
+        # Guardar cambios en Persona
+        persona.save()
+        
+        # ============ ACTUALIZAR DATOS DE PROVEEDOR ============
+        if 'razon_social' in data:
+            proveedor.razon_social = data['razon_social'].strip()
+        
+        if 'nit' in data:
+            # Validar NIT único
+            if data['nit'] and Proveedor.objects.filter(nit=data['nit']).exclude(id=proveedor_id).exists():
+                return Response({
+                    'success': False,
+                    'error': 'El NIT ya está registrado'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            proveedor.nit = data['nit'].strip()
+        
+        if 'tipo_proveedor' in data:
+            proveedor.tipo_proveedor = data['tipo_proveedor']
+        
+        if 'estado' in data:
+            proveedor.estado = data['estado']
+        
+        # Guardar cambios en Proveedor
         proveedor.save()
+        
+        # Refrescar desde BD para obtener datos actualizados
+        proveedor.refresh_from_db()
+        
+        # Serializar con datos actualizados
+        serializer = ProveedorSerializer(proveedor)
         
         return Response({
             'success': True,
             'message': 'Proveedor actualizado exitosamente',
-            'proveedor': ProveedorSerializer(proveedor).data
+            'proveedor': serializer.data
         })
         
     except Proveedor.DoesNotExist:
@@ -1430,7 +1488,11 @@ def actualizar_proveedor(request, proveedor_id):
             'success': False,
             'error': 'Proveedor no encontrado'
         }, status=status.HTTP_404_NOT_FOUND)
-
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': f'Error: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['DELETE'])
 def eliminar_proveedor(request, proveedor_id):
@@ -1491,3 +1553,87 @@ def estadisticas_proveedores(request):
         'success': True,
         'estadisticas': stats
     })
+
+@api_view(['GET'])
+def exportar_proveedores_excel(request):
+    """Exportar proveedores a Excel real (.xlsx)"""
+    try:
+        # Obtener filtros de la query string
+        tipo_proveedor = request.GET.get('tipo', '')
+        estado = request.GET.get('estado', '')
+        busqueda = request.GET.get('busqueda', '')
+        
+        # Base query
+        proveedores = Proveedor.objects.select_related('persona').all()
+        
+        # Aplicar filtros
+        if tipo_proveedor and tipo_proveedor != 'todos':
+            proveedores = proveedores.filter(tipo_proveedor=tipo_proveedor.upper())
+        
+        if estado and estado != 'todos':
+            proveedores = proveedores.filter(estado=estado.upper())
+        
+        if busqueda:
+            proveedores = proveedores.filter(
+                Q(persona__nombre__icontains=busqueda) |
+                Q(persona__apellido_paterno__icontains=busqueda) |
+                Q(persona__apellido_materno__icontains=busqueda) |
+                Q(persona__cedula_identidad__icontains=busqueda) |
+                Q(persona__correo__icontains=busqueda) |
+                Q(razon_social__icontains=busqueda) |
+                Q(nit__icontains=busqueda)
+            )
+        
+        # Crear workbook
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Proveedores"
+        
+        # Estilos
+        header_fill = PatternFill(start_color="FFD700", end_color="FFD700", fill_type="solid")
+        header_font = Font(bold=True, size=12, color="000000")
+        
+        # Headers
+        headers = [
+            'Nombre Completo', 'Tipo Proveedor', 'Cédula', 'NIT',
+            'Teléfono', 'Email', 'Razón Social',
+            'Estado', 'Fecha Registro'
+        ]
+        
+        for col, header in enumerate(headers, start=1):
+            cell = ws.cell(row=1, column=col, value=header)
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+        
+        # Datos
+        for row, proveedor in enumerate(proveedores, start=2):
+            ws.cell(row=row, column=1, value=proveedor.get_nombre_completo())
+            ws.cell(row=row, column=2, value=proveedor.tipo_proveedor)
+            ws.cell(row=row, column=3, value=proveedor.persona.cedula_identidad)
+            ws.cell(row=row, column=4, value=proveedor.nit)
+            ws.cell(row=row, column=5, value=proveedor.persona.numero_celular or '')
+            ws.cell(row=row, column=6, value=proveedor.persona.correo or '')
+            ws.cell(row=row, column=7, value=proveedor.razon_social or '')
+            ws.cell(row=row, column=8, value=proveedor.estado)
+            ws.cell(row=row, column=9, value=proveedor.fecha_registro.strftime('%d/%m/%Y'))
+        
+        # Ajustar anchos
+        for col in range(1, len(headers) + 1):
+            ws.column_dimensions[chr(64 + col)].width = 20
+        
+        # Preparar respuesta
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        fecha = datetime.now().strftime('%Y-%m-%d')
+        response['Content-Disposition'] = f'attachment; filename=proveedores_{fecha}.xlsx'
+        
+        wb.save(response)
+        return response
+        
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': f'Error al exportar: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

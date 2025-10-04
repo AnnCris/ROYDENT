@@ -502,11 +502,12 @@ class TipoClienteSerializer(serializers.ModelSerializer):
         fields = ['id', 'codigo', 'nombre_tipo', 'descripcion']
         read_only_fields = ['id']
 
+# autenticacion/serializers.py - REEMPLAZAR ClienteSerializer y ClienteCreateSerializer
 
 class ClienteSerializer(serializers.ModelSerializer):
     """Serializer para clientes con datos completos de Persona"""
     
-    # Datos de Persona desde Usuario->Persona
+    # Campos de Persona - usando SerializerMethodField para datos dinámicos
     nombre = serializers.CharField(source='usuario.persona.nombre', read_only=True)
     apellido_paterno = serializers.CharField(source='usuario.persona.apellido_paterno', read_only=True)
     apellido_materno = serializers.CharField(source='usuario.persona.apellido_materno', read_only=True)
@@ -517,7 +518,7 @@ class ClienteSerializer(serializers.ModelSerializer):
     # Datos adicionales
     tipo_cliente_nombre = serializers.CharField(source='tipo_cliente.nombre_tipo', read_only=True)
     tipo_cliente_codigo = serializers.CharField(source='tipo_cliente.codigo', read_only=True)
-    nombre_completo = serializers.CharField(source='get_nombre_completo', read_only=True)
+    nombre_completo = serializers.SerializerMethodField()
     documento = serializers.CharField(source='get_documento', read_only=True)
     nombre_usuario = serializers.CharField(source='usuario.nombre_usuario', read_only=True)
     
@@ -547,6 +548,13 @@ class ClienteSerializer(serializers.ModelSerializer):
             'nombre_usuario',
         ]
         read_only_fields = ['id', 'fecha_registro', 'fecha_actualizacion']
+    
+    def get_nombre_completo(self, obj):
+        """Obtener nombre completo actualizado desde Persona"""
+        if obj.usuario and obj.usuario.persona:
+            return obj.usuario.persona.get_nombre_completo()
+        return ''
+
 
 class ClienteCreateSerializer(serializers.Serializer):
     """Serializer para crear un cliente nuevo (con usuario y persona)"""
@@ -567,6 +575,7 @@ class ClienteCreateSerializer(serializers.Serializer):
     tipo_cliente_id = serializers.IntegerField()
     razon_social = serializers.CharField(max_length=200, required=False, allow_blank=True)
     nit = serializers.CharField(max_length=20, required=False, allow_blank=True)
+    estado = serializers.ChoiceField(choices=Cliente.ESTADO_CHOICES, default='ACTIVO')
     
     def validate_nombre_usuario(self, value):
         if Usuario.objects.filter(nombre_usuario=value).exists():
@@ -588,23 +597,32 @@ class ClienteCreateSerializer(serializers.Serializer):
             raise serializers.ValidationError("Tipo de cliente no válido")
         return value
     
+    def validate_numero_celular(self, value):
+        """Validar celular boliviano"""
+        celular_clean = value.strip()
+        if len(celular_clean) != 8:
+            raise serializers.ValidationError("El celular debe tener 8 dígitos")
+        if not celular_clean.startswith(('6', '7')):
+            raise serializers.ValidationError("El celular debe empezar con 6 o 7")
+        return celular_clean
+    
     def create(self, validated_data):
         from django.db import transaction
         
         with transaction.atomic():
             # 1. Crear Persona
             persona = Persona.objects.create(
-                nombre=validated_data['nombre'],
-                apellido_paterno=validated_data['apellido_paterno'],
-                apellido_materno=validated_data.get('apellido_materno', ''),
-                cedula_identidad=validated_data['cedula_identidad'],
-                numero_celular=validated_data['numero_celular'],
-                correo=validated_data['correo']
+                nombre=validated_data['nombre'].strip(),
+                apellido_paterno=validated_data['apellido_paterno'].strip(),
+                apellido_materno=validated_data.get('apellido_materno', '').strip(),
+                cedula_identidad=validated_data['cedula_identidad'].strip(),
+                numero_celular=validated_data['numero_celular'].strip(),
+                correo=validated_data['correo'].strip()
             )
             
             # 2. Crear Usuario
             usuario = Usuario.objects.create_user(
-                nombre_usuario=validated_data['nombre_usuario'],
+                nombre_usuario=validated_data['nombre_usuario'].strip(),
                 password=validated_data['password'],
                 persona=persona
             )
@@ -623,19 +641,18 @@ class ClienteCreateSerializer(serializers.Serializer):
             cliente = Cliente.objects.create(
                 usuario=usuario,
                 tipo_cliente=tipo_cliente,
-                razon_social=validated_data.get('razon_social', ''),
-                nit=validated_data.get('nit', ''),
-                estado='ACTIVO'
+                razon_social=validated_data.get('razon_social', '').strip(),
+                nit=validated_data.get('nit', '').strip(),
+                estado=validated_data.get('estado', 'ACTIVO')
             )
             
             return cliente
 
-
 class ProveedorSerializer(serializers.ModelSerializer):
     """Serializer para proveedores"""
     
-    # Campos desde Persona
-    nombre_completo = serializers.CharField(source='get_nombre_completo', read_only=True)
+    # Campos desde Persona - usando SerializerMethodField para datos dinámicos
+    nombre_completo = serializers.SerializerMethodField()
     email = serializers.EmailField(source='persona.correo', read_only=True)
     telefono = serializers.CharField(source='persona.numero_celular', read_only=True)
     cedula = serializers.CharField(source='persona.cedula_identidad', read_only=True)
@@ -658,6 +675,12 @@ class ProveedorSerializer(serializers.ModelSerializer):
             'cedula',
         ]
         read_only_fields = ['id', 'fecha_registro', 'fecha_actualizacion']
+    
+    def get_nombre_completo(self, obj):
+        """Obtener nombre completo actualizado desde Persona"""
+        if obj.persona:
+            return obj.persona.get_nombre_completo()
+        return ''
     
     def validate_nit(self, value):
         if self.instance:
@@ -684,6 +707,7 @@ class ProveedorCreateSerializer(serializers.Serializer):
     tipo_proveedor = serializers.ChoiceField(choices=Proveedor.TIPO_PROVEEDOR)
     nit = serializers.CharField(max_length=20)
     razon_social = serializers.CharField(max_length=200, required=False, allow_blank=True)
+    estado = serializers.ChoiceField(choices=Proveedor.ESTADO_CHOICES, default='ACTIVO')
     
     def validate_cedula_identidad(self, value):
         if Persona.objects.filter(cedula_identidad=value).exists():
@@ -695,28 +719,36 @@ class ProveedorCreateSerializer(serializers.Serializer):
             raise serializers.ValidationError("Este NIT ya está registrado")
         return value
     
+    def validate_numero_celular(self, value):
+        """Validar celular boliviano"""
+        celular_clean = value.strip()
+        if len(celular_clean) != 8:
+            raise serializers.ValidationError("El celular debe tener 8 dígitos")
+        if not celular_clean.startswith(('6', '7')):
+            raise serializers.ValidationError("El celular debe empezar con 6 o 7")
+        return celular_clean
+    
     def create(self, validated_data):
         from django.db import transaction
         
         with transaction.atomic():
             # 1. Crear Persona
             persona = Persona.objects.create(
-                nombre=validated_data['nombre'],
-                apellido_paterno=validated_data['apellido_paterno'],
-                apellido_materno=validated_data.get('apellido_materno', ''),
-                cedula_identidad=validated_data['cedula_identidad'],
-                numero_celular=validated_data['numero_celular'],
-                correo=validated_data['correo']
+                nombre=validated_data['nombre'].strip(),
+                apellido_paterno=validated_data['apellido_paterno'].strip(),
+                apellido_materno=validated_data.get('apellido_materno', '').strip(),
+                cedula_identidad=validated_data['cedula_identidad'].strip(),
+                numero_celular=validated_data['numero_celular'].strip(),
+                correo=validated_data['correo'].strip()
             )
             
             # 2. Crear Proveedor
             proveedor = Proveedor.objects.create(
                 persona=persona,
                 tipo_proveedor=validated_data['tipo_proveedor'],
-                nit=validated_data['nit'],
-                razon_social=validated_data.get('razon_social', ''),
-                estado='ACTIVO'
+                nit=validated_data['nit'].strip(),
+                razon_social=validated_data.get('razon_social', '').strip(),
+                estado=validated_data.get('estado', 'ACTIVO')
             )
             
-            return proveedor    
-
+            return proveedor

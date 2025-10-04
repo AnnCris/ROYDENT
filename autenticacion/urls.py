@@ -62,7 +62,7 @@ urlpatterns = [
     path('api/clientes/<int:cliente_id>/activar/', views.activar_cliente, name='api_activar_cliente'),
     path('api/clientes/estadisticas/', views.estadisticas_clientes, name='api_estadisticas_clientes'),
     path('api/clientes/exportar-excel/', views.exportar_clientes_excel, name='api_exportar_clientes_excel'),
-    
+
     # ============ PROVEEDORES ============
     path('api/proveedores/', views.listar_proveedores, name='api_listar_proveedores'),
     path('api/proveedores/<int:proveedor_id>/', views.obtener_proveedor, name='api_obtener_proveedor'),
@@ -71,4 +71,5 @@ urlpatterns = [
     path('api/proveedores/<int:proveedor_id>/eliminar/', views.eliminar_proveedor, name='api_eliminar_proveedor'),
     path('api/proveedores/<int:proveedor_id>/activar/', views.activar_proveedor, name='api_activar_proveedor'),
     path('api/proveedores/estadisticas/', views.estadisticas_proveedores, name='api_estadisticas_proveedores'),
+    path('api/proveedores/exportar-excel/', views.exportar_proveedores_excel, name='api_exportar_proveedores_excel'),
 ]
